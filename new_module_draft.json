@@ -1,0 +1,34 @@
+[
+  {
+    "id": "mod-6",
+    "number": "06",
+    "title": "新章節：Introduction to Modern Cryptography - Historical Ciphers and Their Cryptanalysis (1)",
+    "subtitle": "Chapter Subtitle",
+    "source": "Introduction to Modern Cryptography - Historical Ciphers and Their Cryptanalysis (1).pdf",
+    "summary": "請填寫本章教學目標與摘要。",
+    "sections": [
+      {
+        "title": "章節概述與核心理論",
+        "content": [
+          "請填寫此處重點說明。"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mod-7",
+    "number": "07",
+    "title": "新章節：Introduction to Modern Cryptography - Perfectly Secret Encryption (1)",
+    "subtitle": "Chapter Subtitle",
+    "source": "Introduction to Modern Cryptography - Perfectly Secret Encryption (1).pdf",
+    "summary": "請填寫本章教學目標與摘要。",
+    "sections": [
+      {
+        "title": "章節概述與核心理論",
+        "content": [
+          "請填寫此處重點說明。"
+        ]
+      }
+    ]
+  }
+]

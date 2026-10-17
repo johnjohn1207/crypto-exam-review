@@ -1,0 +1,171 @@
+# -*- coding: utf-8 -*-
+"""
+Script to generate index.html for the modern cryptography learning platform.
+"""
+
+index_html = """<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現代與後量子密碼學導論 | 複習暨互動學習平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfeff',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            900: '#164e63',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                        sans: ['"Inter"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- KaTeX CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Custom style tweaks -->
+    <style>
+        .katex { font-size: 1.05em; }
+        .katex-display { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-md font-mono text-sm">
+                    Ψ
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-2">
+                        現代與後量子密碼學導論
+                        <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 hidden sm:inline-block">
+                            Part 1: Provable Security
+                        </span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400 font-mono hidden md:block">Introduction to Modern and Post-quantum Cryptography Review Portal</p>
+                </div>
+            </div>
+
+            <!-- Tab Buttons -->
+            <nav class="flex items-center gap-1 sm:gap-2">
+                <button onclick="switchTab('summaries')" data-tab="summaries"
+                    class="nav-tab-btn px-3 py-2 text-xs font-semibold rounded-lg border border-transparent transition flex items-center gap-1.5">
+                    <span>📖 章節重點整理</span>
+                </button>
+                <button onclick="switchTab('playgrounds')" data-tab="playgrounds"
+                    class="nav-tab-btn px-3 py-2 text-xs font-semibold rounded-lg border border-transparent transition flex items-center gap-1.5">
+                    <span>⚙️ 互動實驗室</span>
+                </button>
+                <button onclick="switchTab('quizzes')" data-tab="quizzes"
+                    class="nav-tab-btn px-3 py-2 text-xs font-semibold rounded-lg border border-transparent transition flex items-center gap-1.5">
+                    <span>✍️ 互動題目練習</span>
+                </button>
+                <button onclick="switchTab('glossary')" data-tab="glossary"
+                    class="nav-tab-btn px-3 py-2 text-xs font-semibold rounded-lg border border-transparent transition flex items-center gap-1.5">
+                    <span>🔍 專業名詞檢索</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- VIEW 1: CHAPTER SUMMARIES -->
+        <section id="view-summaries" class="tab-view">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                <!-- Left Sidebar: Modules List -->
+                <aside class="lg:col-span-1 space-y-3 sticky top-20">
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">知識模組導覽</span>
+                        <span class="text-[11px] text-slate-500 font-mono">6 個章節</span>
+                    </div>
+                    <div id="summaries-module-list" class="space-y-2">
+                        <!-- Populated by app.js -->
+                    </div>
+                </aside>
+
+                <!-- Right Content Area: Detailed Summary -->
+                <article id="module-content-area" class="lg:col-span-3">
+                    <!-- Populated by app.js -->
+                </article>
+            </div>
+        </section>
+
+        <!-- VIEW 2: INTERACTIVE PLAYGROUNDS -->
+        <section id="view-playgrounds" class="tab-view hidden">
+            <div class="space-y-6">
+                <!-- Navigation Subtabs -->
+                <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-4" id="playground-tabs-bar">
+                    <!-- Populated by app.js -->
+                </div>
+
+                <!-- Dynamic Playground Panels Container -->
+                <div id="playground-content-container"></div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: INTERACTIVE QUIZZES -->
+        <section id="view-quizzes" class="tab-view hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                <!-- Left Filter & Stats -->
+                <aside class="lg:col-span-1 sticky top-20" id="quiz-filter-container">
+                    <!-- Populated by app.js -->
+                </aside>
+
+                <!-- Right Questions Feed -->
+                <div class="lg:col-span-3 space-y-6" id="quiz-list-container">
+                    <!-- Populated by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: GLOSSARY -->
+        <section id="view-glossary" class="tab-view hidden">
+            <div id="glossary-content-area">
+                <!-- Populated by app.js -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            現代與後量子密碼學導論（Introduction to Modern and Post-quantum Cryptography）複習工具平台 
+            | 依據課程投影片與教科書嚴格對齊編寫
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/playgrounds.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(index_html)
+
+print("index.html successfully written.")
