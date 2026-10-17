@@ -1,0 +1,495 @@
+# -*- coding: utf-8 -*-
+"""
+Script to build `notes.html` - A dedicated, clean, distraction-free reading portal
+for the cryptographic lecture notes and textbook summaries.
+"""
+
+notes_html_content = """<!DOCTYPE html>
+<html lang="zh-TW" class="dark" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>密碼學精華筆記閱讀手冊 | Cryptography Reader Notes</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sepia: {
+                            base: '#fbf0d9',
+                            card: '#f4e5c3',
+                            border: '#e4cd9e',
+                            text: '#433422',
+                            muted: '#7a6348'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                        sans: ['"Inter"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- KaTeX CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        /* KaTeX typography optimization */
+        .katex { font-size: 1.05em; }
+        .katex-display { margin: 1em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.4); }
+
+        /* Reading Progress Bar */
+        #reading-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #06b6d4, #6366f1);
+            z-index: 100;
+            transition: width 0.1s linear;
+        }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Print styles for export to PDF */
+        @media print {
+            header, aside, #reading-progress-bar, .no-print { display: none !important; }
+            main { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            body { background: white !important; color: black !important; font-size: 12pt; }
+            .note-card { break-inside: avoid; border: 1px solid #ccc !important; background: transparent !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200">
+
+    <!-- Top Reading Progress Bar -->
+    <div id="reading-progress-bar" style="width: 0%;"></div>
+
+    <!-- Header Toolbar -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/90 border-b border-slate-800 transition-colors duration-200" id="main-header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
+            
+            <!-- Left: Brand / Title -->
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2 group text-slate-300 hover:text-white transition">
+                    <span class="w-7 h-7 rounded-lg bg-cyan-600/30 border border-cyan-500/50 flex items-center justify-center font-mono font-bold text-cyan-300 text-xs">
+                        📖
+                    </span>
+                    <span class="font-bold text-sm tracking-tight hidden sm:inline-block">密碼學精華閱讀手冊</span>
+                </a>
+                <span class="text-xs text-slate-500 hidden md:inline">| 全教材 8 大章節精煉版</span>
+            </div>
+
+            <!-- Center: Search Input -->
+            <div class="relative w-44 sm:w-64">
+                <input type="text" id="quick-search" placeholder="搜尋筆記重點（如 PRG, Shannon）..."
+                    class="w-full bg-slate-950/80 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+            </div>
+
+            <!-- Right: Reader Settings & Switch -->
+            <div class="flex items-center gap-2">
+                <!-- Font size controls -->
+                <div class="flex items-center border border-slate-700 rounded-lg overflow-hidden bg-slate-950 text-xs text-slate-400">
+                    <button id="font-dec-btn" class="px-2 py-1 hover:bg-slate-800 hover:text-slate-200 transition" title="縮小字體">A-</button>
+                    <button id="font-inc-btn" class="px-2 py-1 hover:bg-slate-800 hover:text-slate-200 transition" title="放大字體">A+</button>
+                </div>
+
+                <!-- Theme switcher -->
+                <div class="flex items-center border border-slate-700 rounded-lg overflow-hidden bg-slate-950 text-xs">
+                    <button id="theme-dark-btn" class="px-2.5 py-1 text-cyan-400 bg-slate-800 transition" title="夜間深色">深色</button>
+                    <button id="theme-sepia-btn" class="px-2.5 py-1 text-slate-400 hover:text-slate-200 transition" title="羊皮紙暖色">紙張</button>
+                    <button id="theme-light-btn" class="px-2.5 py-1 text-slate-400 hover:text-slate-200 transition" title="純白護眼">明亮</button>
+                </div>
+
+                <!-- Print button -->
+                <button onclick="window.print()" class="hidden lg:flex items-center gap-1 border border-slate-700 hover:border-slate-500 px-2.5 py-1 rounded-lg text-xs text-slate-300 transition" title="列印或匯出為 PDF">
+                    <span>🖨️ 列印</span>
+                </button>
+
+                <!-- Back to Playground Link -->
+                <a href="index.html" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium px-3 py-1 rounded-lg text-xs transition flex items-center gap-1 shadow">
+                    <span>互動平台</span> →
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container: Three-Column Layout -->
+    <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-8">
+        
+        <!-- Left Sidebar: Table of Contents -->
+        <aside class="w-64 shrink-0 hidden lg:block sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto pr-2" id="toc-sidebar">
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+                <span>章節目錄導覽</span>
+                <span class="text-[10px] text-slate-500 font-mono">8 MODULES</span>
+            </div>
+            <nav class="space-y-1" id="toc-nav-list">
+                <!-- Populated dynamically -->
+            </nav>
+        </aside>
+
+        <!-- Center: Notes Reader Content -->
+        <main class="flex-1 max-w-4xl mx-auto space-y-12 min-w-0" id="notes-main-content">
+            <!-- Populated dynamically from data.js -->
+        </main>
+
+        <!-- Right Sidebar: On this Page Mini TOC (visible on wide screens) -->
+        <aside class="w-48 shrink-0 hidden xl:block sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto pl-2 border-l border-slate-800 text-xs" id="sub-toc-sidebar">
+            <div class="font-bold text-slate-400 mb-3 uppercase tracking-wider text-[11px]">本章小節導覽</div>
+            <div id="sub-toc-list" class="space-y-2 text-slate-500">
+                <!-- Populated when scrolling/clicking -->
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500 transition-colors duration-200" id="main-footer">
+        <div class="max-w-7xl mx-auto px-4">
+            密碼學精華筆記手冊 | 嚴謹整理自 Katz & Lindell 教材、《The Joy of Cryptography》與劉子源教授講義 | 
+            <a href="index.html" class="text-cyan-400 hover:underline">返回互動測驗與實驗室</a>
+        </div>
+    </footer>
+
+    <!-- Load Data and Reader Engine -->
+    <script src="js/data.js"></script>
+    <script>
+        // Reader Engine State
+        const ReaderApp = {
+            currentTheme: 'dark', // 'dark' | 'sepia' | 'light'
+            fontSizeLevel: 0, // -1: small, 0: normal, 1: large, 2: extra large
+            fontSizeClasses: ['text-sm', 'text-base', 'text-lg'],
+
+            init() {
+                this.renderTOC();
+                this.renderNotes();
+                this.setupTheme();
+                this.setupFontSize();
+                this.setupSearch();
+                this.setupScrollProgress();
+                this.setupSubTOC();
+                this.initKaTeX();
+            },
+
+            initKaTeX() {
+                let interval = setInterval(() => {
+                    if (typeof renderMathInElement !== 'undefined') {
+                        clearInterval(interval);
+                        renderMathInElement(document.getElementById('notes-main-content'), {
+                            delimiters: [
+                                { left: '$$', right: '$$', display: true },
+                                { left: '$', right: '$', display: false }
+                            ],
+                            throwOnError: false
+                        });
+                    }
+                }, 100);
+                setTimeout(() => clearInterval(interval), 3000);
+            },
+
+            // Render TOC on Left Sidebar
+            renderTOC() {
+                const container = document.getElementById('toc-nav-list');
+                if (!container || typeof MODULES_DATA === 'undefined') return;
+
+                container.innerHTML = MODULES_DATA.map(m => `
+                    <a href="#${m.id}" class="toc-item block px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-cyan-300 hover:bg-slate-900/60 transition border border-transparent">
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono text-[10px] text-cyan-400 font-bold shrink-0">${m.number}</span>
+                            <span class="truncate">${m.title}</span>
+                        </div>
+                    </a>
+                `).join('');
+            },
+
+            // Smart Content Parser: Transform raw text into high-readability Cards
+            parseSectionContent(paragraphs) {
+                return paragraphs.map(p => {
+                    let formatted = p.replace(/\\*\\*(.*?)\\*\\*/g, '<strong class="font-semibold text-slate-100">$1</strong>');
+                    
+                    // Bullet items
+                    if (formatted.startsWith('- ')) {
+                        return `<li class="ml-4 list-disc pl-1 text-slate-300 leading-relaxed my-1">${formatted.substring(2)}</li>`;
+                    }
+
+                    // Numbered item: 1. 2. 3.
+                    if (/^\\d+\\.\\s/.test(formatted)) {
+                        return `<div class="font-medium text-slate-200 mt-2 mb-1">${formatted}</div>`;
+                    }
+
+                    // Special Callout Highlighting based on keywords
+                    const lower = p.toLowerCase();
+                    if (p.includes('**Kerckhoffs') || p.includes('**Shannon') || p.includes('**定理') || p.includes('**Luby-Rackoff') || p.includes('**Blum-Micali')) {
+                        return `
+                            <div class="note-card my-3 p-4 rounded-xl border-l-4 border-indigo-500 bg-indigo-950/20 border border-slate-800/80 shadow-sm">
+                                <div class="text-xs uppercase font-mono font-bold text-indigo-300 mb-1 flex items-center gap-1.5">
+                                    <span>📜 核心理論 / 定理定義</span>
+                                </div>
+                                <div class="text-slate-200 leading-relaxed text-sm">${formatted}</div>
+                            </div>
+                        `;
+                    }
+
+                    if (p.includes('攻擊') || p.includes('漏洞') || p.includes('Padding Oracle') || p.includes('Two-Time Pad') || p.includes('長度延伸')) {
+                        return `
+                            <div class="note-card my-3 p-4 rounded-xl border-l-4 border-amber-500 bg-amber-950/20 border border-slate-800/80 shadow-sm">
+                                <div class="text-xs uppercase font-mono font-bold text-amber-300 mb-1 flex items-center gap-1.5">
+                                    <span>⚡ 攻防分析 / 漏洞運算</span>
+                                </div>
+                                <div class="text-slate-200 leading-relaxed text-sm">${formatted}</div>
+                            </div>
+                        `;
+                    }
+
+                    if (p.includes('誤區') || p.includes('重大禁忌') || p.includes('致命缺陷') || p.includes('不安全')) {
+                        return `
+                            <div class="note-card my-3 p-4 rounded-xl border-l-4 border-rose-500 bg-rose-950/20 border border-slate-800/80 shadow-sm">
+                                <div class="text-xs uppercase font-mono font-bold text-rose-300 mb-1 flex items-center gap-1.5">
+                                    <span>⚠️ 考試易錯陷阱 / 防錯警告</span>
+                                </div>
+                                <div class="text-slate-200 leading-relaxed text-sm">${formatted}</div>
+                            </div>
+                        `;
+                    }
+
+                    return `<p class="leading-relaxed text-slate-300 my-2">${formatted}</p>`;
+                }).join('');
+            },
+
+            // Render Notes Body
+            renderNotes() {
+                const container = document.getElementById('notes-main-content');
+                if (!container || typeof MODULES_DATA === 'undefined') return;
+
+                container.innerHTML = MODULES_DATA.map((m, mIdx) => {
+                    const sourcesText = Array.isArray(m.sources) 
+                        ? m.sources.map(s => `<span class="inline-block px-2 py-0.5 rounded bg-slate-800/80 text-[11px] text-slate-400 border border-slate-700/60 mr-1.5 mb-1">${s}</span>`).join('')
+                        : `<span class="inline-block px-2 py-0.5 rounded bg-slate-800/80 text-[11px] text-slate-400 border border-slate-700/60">${m.source || ''}</span>`;
+
+                    return `
+                        <article id="${m.id}" class="chapter-article bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-xl relative transition-all duration-200">
+                            
+                            <!-- Chapter Banner Header -->
+                            <header class="border-b border-slate-800/80 pb-5 mb-6">
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <span class="font-mono text-xs font-bold px-2.5 py-1 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/80 uppercase tracking-wide">
+                                        ${m.number}
+                                    </span>
+                                    <div class="text-xs text-slate-400">
+                                        章節 ${mIdx + 1} / ${MODULES_DATA.length}
+                                    </div>
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2">
+                                    ${m.title}
+                                </h2>
+                                <div class="text-sm font-mono text-cyan-400 mt-1 font-medium">
+                                    ${m.subtitle}
+                                </div>
+                                <div class="mt-3 flex flex-wrap gap-1">
+                                    ${sourcesText}
+                                </div>
+                                <div class="mt-4 p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-300 text-sm leading-relaxed">
+                                    <strong class="text-cyan-400 block text-xs uppercase font-mono mb-1">【章節核心導讀】</strong>
+                                    ${m.summary}
+                                </div>
+                            </header>
+
+                            <!-- Sections -->
+                            <div class="space-y-8">
+                                ${m.sections.map((sec, sIdx) => `
+                                    <section id="${m.id}-sec-${sIdx}" class="section-block">
+                                        <h3 class="text-lg font-bold text-cyan-200 border-b border-slate-800/60 pb-2 mb-3 flex items-center gap-2">
+                                            <span class="w-1.5 h-4 bg-cyan-500 rounded-full"></span>
+                                            ${sec.title}
+                                        </h3>
+                                        <div class="text-sm space-y-2 font-sans">
+                                            ${this.parseSectionContent(sec.content)}
+                                        </div>
+                                    </section>
+                                `).join('')}
+                            </div>
+
+                            <!-- Back to Top / Navigation Footer -->
+                            <div class="mt-8 pt-4 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-500">
+                                <span>標籤：#${m.id}</span>
+                                <a href="#toc-sidebar" class="text-cyan-400 hover:underline">回到章節目錄 ↑</a>
+                            </div>
+
+                        </article>
+                    `;
+                }).join('');
+            },
+
+            // Theme Management
+            setupTheme() {
+                const darkBtn = document.getElementById('theme-dark-btn');
+                const sepiaBtn = document.getElementById('theme-sepia-btn');
+                const lightBtn = document.getElementById('theme-light-btn');
+                const root = document.getElementById('html-root');
+
+                const applyTheme = (theme) => {
+                    this.currentTheme = theme;
+                    [darkBtn, sepiaBtn, lightBtn].forEach(b => {
+                        b.classList.remove('bg-slate-800', 'bg-amber-200', 'bg-slate-200', 'text-cyan-400', 'text-amber-900', 'text-slate-900');
+                        b.classList.add('text-slate-400');
+                    });
+
+                    if (theme === 'dark') {
+                        root.className = 'dark';
+                        document.body.className = 'bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200';
+                        darkBtn.classList.add('bg-slate-800', 'text-cyan-400');
+                        darkBtn.classList.remove('text-slate-400');
+                    } else if (theme === 'sepia') {
+                        root.className = '';
+                        document.body.className = 'bg-[#f7efe1] text-[#3e3124] font-serif min-h-screen flex flex-col antialiased transition-colors duration-200';
+                        sepiaBtn.classList.add('bg-[#e9dcbc]', 'text-amber-950', 'font-bold');
+                        sepiaBtn.classList.remove('text-slate-400');
+                    } else if (theme === 'light') {
+                        root.className = '';
+                        document.body.className = 'bg-[#fafafa] text-slate-800 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200';
+                        lightBtn.classList.add('bg-slate-200', 'text-slate-900', 'font-bold');
+                        lightBtn.classList.remove('text-slate-400');
+                    }
+                };
+
+                darkBtn.addEventListener('click', () => applyTheme('dark'));
+                sepiaBtn.addEventListener('click', () => applyTheme('sepia'));
+                lightBtn.addEventListener('click', () => applyTheme('light'));
+            },
+
+            // Font Size Zoom
+            setupFontSize() {
+                const decBtn = document.getElementById('font-dec-btn');
+                const incBtn = document.getElementById('font-inc-btn');
+                const mainArea = document.getElementById('notes-main-content');
+
+                incBtn.addEventListener('click', () => {
+                    if (this.fontSizeLevel < 2) {
+                        this.fontSizeLevel++;
+                        mainArea.style.fontSize = this.fontSizeLevel === 1 ? '1.08rem' : '1.18rem';
+                    }
+                });
+
+                decBtn.addEventListener('click', () => {
+                    if (this.fontSizeLevel > -1) {
+                        this.fontSizeLevel--;
+                        mainArea.style.fontSize = this.fontSizeLevel === -1 ? '0.92rem' : '1.0rem';
+                    }
+                });
+            },
+
+            // Quick Filter / Search
+            setupSearch() {
+                const searchInput = document.getElementById('quick-search');
+                searchInput.addEventListener('input', (e) => {
+                    const kw = e.target.value.toLowerCase().trim();
+                    const articles = document.querySelectorAll('.chapter-article');
+                    
+                    articles.forEach(art => {
+                        if (!kw) {
+                            art.style.display = '';
+                            return;
+                        }
+                        const text = art.innerText.toLowerCase();
+                        if (text.includes(kw)) {
+                            art.style.display = '';
+                        } else {
+                            art.style.display = 'none';
+                        }
+                    });
+                });
+            },
+
+            // Reading Progress Bar & Active TOC Item
+            setupScrollProgress() {
+                const progressBar = document.getElementById('reading-progress-bar');
+                const tocLinks = document.querySelectorAll('.toc-item');
+                const articles = document.querySelectorAll('.chapter-article');
+
+                window.addEventListener('scroll', () => {
+                    const scrollTop = window.scrollY;
+                    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                    progressBar.style.width = `${progress}%`;
+
+                    // Highlight Active Chapter in TOC
+                    let currentActiveId = '';
+                    articles.forEach(art => {
+                        const top = art.offsetTop - 120;
+                        if (scrollTop >= top) {
+                            currentActiveId = art.id;
+                        }
+                    });
+
+                    tocLinks.forEach(link => {
+                        if (link.getAttribute('href') === `#${currentActiveId}`) {
+                            link.classList.add('bg-cyan-950/60', 'text-cyan-300', 'border-cyan-700/50', 'font-bold');
+                            link.classList.remove('text-slate-400', 'border-transparent');
+                        } else {
+                            link.classList.remove('bg-cyan-950/60', 'text-cyan-300', 'border-cyan-700/50', 'font-bold');
+                            link.classList.add('text-slate-400', 'border-transparent');
+                        }
+                    });
+                });
+            },
+
+            // Right Sidebar: Sub TOC
+            setupSubTOC() {
+                const subContainer = document.getElementById('sub-toc-list');
+                const articles = document.querySelectorAll('.chapter-article');
+
+                const updateSubTOC = (activeArticle) => {
+                    if (!activeArticle || !subContainer) return;
+                    const headers = activeArticle.querySelectorAll('h3');
+                    if (headers.length === 0) {
+                        subContainer.innerHTML = '<div class="text-slate-600">無子節</div>';
+                        return;
+                    }
+                    subContainer.innerHTML = Array.from(headers).map(h => {
+                        const secId = h.parentElement.id;
+                        return `
+                            <a href="#${secId}" class="block truncate py-1 text-slate-400 hover:text-cyan-300 transition">
+                                ${h.innerText.trim()}
+                            </a>
+                        `;
+                    }).join('');
+                };
+
+                window.addEventListener('scroll', () => {
+                    let activeArticle = null;
+                    articles.forEach(art => {
+                        if (window.scrollY >= art.offsetTop - 150) {
+                            activeArticle = art;
+                        }
+                    });
+                    if (activeArticle) updateSubTOC(activeArticle);
+                });
+            }
+        };
+
+        // Initialize on DOM Ready
+        document.addEventListener('DOMContentLoaded', () => {
+            ReaderApp.init();
+        });
+    </script>
+</body>
+</html>
+"""
+
+with open("notes.html", "w", encoding="utf-8") as f:
+    f.write(notes_html_content)
+
+print("notes.html successfully created!")
