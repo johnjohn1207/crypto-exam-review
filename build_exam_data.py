@@ -1,0 +1,739 @@
+# -*- coding: utf-8 -*-
+import json
+import os
+
+print("Starting to build exam_data.js...")
+
+# 1. 關鍵公式與定理 (FORMULAS_DATA)
+FORMULAS_DATA = [
+    {
+        "id": "form-1",
+        "chapter": "Ch. 1",
+        "category": "ch1-2",
+        "name": "夏農完善保密性條件",
+        "math": "\\Pr[C = c \\mid M = m] = \\Pr[C = c] = \\frac{1}{|\\mathcal{C}|}",
+        "intuition": "密文完全是一堆均勻雜訊。不論明文是一串情書還是一串亂碼，加密出來的密文分佈長得完全一樣。偷看密文對猜測原本內容完全沒有任何幫助。",
+        "formal": "對所有明文 $m \\in \\mathcal{M}$ 與密文 $c \\in \\mathcal{C}$，條件機率恆等於無條件機率。等價於明文與密文隨機變數相互獨立。",
+        "pitfall": "很多同學以為「金鑰長度等於明文長度」就是完善保密。錯，金鑰長度足夠只是必要條件，全零金鑰也是等長金鑰但毫無保密性。"
+    },
+    {
+        "id": "form-2",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "name": "夏農金鑰長度下界定理",
+        "math": "|\\mathcal{K}| \\ge |\\mathcal{M}|",
+        "intuition": "你想保護多少種不同的秘密，你的保險箱鑰匙種類就至少要有那麼多種。如果鑰匙數量比秘密少，必定有某個秘密永遠不可能變成某個密文，攻擊者就能用刪除法抓到破綻。",
+        "formal": "任何具備正確性（Correctness）且達成完善保密性（Perfect Secrecy）的加密系統，其金鑰空間大小必定大於或等於明文空間大小。",
+        "pitfall": "證明時切記要使用反證法：假設 $|\\mathcal{K}| < |\\mathcal{M}|$，解密所得集合 $|S(c)| \\le |\\mathcal{K}| < |\\mathcal{M}|$，必然存在某個 $m^* \\notin S(c)$ 導致 $\\Pr[C=c \\mid M=m^*] = 0$。"
+    },
+    {
+        "id": "form-3",
+        "chapter": "Ch. 4",
+        "category": "ch4-5",
+        "name": "可忽略函數定義",
+        "math": "\\forall c > 0, \\exists N_0, \\forall \\lambda > N_0 : \\mu(\\lambda) < \\frac{1}{\\lambda^c}",
+        "intuition": "在電腦能處理的範圍內，這件事發生的機率比被隕石連續砸中十次還要低。隨便拿一個多項式的倒數，當長度夠長時，這個機率都比它還要快地衝向零。",
+        "formal": "對於任意正多項式 $p(\\lambda)$，均存在臨界值 $N_0$，當安全參數 $\\lambda > N_0$ 時，恆有 $|\\mu(\\lambda)| < 1/p(\\lambda)$。",
+        "pitfall": "常考反例：$2^{-\\lambda}$ 是可忽略函數，$\\lambda^{-100}$ 不是可忽略函數（因為它是多項式倒數），$\\lambda^{-\\log \\lambda}$ 是可忽略函數。"
+    },
+    {
+        "id": "form-4",
+        "chapter": "Ch. 4",
+        "category": "ch4-5",
+        "name": "生日悖論碰撞界限",
+        "math": "q \\approx \\sqrt{2 \\ln(2) \\cdot N} \\approx 1.177 \\sqrt{N}",
+        "intuition": "在一個有 $N$ 個房間的旅館隨機丟人進去，只要丟大約根號 $N$ 個人，有兩個人住進同一間房的機率就超過一半。這就是為什麼雜湊值長度一定要加倍。",
+        "formal": "在大小為 $N$ 的空間中均勻隨機取樣 $q$ 次，當 $q \\approx \\sqrt{N}$ 時，出現至少一組碰撞的機率達到 50%。因此 $n$ 位元的輸出僅具備 $n/2$ 位元的抗碰撞強度。",
+        "pitfall": "防禦生日攻擊時，輸出位元數必須是安全等級的兩倍（例如想防禦 $2^{128}$ 次運算的攻擊，必須使用 256 位元的雜湊函數如 SHA-256）。"
+    },
+    {
+        "id": "form-5",
+        "chapter": "Ch. 4",
+        "category": "ch4-5",
+        "name": "差異引理與壞事件技術",
+        "math": "|\\Pr[\\mathcal{D}^{\\mathcal{L}_1} = 1] - \\Pr[\\mathcal{D}^{\\mathcal{L}_2} = 1]| \\le \\Pr[\\text{bad}]",
+        "intuition": "兩台機器長得幾乎一模一樣，只有在某個非常倒楣的意外（bad）發生時，它們的行為才會露出馬腳。所以攻擊者能分出兩台機器的勝率，絕對不會超過倒楣意外發生的機率。",
+        "formal": "若函式庫 $\\mathcal{L}_1$ 與 $\\mathcal{L}_2$ 在事件 bad 發生前執行軌跡完全相同，則任何區分者 $\\mathcal{D}$ 的區分優勢上限受限於 $\\Pr[\\text{bad}]$。",
+        "pitfall": "寫證明時，一定要先論證在 bad 發生前兩者的每一步程式碼代數等價，不可直接跳步引用。"
+    },
+    {
+        "id": "form-6",
+        "chapter": "Ch. 6-7",
+        "category": "ch6-7",
+        "name": "PRF / PRP 切換引理",
+        "math": "|\\Pr[\\mathcal{D}^{\\text{PRP}} = 1] - \\Pr[\\mathcal{D}^{\\text{PRF}} = 1]| \\le \\frac{q(q-1)}{2 \\cdot 2^n} \\le \\frac{q^2}{2^{n+1}}",
+        "intuition": "置換（PRP）就像發撲克牌（抽一張少一張，絕不重複），函數（PRF）就像擲骰子（每次獨立，可能重複）。只要抽的次數遠小於牌堆開根號，幾乎抽不到重複的牌，所以兩者看起來根本沒差。",
+        "formal": "對於區塊大小為 $n$ 位元的偽隨機置換，只要查詢次數 $q \\ll 2^{n/2}$，其與偽隨機函數之區分優勢為可忽略。因此 PRP 可直接當作 PRF 使用。",
+        "pitfall": "反向不成立。PRF 不能直接降級當作 PRP，因為 PRF 不保證可逆且會有碰撞。"
+    },
+    {
+        "id": "form-7",
+        "chapter": "Ch. 7",
+        "category": "ch6-7",
+        "name": "Feistel 網路可逆性與 2 輪線性不變量",
+        "math": "(L_{2,A} \\oplus L_{2,B}) = (L_A \\oplus L_B) \\quad \\text{when } R_A = R_B",
+        "intuition": "Feistel 架構不管輪函數多複雜都能解密，因為它靠的是開關反轉（XOR）。但如果只做兩輪，只要固定右半邊，輪函數黑箱輸出就會被自我抵消，攻擊者看一眼就戳破偽裝。",
+        "formal": "Feistel 每輪運算為 $(L', R') = (R, L \\oplus F(K_i, R))$。解密運算僅依賴 XOR 自反性，不需 $F$ 具備可逆性。但 2 輪 Feistel 存在線性差分特徵，Luby-Rackoff 定理要求至少 3 輪才具備 PRP 安全性。",
+        "pitfall": "記住結論：2 輪必破；3 輪達到普通 PRP 安全性；4 輪才能抵抗包含逆向查詢的強 PRP（Strong PRP）安全性。"
+    },
+    {
+        "id": "form-8",
+        "chapter": "Ch. 8",
+        "category": "ch8-9",
+        "name": "決定性加密必破 CPA 定理",
+        "math": "|\\mathcal{M}| = |\\mathcal{C}| \\implies \\text{Insecure under IND-CPA}",
+        "intuition": "如果加密沒有加隨機數（像蓋章一樣，同樣的明文永遠蓋出同樣的密文），攻擊者拿同樣的明文去加密兩次，看到密文長得一樣就抓包了。所以安全加密的密文一定會膨脹以容納隨機數。",
+        "formal": "若加密演算法為確定性（Deterministic），且具備正確性，當 $|\\mathcal{M}| = |\\mathcal{C}|$ 時加密為雙射。攻擊者查詢兩次相同明文即可達到優勢 $1 - 2^{-|C|} \\approx 1$。",
+        "pitfall": "答題時區分者必須明確寫出兩次查詢：$C_1 \\leftarrow \\text{enc}(0^n), C_2 \\leftarrow \\text{enc}(0^n)$，並比對 $C_1 == C_2$。"
+    },
+    {
+        "id": "form-9",
+        "chapter": "Ch. 9",
+        "category": "ch8-9",
+        "name": "CTR 模式線性可塑性公式",
+        "math": "C' = C \\oplus \\Delta \\implies M' = M \\oplus \\Delta",
+        "intuition": "CTR 模式就像拿一串隨機數字跟明文做加減。攻擊者雖然不知道原本數字是多少，但在密文第 3 個位元反轉一下，解密出來的明文第 3 個位元也必定精準反轉。這叫可塑性，直接被 CCA 攻擊打穿。",
+        "formal": "CTR 模式具備位元翻轉可塑性（Bit-flipping Malleability）。由於缺乏完整性校驗，攻擊者可藉此構造關聯密文送交解密 Oracle，或發動 Format/Null Oracle 攻擊還原全部明文。",
+        "pitfall": "CTR 模式是安全的 CPA 加密，但絕對不是安全的 CCA 加密，必須外掛 MAC 或使用 GCM 認證加密。"
+    },
+    {
+        "id": "form-10",
+        "chapter": "Ch. 9",
+        "category": "ch8-9",
+        "name": "Encrypt-then-MAC 認證加密正規",
+        "math": "C = \\text{Enc}(K_e, M), \\quad T = \\text{MAC}(K_m, C), \\quad \\text{Output: } (C, T)",
+        "intuition": "先打包裝箱封好，再在箱子外面貼防偽封條。收件人先檢查封條，封條被動過直接丟垃圾桶，連開箱都不開。這樣攻擊者連猜密文解密的機會都沒有，最安全。",
+        "formal": "在獨立金鑰下，搭配 CPA 安全加密與強不可偽造 MAC（sUF-CMA），Encrypt-then-MAC 保證達到認證加密（AE）與 IND-CCA 安全性。能抵禦所有解密錯誤側通道與填充預言機攻擊。",
+        "pitfall": "對比：Encrypt-and-MAC 會因標籤洩漏明文相等性而失敗；MAC-then-encrypt 會因解密後才驗證標籤而引發 Padding Oracle 漏洞。"
+    }
+]
+
+print(f"Loaded {len(FORMULAS_DATA)} formulas.")
+
+# 2. 作業一題目詳解 (HW1_SOLUTIONS)
+HW1_SOLUTIONS = [
+    {
+        "id": "hw1-1a",
+        "title": "作業一 1(a)：AND 運算修改型 OTP",
+        "chapter": "Ch. 1-2",
+        "category": "ch1-2",
+        "question": "考慮將 One-Time Pad 的 XOR 運算改為位元 AND (∧)：Enc(K, M) = K ∧ M。請問：(i) 此方案是否正確？若正確請給出解密函數，若否請說明原因。(ii) 此方案是否提供完善保密性？請證明。",
+        "intuition": "AND 運算就像黑色油漆。只要金鑰給了 0，無論你的秘密是 0 還是 1，塗上去全變成 0。既然資訊被毀滅了，解密端就不可能還原，所以不具備正確性；同時，如果偷看密文看到 1，你就知道明文絕對是 1（因為 0 AND 任何數都不可能是 1），這直接洩漏了機密，保密性立刻破功。",
+        "proof": "(i) 不具備正確性：正確性要求 Dec(K, Enc(K, M)) = M。當 K = 0 時，Enc(0, 0) = 0 且 Enc(0, 1) = 0。給定金鑰 0 與密文 0，解密演算法無法判定明文原為 0 或 1，映射非單射，逆函數不存在。\n\n(ii) 不提供完善保密性：取單位元明文 M_0 = 0, M_1 = 1，金鑰 K 均勻取樣自 {0, 1}。當 M_0 = 0 時，C = K ∧ 0 = 0 恆成立，Pr[C = 1 | M = 0] = 0。當 M_1 = 1 時，C = K ∧ 1 = K，Pr[C = 1 | M = 1] = Pr[K = 1] = 1/2。條件機率不相等，違反完善保密性。",
+        "pitfall": "不可只寫「因為 AND 不可逆」。必須明確舉出反例：說明當 K = 0 時兩個不同明文映射到同一密文；在保密性部分必須列出具體的機率不相等式。"
+    },
+    {
+        "id": "hw1-1b",
+        "title": "作業一 1(b)：十進位數字 (0-9) 模 10 加法 OTP",
+        "chapter": "Ch. 1-2",
+        "category": "ch1-2",
+        "question": "考慮在十進位數字 {0, ..., 9} 上的 OTP 變體：Enc(K, M) = (K + M) mod 10，Dec(K, C) = (C - K) mod 10。(i) 證明此方案具備正確性。(ii) 證明此方案在 K 均勻隨機選取時具備完善保密性。",
+        "intuition": "在鐘面上撥時針，往前撥 K 格再往後撥 K 格必定回到原地，這就是正確性；而如果撥的格數 K 是完全均勻隨機的，無論原本指在哪個數字，停在任何一個點的機率都是剛好十分之一，偷看最終停在哪個點對猜測起點毫無幫助，這就是完善保密性。",
+        "proof": "(i) 正確性證明：對任意 K, M ∈ {0, ..., 9}，Dec(K, Enc(K, M)) = (((K + M) mod 10) - K) mod 10 ≡ K + M - K ≡ M (mod 10)。因為 M ∈ {0, ..., 9}，故 M mod 10 = M，解密精確還原。\n\n(ii) 完善保密性證明：金鑰 K 均勻選自 {0, ..., 9}，故 Pr[K = k] = 1/10。對任意固定明文 m 與密文 c，Pr[C = c | M = m] = Pr[(K + m) mod 10 = c]。在加法群 Z_10 中，同餘式 K ≡ c - m (mod 10) 存在唯一整數解 K ∈ {0, ..., 9}。因此 Pr[K = (c - m) mod 10] = 1/10。對任意兩筆明文 m_0, m_1，條件機率恆等於 1/10，密文分佈與明文獨立。",
+        "pitfall": "證明保密性時，要點出「加法群 Z_10 中每個元素都有唯一的加法反元素」，確保方程式在金鑰空間中有且僅有一個解。"
+    },
+    {
+        "id": "hw1-1c",
+        "title": "作業一 1(c)：金鑰長度減半之 OTP 攻擊",
+        "chapter": "Ch. 1-2",
+        "category": "ch1-2",
+        "question": "考慮金鑰長度僅為明文一半的 OTP 方案：Enc(K, M) = (K ⊕ M1, K ⊕ M2)，其中 M = (M1, M2) 且 |M1| = |M2| = |K|。請提出具體攻擊打破機密性，並指出攻擊者可萃取的資訊。",
+        "intuition": "同一把鑰匙用了兩次。攻擊者把前後兩半密文拿來 XOR 一下，金鑰就自我相消了，直接露出前後兩段明文的差值。這就像拿兩張半透明紙疊在一起，只要重疊就露出兩份公文的差異。",
+        "proof": "攻擊者取得密文 (C1, C2) = (K ⊕ M1, K ⊕ M2)。計算差分：C1 ⊕ C2 = (K ⊕ M1) ⊕ (K ⊕ M2) = M1 ⊕ M2。金鑰 K 徹底抵消。\n\n萃取資訊與攻擊：\n1. 獲得兩段明文之位元差異 M1 ⊕ M2。\n2. 若明文前後相同 (M1 = M2)，則 C1 ⊕ C2 = 0^n，完全洩漏重複性。\n3. 已知前綴破譯（Crib Dragging）：若 M1 為協定固定標頭，可直接推得 M2 = (M1 ⊕ M2) ⊕ M1。\n4. 區分攻擊：挑戰提交 M^(0) = (0^n, 0^n) 與 M^(1) = (0^n, 1^n)，若 C1 ⊕ C2 = 0^n 輸出 0 否則輸出 1，區分優勢達 1。",
+        "pitfall": "題目要求「明確指出可萃取的資訊」以及「具體攻擊」，答題時差分公式與區分者演算法兩者皆須完整列出。"
+    },
+    {
+        "id": "hw1-2a",
+        "title": "作業一 2(a)：函式庫 L1 與 L2 不可區分性判定",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "question": "L1: query(M) 回傳 K ⊕ M (K 隨機)。L2: query(M) 若 M = R1 回傳 R2，否則回傳 M ⊕ R1 ⊕ R2 (R1, R2 隨機)。這兩個函式庫是否不可區分？請給出證明或區分者程式。",
+        "intuition": "這題是出題老師精心設計的障眼法。仔細看一下 L2 的 if 條件：當 M = R1 時，如果我們硬代入 else 的公式，結果是 R1 ⊕ R1 ⊕ R2 = 0 ⊕ R2 = R2，居然跟 if 裡面的結果完全一模一樣。也就是說這個 if 根本是寫心酸的廢話，整台機器無論輸入什麼，永遠都在回傳 M ⊕ (R1 ⊕ R2)。而兩個隨機數相加依然是一個完美的隨機數，所以兩台機器一模一樣。",
+        "proof": "結論：兩函式庫完全不可區分 (L1 ≡ L2)。\n\n證明：\n1. 檢驗 L2 當 M = R1 時 else 分支之取值：M ⊕ R1 ⊕ R2 = R1 ⊕ R1 ⊕ R2 = 0^n ⊕ R2 = R2。\n2. 因此無論 M 是否等於 R1，query(M) 恆回傳 M ⊕ (R1 ⊕ R2)。if 條件完全冗餘。\n3. 令 K' = R1 ⊕ R2。由於 R1, R2 獨立均勻取樣自 {0, 1}^n，根據 OTP 性質，K' 嚴格均勻分佈於 {0, 1}^n。\n4. L2 等價於在初始化時取樣 K' 並回傳 K' ⊕ M，與 L1 行為完全恆等。I/O 聯合機率分佈無差別。",
+        "pitfall": "極多學生會直覺認為可以猜測 R1 來區分 L2，因而寫出錯誤的區分者。必須先代數化簡分支條件，確認兩分支數值恆等。"
+    },
+    {
+        "id": "hw1-2b",
+        "title": "作業一 2(b)：LC 與 LD 函式庫加解密一致性",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "question": "LC: enc(M) 回傳 K ⊕ M，dec(C) 回傳 K ⊕ C (共用金鑰 K)。LD: enc(M) 回傳獨立隨機 C，dec(C) 回傳獨立隨機 M。兩者是否不可區分？請證明或給出區分者。",
+        "intuition": "LC 是真正有對鎖的保險箱，你放蘋果進去鎖上，拿同一把鑰匙開箱拿出來必定是蘋果。但 LD 是個冒牌貨，放蘋果進去鎖上，開箱卻隨機吐出香蕉。攻擊者只要「先加密再解密」，檢查拿出來的是不是原本的東西，冒牌貨瞬間現形。",
+        "proof": "結論：兩函式庫可區分 (LC 不等於 LD)。\n\n區分者程式 D：\n1. 呼叫 C := enc(0^n)。\n2. 呼叫 M' := dec(C)。\n3. 若 M' == 0^n 輸出 1 (判定為 LC)，否則輸出 0 (判定為 LD)。\n\n優勢計算：\n在 LC 中，M' = K ⊕ (K ⊕ 0^n) = 0^n 恆成立，Pr[D -> 1 | LC] = 1。\n在 LD 中，dec(C) 獨立均勻取樣，Pr[D -> 1 | LD] = Pr[M' = 0^n] = 2^(-n)。\n優勢 Adv = 1 - 2^(-n) ≈ 1，以壓倒性機率區分。",
+        "pitfall": "如果攻擊者只呼叫 enc 或只呼叫 dec，兩者單獨看都是隨機數無法區分；關鍵在於「串聯呼叫 enc 後 dec」測試正確性關聯。"
+    },
+    {
+        "id": "hw1-3",
+        "title": "作業一 3：修改型 OTP 方案 Σ' 安全性證明",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "question": "Σ 為 OTP。構造 Σ'：KeyGen'() = K，Enc'(K, M) = (C1, C2) 其中 C1 = Enc(K, M) = K ⊕ M，C2 = Enc(K, M ⊕ 1^n) = K ⊕ M ⊕ 1^n，Dec'(K, (C1, C2)) = Dec(K, C1)。判斷 Σ' 是否安全並給出形式證明或攻擊。",
+        "intuition": "雖然這台機器一口氣吐出兩個密文，而且第二個密文剛好是第一個密文的反轉（C2 = C1 ⊕ 1^n），但請注意：第一個密文 C1 本身是完美的均勻亂碼，第二個密文只是它的影子。只要金鑰只用一次，對於任何明文，密文對的分佈永遠都是「一個均勻亂碼 + 它的反轉」，完全沒有洩漏任何關於明文的蛛絲馬跡，在單次保密性定義下依然堅不可摧。",
+        "proof": "結論：在單次保密性（One-Time Secrecy / IND-OTS）定義下，Σ' 是安全的。\n\n形式證明：\n1. 挑戰者收到兩筆等長明文 M_0, M_1，隨機挑選 b ∈ {0, 1} 與 K ← {0, 1}^n。\n2. 密文 C1 = K ⊕ M_b，C2 = K ⊕ M_b ⊕ 1^n = C1 ⊕ 1^n。\n3. 對於任何給定明文 m，檢驗密文對 (c1, c2) 的聯合機率分佈：\n   - 若 c2 ≠ c1 ⊕ 1^n，Pr[(C1, C2) = (c1, c2) | M = m] = 0。\n   - 若 c2 = c1 ⊕ 1^n，Pr[(C1, C2) = (c1, c2) | M = m] = Pr[K ⊕ m = c1] = Pr[K = c1 ⊕ m] = 2^(-n)。\n4. 由於 K 均勻分佈，2^(-n) 與明文 m 的取值完全無關。因此 Pr[(C1, C2) = (c1, c2) | M = M_0] = Pr[(C1, C2) = (c1, c2) | M = M_1]。\n5. 密文分佈完全相同，任何攻擊者的猜對優勢恆為 0。方案具備單次完善保密性。\n\n補充說明：該方案不具備「密文均勻分佈於 {0, 1}^(2n)」性質，且若金鑰重用多筆訊息則立即失效。",
+        "pitfall": "切勿因為看到 C1 ⊕ C2 = 1^n 就誤判為不安全！因為這個差分是固定的常數 1^n，不隨明文改變，因此不洩漏任何明文資訊。"
+    },
+    {
+        "id": "hw1-4a",
+        "title": "作業一 4(a)：種子洩漏型 PRG H(S) 安全性分析",
+        "chapter": "Ch. 5",
+        "category": "ch4-5",
+        "question": "G 為安全倍長 PRG。構造 H(S) = A || B || C || D，其中 A || B = G(S) 且 C || D = G(B)。判斷 H 是否為安全 PRG，若非請給出具備不可忽略優勢之區分者。",
+        "intuition": "這叫「把秘密鑰匙印在傳單上」。PRG 能安全展開的前提是中間的運算種子必須死守在記憶體裡不能見光。這題居然把第二輪的種子 B 當作輸出的一部分直接發給全世界。攻擊者拿到 B，自己動手算一下 G(B)，看看跟後面的 C || D 是不是一樣，一秒鐘識破偽隨機產生的假亂碼。",
+        "proof": "結論：H 不是安全的 PRG (Insecure)。\n\n區分者演算法 D(W)：\n1. 輸入待測字串 W ∈ {0, 1}^(4λ)，拆分為 4 區塊：W = w1 || w2 || w3 || w4，每塊長度 λ。\n2. 計算 V := G(w2) ∈ {0, 1}^(2λ)。\n3. 比對：若 V == w3 || w4 輸出 1 (判定為 Real PRG H)；否則輸出 0 (判定為真正隨機字串)。\n\n優勢計算：\n在 H(S) 下：w2 = B，w3 || w4 = C || D = G(B)，等式以機率 1 成立，Pr[D(H(S)) = 1] = 1。\n在均勻真隨機字串下：w3 || w4 與 G(w2) 相互獨立，相等機率為 2^(-2λ)。\n優勢 Adv = |1 - 2^(-2λ)| = 1 - 2^(-2λ) ≈ 1，徹底攻破偽隨機性。",
+        "pitfall": "這就是教科書 Mike Rosulek 第 104 頁的著名反例 H2。輸出絕不能包含後續計算的輸入種子。"
+    },
+    {
+        "id": "hw1-4b",
+        "title": "作業一 4(b)：線性構造 PRF F(K, X) = G(K) ⊕ X 分析",
+        "chapter": "Ch. 6",
+        "category": "ch6-7",
+        "question": "G 為安全 PRG。構造 PRF：F(K, X) = G(K) ⊕ X。F 是否為安全 PRF？若否，請描述區分者。",
+        "intuition": "真正的隨機函數就像每次丟不同的球進去，它隨機吐出一種完全猜不到的新顏色。但這題的機器只是拿一個固定金鑰 G(K) 跟你的輸入相減。你丟 0 跟丟 1 進去，兩次回傳值的差距永遠等於 1（金鑰被減掉了）。這種死板的線性關係在真隨機世界裡根本不可能發生。",
+        "proof": "結論：F 不是安全的 PRF (Insecure)。\n\n核心缺陷：對任意兩筆輸入 X1, X2，輸出差分恆等於輸入差分：\nF(K, X1) ⊕ F(K, X2) = (G(K) ⊕ X1) ⊕ (G(K) ⊕ X2) = X1 ⊕ X2，金鑰徹底相消。\n\n區分者演算法 D：\n1. 查詢 Oracle 輸入 X1 = 0^n，取得 Y1。\n2. 查詢 Oracle 輸入 X2 = 1^n，取得 Y2。\n3. 比對：若 Y1 ⊕ Y2 == 1^n 輸出 1 (判定為 Real PRF F)；否則輸出 0 (判定為真隨機函數)。\n\n優勢計算：\n在 Real PRF 下：Y1 ⊕ Y2 = 1^n 機率為 1。\n在真隨機函數下：兩次輸出獨立，相等機率為 2^(-n)。\n優勢 Adv = 1 - 2^(-n) ≈ 1。單次差分即破解。",
+        "pitfall": "切勿誤以為「因為 G 是安全 PRG，所以 G(K) 是隨機字串，所以加了 X 很安全」。PRF 安全性考核的是「多筆查詢之間的函數映射行為」，而非單次求值的遮罩。"
+    },
+    {
+        "id": "hw1-5a",
+        "title": "作業一 5(a)：四種加密方案之 CPA 安全性判定",
+        "chapter": "Ch. 8",
+        "category": "ch8-9",
+        "question": "判斷下列四種加密方案是否達成 CPA 安全，若否請給出具體攻擊：\n(i) Enc(K, M) = (R, F(K, R) ⊕ M)，R 隨機，F 為安全 PRF。\n(ii) Enc(K, M) = (R, F(K, M) ⊕ R)，R 隨機，F 為安全 PRF。\n(iii) AES in ECB 模式。\n(iv) AES in CTR 模式（隨機選取 IV）。",
+        "intuition": "(i) 每次抽新號碼牌 R 當 PRF 輸入，遮罩每次不同，安全。\n(ii) 隨機數 R 居然直接加在最外層，攻擊者把前後兩半 XOR 一下，R 就消失了，直接露出決定性的 F(K, M)，必死。\n(iii) ECB 就像直接印章，明文長一樣印出來就長一樣，必死。\n(iv) 隨機選 IV 跑計數器，每次金鑰串流都不一樣，安全。",
+        "proof": "(i) 達成 CPA 安全：標準隨機化 PRF 加密。碰撞機率受限於 q^2 / 2^(λ+1)，由 PRF 安全性保證密文不可區分於真隨機串。\n\n(ii) 未達成 CPA 安全：\n攻擊：密文 (C1, C2) = (R, F(K, M) ⊕ R)。計算 C1 ⊕ C2 = F(K, M)，R 徹底抵消。\n攻擊者提交 M0 = 0^n, M1 = 1^n 得挑戰密文 (C1*, C2*)，計算 V* = C1* ⊕ C2* = F(K, Mb)。再查詢加密 Oracle 明文 M0 得 (C1', C2')，計算 V' = C1' ⊕ C2' = F(K, M0)。若 V* == V' 猜 0 否則猜 1，優勢為 1 - 2^(-λ) ≈ 1。\n\n(iii) 未達成 CPA 安全：\n攻擊：ECB 為確定性加密。攻擊者提交 M0 = 0^128 || 0^128 與 M1 = 0^128 || 1^128。取得密文 C* = C1* || C2*。若 C1* == C2* 輸出 0 否則輸出 1，優勢為 1。\n\n(iv) 達成 CPA 安全：隨機選取 IV，在生日界限內 counter 空間不碰撞，偽隨機串流達成 IND-CPA。",
+        "pitfall": "注意 (ii) 的隨機數 R 沒有放在 PRF 裡面！放在外面會被線性 XOR 直接消除，這是極具殺傷力的考卷陷阱。"
+    },
+    {
+        "id": "hw1-5b",
+        "title": "作業一 5(b)：三種認證加密組合正規之 CCA / AE 評估",
+        "chapter": "Ch. 9",
+        "category": "ch8-9",
+        "question": "評估下列組合方案是否提供 CCA 安全性與認證加密 (AE) 並簡要說明：\n(i) Encrypt-then-MAC: C = Enc(Ke, M), T = MAC(Km, C), 輸出 (C, T)\n(ii) Encrypt-and-MAC: C = Enc(Ke, M), T = MAC(Km, M), 輸出 (C, T)\n(iii) MAC-then-encrypt: T = MAC(Km, M), C = Enc(Ke, M || T), 輸出 C",
+        "intuition": "(i) 先包裝再貼防偽標籤：檢查有問題直接拒絕，完全不開箱，最安全（達到 CCA 與 AE）。\n(ii) 標籤跟包裝並行：標籤直接對明文打，明文如果一樣標籤就一樣，連 CPA 都不保證，根本不具備安全性。\n(iii) 先貼標籤再打包裝：必須先拆開包裝才能驗證標籤，解密端一旦報出「填充錯誤」就成了攻擊者的預言機（如 SSL 的 POODLE 漏洞），通訊直接被破譯，一般不提供 CCA/AE。",
+        "proof": "(i) 提供 CCA 安全性且達到 AE：在獨立金鑰下，Encrypt-then-MAC 保證任何被篡改的密文皆會被 MAC 攔截拋棄，解密端絕不處理非法密文，徹底免疫 CCA 與 Padding Oracle 攻擊。\n\n(ii) 不提供 CCA 且未達 AE：MAC 為決定性函數，標籤 T = MAC(Km, M) 洩漏兩筆密文是否來自相同明文（Equality Leakage），甚至未達 CPA 安全。\n\n(iii) 通常不提供 CCA 且未達 AE：解密端必須「先解密、後查驗 MAC」。若解密過程暴露填充錯誤（如 CBC 模式 PKCS#7 錯誤），攻擊者可發動 Padding Oracle 攻擊還原全部明文（歷史案例：TLS 1.0-1.2 之 Lucky Thirteen 漏洞）。",
+        "pitfall": "考試問「何者為標準認證加密」，唯一正確推薦的通用正規永遠是 Encrypt-then-MAC。"
+    }
+]
+
+print(f"Loaded {len(HW1_SOLUTIONS)} homework solutions.")
+
+# 3. 練習一題目詳解 (PRACTICE1_SOLUTIONS, 34 題)
+PRACTICE1_SOLUTIONS = [
+    # Part A (1-13)
+    {
+        "id": "p1-1",
+        "part": "Part A",
+        "chapter": "Ch. 1",
+        "category": "ch1-2",
+        "number": "1",
+        "title": "練習一 第 1 題：OTP 可證明安全的關鍵",
+        "question": "(Ch. 1) What makes OTP provably secure?\nA. The key is very long\nB. The ciphertext is uniformly distributed regardless of the plaintext\nC. The XOR operation is fast",
+        "answer": "B",
+        "intuition": "保密的最高境界不是把密碼搞得很複雜，而是讓加密出來的結果根本就是一堆均勻的宇宙雜訊。不管你的明文是什麼，密文在機率分佈上永遠長得一模一樣，神仙來了也猜不透。",
+        "proof": "正確答案為 B。在 OTP 中，當金鑰均勻隨機時，條件機率 Pr[C = c | M = m] = 2^(-n) 恆成立，密文分佈與明文嚴格獨立。\n選項 A 錯誤：長金鑰僅為必要條件，例如全零金鑰等長但完全不安全。\n選項 C 錯誤：運算速度屬於工程效能，無關資訊理論安全證明。",
+        "pitfall": "切勿選 A。密碼學證明看的是「分佈獨立性」，而非字串長度本身。"
+    },
+    {
+        "id": "p1-2",
+        "part": "Part A",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "number": "2",
+        "title": "練習一 第 2 題：Library/Program 模型中的權限限制",
+        "question": "(Ch. 2) In the library/program model, what can programs NOT do?\nA. Call library subroutines\nB. Read library variables directly\nC. See the output of function calls",
+        "answer": "B",
+        "intuition": "Library 就像一個上鎖的自動販賣機。你可以按按鈕（呼叫副程式）、你可以拿掉出來的飲料（看回傳值），但你絕對不能拆開外殼偷看裡面的電路板與零錢箱（內部金鑰變數）。",
+        "proof": "正確答案為 B。在 Rosulek 的 Library 模型中，函式庫扮演封裝內部狀態的黑箱，攻擊者程式僅能透過公開 API 互動，無法跨越邊界直接讀取內部變數。\n選項 A 與 C 為合法的黑箱互動手段。",
+        "pitfall": "此模型為現代密碼學博弈證明的基石，代表黑箱攻擊（Black-box interaction）。"
+    },
+    {
+        "id": "p1-3",
+        "part": "Part A",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "number": "3",
+        "title": "練習一 第 3 題：兩函式庫何時被視為可互換",
+        "question": "(Ch. 2) When are two libraries considered interchangeable?\nA. When they have the same source code\nB. When they run in the same amount of time\nC. When they have the same interface and produce indistinguishable outputs",
+        "answer": "C",
+        "intuition": "如果兩隻鴨子叫聲一樣、走路姿勢一樣、外表介面一樣，對外界來說它們就是同一隻鴨子。我們不管兩台機器肚子裡的齒輪怎麼轉，只要對任何測試，吐出來的結果分佈完全分不出來，它們在密碼學上就是等價可互換的。",
+        "proof": "正確答案為 C。兩函式庫在多項式時間內對所有呼叫程式產生的 I/O 聯合機率分佈不可區分，且介面一致，即定義為可互換 (Indistinguishable)。\n選項 A 錯誤：內部程式碼可以完全不同（例如 OTP 真實加密 vs 直接隨機取樣）。\n選項 B 錯誤：執行時間相同不保證輸出分佈一致。",
+        "pitfall": "注意「不可區分性」看的是外在 I/O 行為分佈，而非內部演算法程式碼。"
+    },
+    {
+        "id": "p1-4",
+        "part": "Part A",
+        "chapter": "Ch. 4",
+        "category": "ch4-5",
+        "number": "4",
+        "title": "練習一 第 4 題：可忽略函數的數學定義",
+        "question": "(Ch. 4) What does it mean for a function to be negligible?\nA. It runs in polynomial time\nB. It approaches zero faster than any polynomial fraction\nC. It can be computed efficiently",
+        "answer": "B",
+        "intuition": "衰減得極其誇張地快。任何多項式的倒數（如 1/n^2, 1/n^100）已經很小了，但可忽略函數比所有這些倒數都還要更快衝到零，在計算機的世界裡可以直接當作零看待。",
+        "proof": "正確答案為 B。函數 μ(λ) 滿足對所有多項式 p(λ)，存在 N_0 使 λ > N_0 時 |μ(λ)| < 1/p(λ)。\n選項 A 與 C 混淆了演算法複雜度與函數值之漸近衰減特性。",
+        "pitfall": "常考陷阱：1/2^λ 是可忽略；1/λ^10 不是可忽略。"
+    },
+    {
+        "id": "p1-5",
+        "part": "Part A",
+        "chapter": "Ch. 4",
+        "category": "ch4-5",
+        "number": "5",
+        "title": "練習一 第 5 題：生日悖論對密碼學的影響",
+        "question": "(Ch. 4) What is the general implication of the birthday paradox for cryptography?\nA. We need small key spaces\nB. Finding collisions happens with roughly √N samples in a space of size N\nC. Birthday attacks are impossible to prevent",
+        "answer": "B",
+        "intuition": "一般人以為要找碰撞需要找一半（N/2 次），但生日悖論告訴我們，只要「根號 N」次就有一半機率撞期。這把攻擊難度從大山砍成了小土丘。",
+        "proof": "正確答案為 B。取樣次數達約 1.177 √N 時碰撞機率達 50%。\n選項 A 錯誤：因此效應，密碼學需要更大的空間而非更小。\n選項 C 錯誤：可透過將位元長度加倍予以防禦。",
+        "pitfall": "抗碰撞性要求長度加倍：想要 128 位元安全性，雜湊長度必須是 256 位元。"
+    },
+    {
+        "id": "p1-6",
+        "part": "Part A",
+        "chapter": "Ch. 4",
+        "category": "ch4-5",
+        "number": "6",
+        "title": "練習一 第 6 題：Bad Event 證明技術核心概念",
+        "question": "(Ch. 4) What is the key idea behind the “bad event” proof technique?\nA. Bad events always happen\nB. Libraries differ only when a rare bad event occurs\nC. We can prevent all bad events",
+        "answer": "B",
+        "intuition": "兩台機器平時表現百分之百一模一樣，只有在天上掉隕石砸中主機板（罕見 bad 事件）時，才會表現出差異。所以攻擊者想拆穿它們的成功率，絕對超不過被隕石砸中的機率。",
+        "proof": "正確答案為 B。在差異引理中，兩函式庫在 bad 發生前無差別，區分優勢上限等於 Pr[bad]。\n選項 A 與 C 均背離其機率性界限設計。",
+        "pitfall": "寫證明時必須明確標示出哪一行程式碼設定了 bad = true。"
+    },
+    {
+        "id": "p1-7",
+        "part": "Part A",
+        "chapter": "Ch. 6",
+        "category": "ch6-7",
+        "number": "7",
+        "title": "練習一 第 7 題：PRG 與 PRF 的本質差別",
+        "question": "(Ch. 6) What is the primary difference between a PRG and a PRF?\nA. PRFs provide selective access to pseudorandom values for any input\nB. PRGs are more secure than PRFs\nC. PRFs are faster to compute than PRGs",
+        "answer": "A",
+        "intuition": "PRG 就像自來水管，轉開開關它只能順著水流嘩啦啦一直往下流（循序產生）；PRF 就像字典，你愛翻第幾頁查哪個字，它就立刻吐出那個字的隨機定義（任意輸入隨機存取）。",
+        "proof": "正確答案為 A。PRG 產生循序位元串流；PRF 接受任意輸入 x 並計算 F(K, x)，提供隨機存取能力。\n選項 B 錯誤：兩者具備對等的計算安全性定義。\n選項 C 錯誤：PRF 運算通常較繁重。",
+        "pitfall": "PRG 是串流導向；PRF 是區塊/查表導向。"
+    },
+    {
+        "id": "p1-8",
+        "part": "Part A",
+        "chapter": "Ch. 7",
+        "category": "ch6-7",
+        "number": "8",
+        "title": "練習一 第 8 題：Feistel 密碼恆為置換的原因",
+        "question": "(Ch. 7) What makes Feistel ciphers always permutations?\nA. They use strong encryption algorithms\nB. Each round is invertible without inverting the round function\nC. They require reversible round functions",
+        "answer": "B",
+        "intuition": "Feistel 結構的精妙在於：不管黑箱輪函數寫得有多爛、是不是一對一，解密時根本不需要把黑箱逆轉，它只要把輸入再跟黑箱輸出 XOR 一次，利用自己加自己等於零的物理定律，就把原來的數字變回來了。",
+        "proof": "正確答案為 B。單輪運算為 (R, L ⊕ F(K, R))，逆向為 (L', R' ⊕ F(K, L'))，僅依賴 XOR 自反性，完全不需要 F 具備可逆性。\n選項 C 與事實相反；選項 A 與幾何結構可逆性無關。",
+        "pitfall": "Feistel 輪函數 F 即使是不可逆的常數函數，整體線路依然是一個完美的置換！"
+    },
+    {
+        "id": "p1-9",
+        "part": "Part A",
+        "chapter": "Ch. 7",
+        "category": "ch6-7",
+        "number": "9",
+        "title": "練習一 第 9 題：破譯 2 輪 Feistel 的攻擊手法",
+        "question": "(Ch. 7) What attack can break a 2-round Feistel cipher?\nA. Observing that the XOR of the outputs’ left halves equals the XOR of the inputs’ left halves when inputs share the same right half\nB. Birthday attack on the round function\nC. Exhaustive key search",
+        "answer": "A",
+        "intuition": "送進去兩筆右半邊相同的明文，第一輪黑箱被餵入相同數字，吐出相同結果。兩密文左半邊相減，黑箱結果剛好抵消，剩下的差距百分之百等於原本明文左半邊的差距。抓到這種規律，假置換當場被拆穿。",
+        "proof": "正確答案為 A。當 RA = RB 時，L2,A ⊕ L2,B = (LA ⊕ F(K1, R)) ⊕ (LB ⊕ F(K1, R)) = LA ⊕ LB。在 2 輪 Feistel 中機率為 1，真隨機置換中機率僅約 2^(-n/2)。\n選項 B 與 C 複雜度過高，非最優結構性攻擊。",
+        "pitfall": "此題證明了 2 輪 Feistel 絕非安全的 PRP。"
+    },
+    {
+        "id": "p1-10",
+        "part": "Part A",
+        "chapter": "Ch. 6, 8",
+        "category": "ch6-7",
+        "number": "10",
+        "title": "練習一 第 10 題：PRF 黃金法則",
+        "question": "(Ch. 6, 8) What is the “Golden Rule of PRFs”?\nA. PRFs should use large key sizes\nB. Security depends on ensuring distinct inputs to the PRF\nC. PRFs must be implemented in hardware",
+        "answer": "B",
+        "intuition": "PRF 的金科玉律就是：永遠不要餵它吃重複的飼料（輸入值）。只要輸入值不重複，它吐出來的都是神聖不可區分的亂碼；一旦餵了兩次一樣的輸入，它吐出一樣的輸出，偽隨機性當場瓦解。",
+        "proof": "正確答案為 B。PRF 的安全性保證只在 Distinct Inputs 下成立。一旦輸入重複，必然產生相同輸出（CTR 模式嚴禁 IV 重用即根源於此）。\n選項 A 與 C 屬於實作規格，非理論安全法則。",
+        "pitfall": "CTR 模式的 Nonce 重用災難，其本質就是打破了 PRF 黃金法則。"
+    },
+    {
+        "id": "p1-11",
+        "part": "Part A",
+        "chapter": "Ch. 8",
+        "category": "ch8-9",
+        "number": "11",
+        "title": "練習一 第 11 題：CPA 安全允許洩漏的資訊",
+        "question": "(Ch. 8) What information is allowed to leak even in a CPA-secure encryption scheme?\nA. The encryption key\nB. The first byte of the plaintext\nC. The length of the message",
+        "answer": "C",
+        "intuition": "你把一份機密文件裝進信封，雖然外面的人看不到裡面寫什麼，但摸一下厚度知道裡面有一張紙還是一千張紙，這是允許的。密碼學為了效率，允許密文洩漏長度。",
+        "proof": "正確答案為 C。在 IND-CPA 遊戲定義中，攻擊者提交的兩筆挑戰明文被強制要求長度必須相等 (|M0| = |M1|)，代表方案允許洩漏明文長度 |M|。\n選項 A 與 B 均破壞語意保密性。",
+        "pitfall": "若要防止長度洩漏，必須採取 Padding 填充至固定長度。"
+    },
+    {
+        "id": "p1-12",
+        "part": "Part A",
+        "chapter": "Ch. 9",
+        "category": "ch8-9",
+        "number": "12",
+        "title": "練習一 第 12 題：CTR 模式易受 CCA 攻擊之弱點",
+        "question": "(Ch. 9) What property makes CTR mode vulnerable to chosen-ciphertext attacks?\nA. It uses weak encryption\nB. It is malleable – bit flips in the ciphertext cause predictable changes in the plaintext\nC. It requires too much memory",
+        "answer": "B",
+        "intuition": "CTR 模式像黏土一樣任人揉捏（可塑性）。密文第 5 個位元翻轉一下，解密後的明文第 5 個位元也必定精確翻轉。攻擊者隨便改一個字送給解密機關，就能套出秘密，CCA 防禦直接破防。",
+        "proof": "正確答案為 B。CTR 模式結構為 C = M ⊕ keystream，具備線性可塑性，翻轉密文會精確反應在解密明文上，使攻擊者能構造有效關聯密文攻破 IND-CCA。\n選項 A 錯誤：CTR 加密本身具備強固的 CPA 安全性。",
+        "pitfall": "Malleability 是 CCA 的最大死敵。想要抗 CCA，必須消除可塑性（加 MAC）。"
+    },
+    {
+        "id": "p1-13",
+        "part": "Part A",
+        "chapter": "Ch. 9",
+        "category": "ch8-9",
+        "number": "13",
+        "title": "練習一 第 13 題：Encrypt-and-MAC 未達 CPA 安全之原因",
+        "question": "(Ch. 9) Why is Encrypt-and-MAC not even CPA-secure?\nA. The encryption is too weak\nB. The MAC key is exposed\nC. The MAC is computed on the plaintext, leaking equality information",
+        "answer": "C",
+        "intuition": "MAC 是個死板的檢查章，同樣的文件蓋出來的章永遠一模一樣。Encrypt-and-MAC 居然把明文的檢查章大搖大擺貼在密文外面。只要兩次加密的文件內容相同，外面的檢查章就完全一樣，偷看的人一眼就看出「這兩份文件是一樣的」。",
+        "proof": "正確答案為 C。MAC 為決定性演算法，標籤 T = MAC(Km, M) 直接反映明文內容。對相同明文加密兩次必產生相同標籤，直接洩漏明文相等性，違背 IND-CPA。\n選項 A 與 B 與根本原因無關。",
+        "pitfall": "MAC 的目的是防止篡改（完整性），絕不保證機密性！"
+    },
+
+    # Part B (14-26)
+    {
+        "id": "p1-14",
+        "part": "Part B",
+        "chapter": "Ch. 1",
+        "category": "ch1-2",
+        "number": "14",
+        "title": "練習一 第 14 題：新創公司 1TB USB 隨身碟 OTP 系統批判",
+        "question": "(Ch. 1) 新創公司宣稱基於 OTP 開發抗量子超安全通訊系統：註冊給 1TB USB 裝預產密碼本，傳訊取用並標記已使用，用達 80% 申請新隨身碟。(a) 指出至少三個實務問題；(b) 解釋如何危害安全或可用性；(c) 在維持 OTP 理論安全下提出改進對策。",
+        "intuition": "這是一家典型的「理論很美好、實務死得慘」的新創公司。1TB 隨身碟如果 Alice 和 Bob 同時寄信，兩人用到同一段密碼本就完蛋了；隨身碟弄丟了裡面的歷史金鑰全被鑑識專家挖出來；而且通訊錄有一百個人就得發一百支 1TB 隨身碟，快遞送不及大家就不用聊天了。",
+        "proof": "(a) 三大實務問題：1. 金鑰同步衝突；2. 快閃記憶體抹除不徹底；3. 網路擴展性瓶頸。\n(b) 危害分析：雙向同時發送導致同一段金鑰被使用兩次（Two-time pad 災難），明文相加洩漏；快閃記憶體 Wear Leveling 機制使標記已使用無法真正抹除物理位元，被盜即可提取舊金鑰；N 人通訊需 O(N^2) 支隨身碟且快遞延遲阻斷通訊。\n(c) 維持 OTP 改進建議：密碼本劃分專用發送與接收區；改用硬體安全模組 (HSM) 支援硬體自毀 (Zeroization)；引入 QKD 量子金鑰分發持續自動補充。",
+        "pitfall": "答題時不可只泛泛而談「很麻煩」，必須提到具體密碼學術語：Two-time pad 碰撞、Wear leveling、O(N^2) 擴展性。"
+    },
+    {
+        "id": "p1-15",
+        "part": "Part B",
+        "chapter": "Ch. 1-2",
+        "category": "ch1-2",
+        "number": "15",
+        "title": "練習一 第 15 題：挑戰者與攻擊者博弈之 OTP 完善保密證明",
+        "question": "(Ch. 1-2) 考慮挑戰者選 b ∈ {0,1}, K ← {0,1}^n，計算 C = K ⊕ Mb 給攻擊者。證明任意攻擊者猜對機率 Pr[b' = b] = 1/2。說明此結果代表的密碼學意義。",
+        "intuition": "不管你提交兩筆什麼明文，挑戰者丟給你的密文永遠是一堆純粹的拋硬幣亂碼。你就算搬出全世界最強大的超級電腦，在兩堆一模一樣的亂碼面前，能猜對的勝率就跟閉著眼睛瞎猜一模一樣，精準的 50%。",
+        "proof": "數學證明：\n1. 對任意固定 m，Pr[C = c | Mb = m] = Pr[K = c ⊕ m] = 2^(-n)。\n2. 故 Pr[C = c | b = 0] = 2^(-n) = Pr[C = c | b = 1]。\n3. 對任意攻擊者 A，Pr[b' = 1 | b = 0] = ∑_c Pr[A(c)=1] 2^(-n) = Pr[b' = 1 | b = 1]。\n4. Pr[b' = b] = 1/2 Pr[b'=0 | b=0] + 1/2 Pr[b'=1 | b=1] = 1/2(1 - Pr[b'=1 | b=0]) + 1/2 Pr[b'=1 | b=1] = 1/2。\n密碼學意義：OTP 達成完善保密性，面對具備無窮算力的攻擊者其優勢恆為 0。",
+        "pitfall": "必須把全機率展開式寫完整，最後導出精確的 1/2。"
+    },
+    {
+        "id": "p1-16",
+        "part": "Part B",
+        "chapter": "Ch. 1-2",
+        "category": "ch1-2",
+        "number": "16",
+        "title": "練習一 第 16 題：即時通訊軟體 128 位元 XOR 協定批判",
+        "question": "(Ch. 1-2) 註冊產出 128 位元 K，傳訊計算 C = K ⊕ M，伺服器絕密通道交換金鑰，宣稱用 XOR 就等於 OTP。(a) 用可證明安全框架分析是否具備機密性；(b) 指出三大漏洞；(c) 改為每日產生新金鑰是否能解決問題？",
+        "intuition": "這叫「掛羊頭賣狗肉」。OTP 的精髓在於『單次使用』且『長度足夠』，這家公司只抄了個 XOR 運算就說自己是 OTP。128 位元金鑰拿去加密幾千條訊息，密文一相加所有人聊天的內容全都現形了；而且伺服器經手交換金鑰，老闆想看隨時看；改成每天換金鑰依然擋不住當天幾百條訊息彼此串聯破譯。",
+        "proof": "(a) 不具備機密性：OTP 要求 |K| ≥ |M| 且不可重用。此處 K 僅 128 位元且跨訊息重複使用，完全破壞安全性假設。\n(b) 三大漏洞：1. 串流金鑰重用 (Keystream reuse) 洩漏差分 M1 ⊕ M2；2. 伺服器金鑰託管與中間人竊聽，無端對端安全；3. 缺乏 MAC 完整性保護，具備位元可塑性。\n(c) 每日更換無法解決：當天發送的所有訊息依然共用同一把 128 位元金鑰，重用漏洞依然存在。",
+        "pitfall": "很多工程師誤以為用 XOR 就是 OTP，這是極其嚴重的觀念錯誤。"
+    },
+    {
+        "id": "p1-17",
+        "part": "Part B",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "number": "17",
+        "title": "練習一 第 17 題：無用隨機變數函式庫 LA 與 LB 不可區分判定",
+        "question": "(Ch. 2) LA: y ← {0,1}^n; return y。LB: y ← {0,1}^n; z ← {0,1}^n; return y。兩者是否不可區分？簡要說明理由。",
+        "intuition": "LB 只是在自己的記憶體裡偷偷丟了一顆骰子 z，丟完看都不看就扔進垃圾桶，最後吐給你的還是骰子 y。對外面的觀察者來說，兩台機器吐出來的東西在機率上毫無二致，根本分不出來。",
+        "proof": "結論：兩函式庫完全不可區分 (LA ≡ LB)。\n理由：LB 中的變數 z 取樣後從未被存取，未參與回傳值運算，亦未更改函式庫全域狀態。每次呼叫 F(x)，兩函式庫回傳的 y 皆獨立且均勻分佈於 {0, 1}^n。外在 I/O 聯合分佈恆等。",
+        "pitfall": "記住原則：Dead Code（無用死碼）與從未洩漏的局部變數不影響不可區分性。"
+    },
+    {
+        "id": "p1-18",
+        "part": "Part B",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "number": "18",
+        "title": "練習一 第 18 題：Alice 與 Bob 瑕疵加密方案之區分者與修復",
+        "question": "(Ch. 2) Lreal: K ← {0,1}^n; encrypt(M): R ← {0,1}^n; C1 := R; C2 := K ⊕ R ⊕ M; return (C1, C2)。Lideal 回傳雙隨機塊。(a) 建構區分者；(b) 提出最小修改使其安全並解釋原理。",
+        "intuition": "(a) 雖然隨機數 R 每次都換，但它居然把 R 明明白白放在 C1 送出來！攻擊者把 C1 跟 C2 加起來，R 就被自己消掉了，只剩下 K ⊕ M。這本質上還是同一把固定金鑰 K，加密兩次就被抓包。(b) 既然 R 明文送出會被消掉，我們就讓 R 通過一個非線性的 PRF 黑箱 F(K, R)，攻擊者就再也消不掉了。",
+        "proof": "(a) 區分者 D：\n1. (C1^(1), C2^(1)) := encrypt(0^n)。\n2. (C1^(2), C2^(2)) := encrypt(0^n)。\n3. 比對：若 C1^(1) ⊕ C2^(1) == C1^(2) ⊕ C2^(2) 輸出 1 否則輸出 0。\n優勢：Real 下兩次運算皆等於 K，相等機率為 1；Ideal 下相等機率為 2^(-n)。Adv = 1 - 2^(-n) ≈ 1。\n\n(b) 最小修改：將 C2 改為 F(K, R) ⊕ M，其中 F 為安全 PRF。原理：只要 R 隨機取樣不碰撞，PRF 保證每次產生的遮罩在計算上等價於獨立隨機密碼本，達到 IND-CPA 安全。",
+        "pitfall": "隨機數若以線性方式明文暴露，無法提供任何遮蓋固定金鑰的作用。"
+    },
+    {
+        "id": "p1-19",
+        "part": "Part B",
+        "chapter": "Ch. 2, 4",
+        "category": "ch1-2",
+        "number": "19",
+        "title": "練習一 第 19 題：混淆證明技術 (Hybrid Proof) 證明 L1 ≡ L2",
+        "question": "(Ch. 2, 4) L1: X ← {0,1}^n; Y := X ⊕ 1^n; return (X, Y)。L2: Y ← {0,1}^n; X := Y ⊕ 1^n; return (X, Y)。用 Hybrid 證明技術證明兩者不可區分，並描述中間混淆函式庫。",
+        "intuition": "L1 是先抽 X 再把 X 全反轉成 Y；L2 是先抽 Y 再把 Y 全反轉成 X。因為把隨機數全部反轉依然是一個完美的隨機數，而且反轉兩次就還原，兩者生成的「一對數字」在機率分佈上根本是一模一樣的雙胞胎。",
+        "proof": "定義中間混淆庫 L_hyb：\nsample():\n  Y ← {0, 1}^n\n  X' := Y ⊕ 1^n\n  X := X'\n  Y' := X ⊕ 1^n\n  return (X, Y')\n\n推導步驟：\n1. L1 ≡ L_hyb：根據 OTP 雙射性質，若 Y 為均勻隨機，則 X' = Y ⊕ 1^n 亦嚴格均勻分佈。取樣 X 等價於取樣 Y 後計算 X'。\n2. L_hyb ≡ L2：代數化簡 Y' = (Y ⊕ 1^n) ⊕ 1^n = Y。故回傳 (X, Y') 等價於回傳 (X, Y)。\n3. 結論：L1 ≡ L_hyb ≡ L2，輸出二元組分佈恆等，達到 Perfect Indistinguishability。",
+        "pitfall": "Hybrid 證明必須把變數替換與代數消除分成清晰的兩步。"
+    },
+    {
+        "id": "p1-20",
+        "part": "Part B",
+        "chapter": "Ch. 4",
+        "category": "ch4-5",
+        "number": "20",
+        "title": "練習一 第 20 題：計算安全性之重要性與兩者侷限性對比",
+        "question": "(Ch. 4) 為何在存在資訊理論安全性下計算安全性在實務上依然重要？討論兩者侷限性。",
+        "intuition": "資訊理論安全就像防彈裝甲，子彈絕對打不穿，但裝甲重達一千噸，車子根本開不動（金鑰要跟資料一樣大，全世界網路會直接癱瘓）。計算安全性就像智慧防禦，只要敵人不是神仙（算力有限），我們拿一把 256 位元的輕巧小鑰匙就能保護整個網際網路。",
+        "proof": "實務重要性：突破夏農 |K| ≥ |M| 下界限制。允許以短金鑰 (128/256 位元) 加密無上限資料，並支撐公鑰密碼學與數位簽章。\n\n兩者侷限性：\n1. 資訊理論安全：金鑰不可重用、金鑰長度過長、金鑰分發成本在網際網路規模下不可行；無法實現單向陷門函數。\n2. 計算安全性：安全性僅對 PPT 攻擊者成立；強烈依賴未證明的複雜度假設 (P ≠ NP, 離散對數, LWE)；面臨量子演算法 (Shor) 突破風險。",
+        "pitfall": "務必同時分析「夏農下界」與「計算複雜度假設」這兩個核心維度。"
+    },
+    {
+        "id": "p1-21",
+        "part": "Part B",
+        "chapter": "Ch. 4",
+        "category": "ch4-5",
+        "number": "21",
+        "title": "練習一 第 21 題：n 位元雜湊之生日悖論與未來十年輸出長度",
+        "question": "(Ch. 4) n 位元雜湊函數：(a) 大約需要雜湊多少隨機輸入才能以 50% 機率找到碰撞？(b) 未來十年至少需要多少輸出位元才能合理防禦生日攻擊？",
+        "intuition": "開根號效應！n 位元的空間，找碰撞不需要 2^n 次，只需要 2^(n/2) 次。所以為了擋住 2^128 次方的算力狂轟濫炸，你的雜湊值必須是 128 的兩倍——也就是 256 位元。",
+        "proof": "(a) 取樣次數近似為 q ≈ √(2 ln 2 · 2^n) ≈ 1.1774 · 2^(n/2) ≈ 2^(n/2) 次輸入。\n(b) 現代密碼標準要求 128 位元計算安全性 (2^128 運算代價)。因生日攻擊將安全強度減半，輸出長度必須至少達 2 × 128 = 256 位元 (如 SHA-256)。",
+        "pitfall": "千萬別回答 128 位元！128 位元的 MD5/前代算法在生日攻擊下只有 2^64 難度，早已被家用電腦攻破。"
+    },
+    {
+        "id": "p1-22",
+        "part": "Part B",
+        "chapter": "Ch. 5",
+        "category": "ch4-5",
+        "number": "22",
+        "title": "練習一 第 22 題：OTP 實務侷限性與 PRG 的必要性",
+        "question": "(Ch. 5) 解釋 OTP 在實用加密上的侷限性，以及為何現代密碼系統需要偽隨機產生器 (PRG)。",
+        "intuition": "你今天下載 50GB 的遊戲，如果用 OTP，伺服器得先用卡車載一顆 50GB 的金鑰硬碟到你家。PRG 的偉大之處在於：雙方只要透過網路悄悄約定一個 32 位元組的小種子，兩邊各自運算，就能在本地生成一模一樣、長達 50GB 的偽隨機金鑰流。",
+        "proof": "OTP 侷限性：金鑰長度與明文等長、不可重用、分發儲存開銷巨大。\nPRG 必要性：以短小真隨機種子 (如 128/256 位元) 透過確定性演算法展開成任意長度之偽隨機串流。在計算安全性假設下，PPT 攻擊者無法將其與真隨機區分，使短金鑰串流密碼成為可能。",
+        "pitfall": "PRG 是從「資訊理論安全」跨越到「計算安全性」的關鍵橋樑。"
+    },
+    {
+        "id": "p1-23",
+        "part": "Part B",
+        "chapter": "Ch. 6-7",
+        "category": "ch6-7",
+        "number": "23",
+        "title": "練習一 第 23 題：PRF 與 PRP 綜合對比",
+        "question": "(Ch. 6-7) 比較 PRF 與 PRP：(a) 定義與性質差異；(b) PRP 如何降級為 PRF 但反之不必然；(c) 為何 PRF 必然碰撞而 PRP 不會？",
+        "intuition": "PRP 是嚴格排隊的一對一置換（雙射），抽一張少一張，絕不撞車；PRF 是隨機點名，可能點到同一個號碼（有碰撞）。因為只要查詢次數遠小於生日界限，隨機點名幾乎不會撞車，所以 PRP 可以直接當 PRF 用；但反過來 PRF 連解密都不保證能解，當然不能直接當 PRP 用。",
+        "proof": "(a) PRF 映射到 Y，不要求雙射與可逆性；PRP 定義域等於值域，為嚴格雙射且必須存在高效率逆函數 P^(-1)。\n(b) 依 Switching Lemma，PRP 與真隨機函數之優勢上限為 q^2 / 2^(n+1)。當 q ≪ 2^(n/2) 時優勢可忽略，可當 PRF 使用。反之因 PRF 缺乏雙射與可逆性而無法直接作 PRP。\n(c) PRP 為雙射，輸入不同輸出必互異；PRF 輸出在空間內獨立均勻分佈，依生日悖論取樣約 2^(n/2) 必現碰撞。",
+        "pitfall": "Switching Lemma 成立的前提是查詢次數小於生日界限 (q ≪ 2^(n/2))。"
+    },
+    {
+        "id": "p1-24",
+        "part": "Part B",
+        "chapter": "Ch. 8",
+        "category": "ch8-9",
+        "number": "24",
+        "title": "練習一 第 24 題：CPA 安全與決定性加密破譯分析",
+        "question": "(Ch. 8) (a) 解釋為何決定性加密必然通不過 CPA；(b) 建構簡單區分者程式；(c) 分析非 CPA 安全系統在實務上的漏洞。",
+        "intuition": "(a) 同樣的人拍照永遠同一個姿勢，攻擊者叫他拍兩張照，看照片一模一樣就知道是本人。(b) 呼叫兩次加密 0，如果兩次密文長得一模一樣就是真實加密。(c) 資料庫裡的「性別」或「薪水」欄位，攻擊者不需要解密，只要看密文長得一樣就知道哪兩個人薪水相同。",
+        "proof": "(a) CPA 允許重複查詢。決定性加密對相同 M 必得相同 C，而隨機庫兩次查詢相同機率僅 2^(-|C|)。\n(b) 區分者 D：C1 := enc(0); C2 := enc(0); 若 C1 == C2 回傳 1 否則 0。優勢為 1 - 2^(-|C|) ≈ 1。\n(c) 實務危害：相等性洩漏 (ECB 企鵝圖)；枚舉暴力破解小空間明文；流量特徵分析。",
+        "pitfall": "CPA 安全的必要條件：加密演算法必須具備隨機性 (Randomized) 或依賴 Nonce。"
+    },
+    {
+        "id": "p1-25",
+        "part": "Part B",
+        "chapter": "Ch. 9",
+        "category": "ch8-9",
+        "number": "25",
+        "title": "練習一 第 25 題：CTR 模式之 Format / Null-oracle 攻擊深度剖析",
+        "question": "(Ch. 9) Format oracle 攻擊：(a) 解釋 Null-oracle 對 CTR 模式之攻擊機制與致命性；(b) 描述實務暴露場景；(c) 計算還原 1KB 檔案所需查詢次數與可行性。",
+        "intuition": "解密端像一個猜數字遊戲的計時器，只要解出來剛好是 0x00 它就叮咚響一下。攻擊者把密文逐位元加上自己的猜測值 g，只要伺服器叮咚響，代表「原本的字 XOR g = 0」，也就是原本的字就等於 g！每個位元組最多猜 256 次，整份檔案像剝洋蔥一樣被完整脫光光。",
+        "proof": "(a) 機制：C' = C ⊕ g，解密得 M' = M ⊕ g。若 Oracle 回傳解密為 null byte (0x00)，則 M ⊕ g = 0 ⇒ M = g。致命性：CTR 具備線性可塑性且缺乏完整性認證，使攻擊者能逐位元組還原明文。\n(b) 實務場景：API 解析 XML/JSON 時遇到非預期 null byte 拋出特定語法錯誤；Padding 錯誤碼差異。\n(c) 查詢量：1KB = 1024 bytes。每 byte 平均查 128 次，總量 1024 × 128 = 131,072 次。以每秒千次請求計僅需約 2 分鐘，攻擊極度可行。",
+        "pitfall": "IND-CPA 完全無法抵禦這類 Active Oracle Attack，必須使用 AEAD。"
+    },
+    {
+        "id": "p1-26",
+        "part": "Part B",
+        "chapter": "Ch. 9",
+        "category": "ch8-9",
+        "number": "26",
+        "title": "練習一 第 26 題：認證加密重放攻擊場景與 Associated Data 防禦",
+        "question": "(Ch. 9) 說明認證加密遭遇重放攻擊之情境，以及附加資料 (AD) 如何解決此漏洞。",
+        "intuition": "AE 認證加密就像一張簽了名的支票，小偷雖然沒辦法偷改支票上的金額，但他把這張合法的支票拿去銀行重複兌現一百次！這就是重放攻擊。解法就是在支票的備註欄（AD）寫上「第 105 號交易」，銀行看過第 105 號之後，第二次看到直接報警。",
+        "proof": "重放場景：AE 保證單一密文之機密與不可篡改性，但不維護連線狀態。攻擊者攔截合法扣款密文並重複發送，接收端驗證成功導致重複執行。\nAD 防禦機制：將不需加密的狀態元數據（遞增序號 Sequence Number, Session ID, Timestamp）放入 AD 參與 MAC 計算。接收端檢驗序號過期即拋棄，攻擊者篡改 AD 則 MAC 驗證失敗。",
+        "pitfall": "AD 雖然是明文傳輸不加密，但它受到 MAC 的密碼學完整性認證保護，無法被篡改。"
+    },
+
+    # Part C (27-34)
+    {
+        "id": "p1-27",
+        "part": "Part C",
+        "chapter": "Ch. 1",
+        "category": "ch1-2",
+        "number": "27",
+        "title": "練習一 第 27 題 (Ex 1.15)：模 n 乘法 OTP 之質數條件",
+        "question": "Ex 1.15 (Ch. 1) 在 {1, ..., n-1} 上以模 n 乘法加密的 OTP 變體：n 為何值時密文均勻分佈？為什麼？",
+        "intuition": "乘法群想當密碼本，必須保證每個數字乘以金鑰後都能一一對應、絕不打架，而且不能乘出零來。如果 n 是合數（例如 2×5=10），選 2 當明文、5 當金鑰，一乘出來直接變成 0，直接掉出遊戲規則外面；唯有 n 是質數時，乘法才構成完美的群，密文才會均勻分佈。",
+        "proof": "結論：n 必須為質數 (Prime)。\n證明：\n1. 若 n 為合數，令 n = a · b (1 < a, b < n)。取 M = a, K = b，則 C = (a · b) mod n = 0 ∉ {1, ..., n-1}，連運算都不封閉；且 gcd(a, n) > 1 導致可能值小於 n-1，分佈不均勻。\n2. 若 n 為質數，Z_n* 為大小 n-1 之乘法群。對任意 M 存在唯一逆元素 M^(-1) mod n。方程式 K · M ≡ c (mod n) 恆有唯一解 K ≡ c · M^(-1) (mod n)。因此 Pr[C = c | M = m] = 1/(n-1)，達成嚴格均勻分佈。",
+        "pitfall": "必須分別證明「合數會產生零因數導致不封閉」與「質數保證逆元素存在唯一解」。"
+    },
+    {
+        "id": "p1-28",
+        "part": "Part C",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "number": "28",
+        "title": "練習一 第 28 題 (Ex 2.13)：模 10 乘法加密無單次保密性證明",
+        "question": "Ex 2.13 (Ch. 2) 金鑰與明文取自 {1, ..., 9}，加密為乘法模 10：證明其不具備單次保密性。",
+        "intuition": "5 乘上任何奇數尾數都是 5，乘上任何偶數尾數都是 0。所以只要明文是 5，密文永遠只能是 0 或 5，絕對不可能跑出 1 來。如果你偷看密文看到 1，你就知道明文絕對不是 5。這就洩密了。",
+        "proof": "取明文 M0 = 5, M1 = 1。\n當 M0 = 5 時：對任意 K ∈ {1, ..., 9}，K·5 mod 10 僅能取值 0 或 5。故 Pr[C = 1 | M = 5] = 0。\n當 M1 = 1 時：C = K mod 10 = K，Pr[C = 1 | M = 1] = Pr[K = 1] = 1/9。\n由於 Pr[C = 1 | M = 5] ≠ Pr[C = 1 | M = 1]，條件機率不等，單次保密性破裂。",
+        "pitfall": "抓特定密文 c = 1 直接計算兩邊機率不相等即可一擊必殺。"
+    },
+    {
+        "id": "p1-29",
+        "part": "Part C",
+        "chapter": "Ch. 2",
+        "category": "ch1-2",
+        "number": "29",
+        "title": "練習一 第 29 題 (Ex 2.14)：金鑰數小於明文數絕不具備 OTS 證明",
+        "question": "Ex 2.14 (Ch. 2) 證明金鑰數小於明文數 (|K| < |M|) 的加密方案絕不可能具備單次保密性。",
+        "intuition": "鴿籠原理！假設只有 5 把鑰匙，但有 10 個秘密。某個密文拿這 5 把鑰匙去解密，最多只能解出 5 種秘密，剩下 5 個秘密永遠不可能變成這個密文。攻擊者看到這個密文，立刻知道原本絕不可能是剩下那 5 個秘密，排除法大獲全勝，保密性泡湯。",
+        "proof": "反證法：設方案正確且具備 OTS，且 |K| < |M|。\n1. 取某個具正出現機率之密文 c。\n2. 定義解密集合 S(c) = { Dec(k, c) | k ∈ K }。因 Dec 為確定性函數，|S(c)| ≤ |K| < |M|。\n3. 由鴿籠原理，必存在某明文 m* ∉ S(c)。\n4. 由正確性，無任何金鑰可將 m* 加密為 c，故 Pr[C = c | M = m*] = 0。\n5. 但存在 m' ∈ S(c) 使 Pr[C = c | M = m'] > 0。\n6. 矛盾產生，故具備單次保密者必滿足 |K| ≥ |M|。",
+        "pitfall": "這是密碼學史上最經典的夏農定理證明，考場上一定要會熟練默寫。"
+    },
+    {
+        "id": "p1-30",
+        "part": "Part C",
+        "chapter": "Ch. 5",
+        "category": "ch4-5",
+        "number": "30",
+        "title": "練習一 第 30 題 (Ex 5.21)：PRG 反饋型構造安全判定",
+        "question": "Ex 5.21 (Ch. 5) 判斷由倍長 PRG 構建之反饋型構造是否為安全 PRG，給出證明或攻擊。",
+        "intuition": "這要看你有沒有把中間的秘密藏好。如果像流水線一樣，每次只吐出前半段，後半段拿去當下一輪的種子且嚴格保密，這是安全的串流密碼（如課本 Claim 5.7）；但如果你自作聰明把每一輪的種子也一起列印在輸出上，攻擊者就能自己重算下一輪，秒破。",
+        "proof": "分類解析：\n1. 標準隱藏狀態構造 (Claim 5.7)：si || ti := G(si-1)，回傳 t1 || ... || tn || sn。判定為安全。證明採 Hybrid Argument，建立 n 個中間庫，逐輪套用 G 的 PRG 安全性，以真隨機位元替換，歸納證明整體不可區分。\n2. 暴露中間狀態構造 (如課本 H2)：輸出包含中間種子 si。判定為不安全。區分者截取 si 並比對 G(si) 是否等於後續輸出，優勢達 1 - 2^(-2λ)。",
+        "pitfall": "答題時必須明確指出「狀態種子是否保密」是決定安全與否的唯一分水嶺。"
+    },
+    {
+        "id": "p1-31",
+        "part": "Part C",
+        "chapter": "Ch. 6",
+        "category": "ch6-7",
+        "number": "31",
+        "title": "練習一 第 31 題 (Ex 6.9)：H(K,X) = F(K,X) ⊕ F(K,0^n) 偽隨機性破壞",
+        "question": "Ex 6.9 (Ch. 6) 證明 H(K, X) = F(K, X) ⊕ F(K, 0^n) 不是安全的 PRF，即使 F 是安全 PRF。",
+        "intuition": "你看一下當輸入為全零時會發生什麼事：H(K, 0^n) = F(K, 0^n) ⊕ F(K, 0^n) = 0。不管你的金鑰多高深，只要我輸入 0，你永遠吐出 0。天底下哪有每次擲骰子都必定擲出 0 點的真隨機函數？",
+        "proof": "核心破綻：在輸入 X = 0^n 時，H(K, 0^n) = F(K, 0^n) ⊕ F(K, 0^n) = 0^m 恆成立。\n區分者 D：查詢 Oracle 輸入 0^n，得回傳值 Y。若 Y == 0^m 輸出 1 否則輸出 0。\n優勢計算：Real 下機率為 1，Rand 下機率為 2^(-m)。Adv = 1 - 2^(-m) ≈ 1。單次查詢攻破。",
+        "pitfall": "密碼學題型看到自變數抵消，第一時間要想到輸入 0^n 或全 1 測試固定點。"
+    },
+    {
+        "id": "p1-32",
+        "part": "Part C",
+        "chapter": "Ch. 7",
+        "category": "ch6-7",
+        "number": "32",
+        "title": "練習一 第 32 題 (Ex 7.4)：線性輪函數 Feistel 任意輪數必破證明",
+        "question": "Ex 7.4 (Ch. 7) 證明當輪函數為 F(Ki, X) = Ki ⊕ X 時，無論迭代多少輪，該 Feistel 密碼皆非安全 PRP。",
+        "intuition": "Feistel 想安全，黑箱裡面必須有翻天覆地的非線性攪拌（像 S-box）。如果輪函數只是單純的 XOR 加法，整棟大樓不管疊了一百層還是一千層，本質上就是個龐大的線性矩陣相加。四個輸入相加等於零，四個密文相加也必定等於零，金鑰完全被消光光。",
+        "proof": "輪函數 F(Ki, X) = Ki ⊕ X 在 F_2^w 上為純仿射線性函數。Feistel 每輪運算皆為位元置換與 XOR 加法，複合 r 輪後整體輸出滿足線性關係：C = A · P ⊕ B(K)，其中 A 為固定公開矩陣，B(K) 為金鑰偏移。\n區分者 D：選 P1, P2, P3，設 P4 = P1 ⊕ P2 ⊕ P3。查詢對應密文計算 C1 ⊕ C2 ⊕ C3 ⊕ C4 = A(P1 ⊕ P2 ⊕ P3 ⊕ P4) = A(0) = 0。在該密碼中機率為 1，在真隨機置換中機率僅約 2^(-2w)。任意輪數皆破。",
+        "pitfall": "證明必須點出「仿射變換之複合依然是仿射變換」，此為代數不變量核心。"
+    },
+    {
+        "id": "p1-33",
+        "part": "Part C",
+        "chapter": "Ch. 8",
+        "category": "ch8-9",
+        "number": "33",
+        "title": "練習一 第 33 題 (Ex 8.11)：|M|=|C| 之正確方案絕不具備 CPA 證明",
+        "question": "Ex 8.11 (Ch. 8) 證明具備正確性且 |M| = |C| 的加密方案絕不可能達成 CPA 安全。",
+        "intuition": "如果空間一樣大，又要求不能解密錯誤，那每個明文就只能綁定一個密文，絕對不能隨機擲骰子變出新花樣（也就是必然是確定性加密）。而只要是確定性加密，連續加密兩次同樣的訊息，密文一模一樣，CPA 當場暴斃。",
+        "proof": "證明步驟：\n1. 由正確性：Dec(K, Enc(K, M)) = M 保證 Enc(K, ·) 必須為單射 (Injective)。\n2. 有限集單射且 |M| = |C| 保證 Enc(K, ·) 為雙射 (Bijective)。\n3. 雙射意味著每個明文對應唯一密文，演算法絕不可具備隨機性，必須為確定性 (Deterministic)。\n4. 任何確定性加密方案，攻擊者查詢相同 M 兩次，以優勢 1 - 2^(-|C|) ≈ 1 攻破 CPA。\n5. 故 |M| = |C| 之正確方案絕不可能達 CPA 安全。",
+        "pitfall": "此題完美串聯了「代數雙射性」與「CPA 隨機化必要性」。"
+    },
+    {
+        "id": "p1-34",
+        "part": "Part C",
+        "chapter": "Ch. 9",
+        "category": "ch8-9",
+        "number": "34",
+        "title": "練習一 第 34 題 (Ex 9.21)：重複加密兩次之雙區塊方案 CCA 破譯",
+        "question": "Ex 9.21 (Ch. 9) Enc'(K, M) = (C1, C2) 分別加密兩次，解密時檢查兩半部解密結果是否一致。證明即使基礎方案安全，新方案依然不具備 CCA 安全性。",
+        "intuition": "解密端像個嚴格的考官，要求你繳交兩份一模一樣的考卷複本才給過。攻擊者拿到了挑戰密文 (C1*, C2*)，雖然不能直接問考官這份密文，但他把第一份考卷直接影印一份，湊成 (C1*, C1*) 送交解密！考官一看：兩份解出來都一樣，於是開開心心地把答案直接唸出來給攻擊者聽。",
+        "proof": "CCA 攻擊演算法：\n1. 提交 M0 ≠ M1 給挑戰 Oracle，獲挑戰密文 C* = (C1*, C2*)。\n2. 因基礎方案具隨機性，C1* ≠ C2* 具壓倒性機率成立。\n3. 構造竄改密文 C' = (C1*, C1*)。顯然 C' ≠ C*，為合法 CCA 解密查詢！\n4. 送交解密 Oracle Dec'。解密端計算 Dec(K, C1*) = Mb 且 Dec(K, C1*) = Mb，兩者一致，Oracle 成功回傳 Mb！\n5. 攻擊者獲得 Mb，優勢為 1，完全攻破 CCA 安全性。",
+        "pitfall": "CCA 規則只禁止詢問「挑戰密文本身 C*」。只要構造出 C' ≠ C* 且能通過檢查，就能合法利用解密 Oracle。"
+    }
+]
+
+print(f"Loaded {len(PRACTICE1_SOLUTIONS)} practice solutions.")
+
+# 4. 衍生考題變形 (VARIATION_EXAMS, 6 大題)
+VARIATION_EXAMS = [
+    {
+        "id": "var-1",
+        "category": "ch1-2",
+        "chapter": "Ch. 1-2 變形",
+        "title": "變化題型 1：合數階模 n 乘法之零因數缺陷",
+        "question": "設明文與金鑰空間為 M = K = {1, 2, ..., n-1}，加密函數為 C = (K · M) mod n。若 n = p · q (p, q 為相異奇質數)，請構造一個多項式時間攻擊者，在常數次查詢內以機率 1 打破此方案的單次保密性。",
+        "intuition": "質數群沒有漏洞，但合數群裡面藏著致命的「零因數」。只要挑選 p 當明文，q 當金鑰，一乘出來直接變成 0（整除），密文直接歸零！攻擊者只要挑選 p 跟 1 當明文比對，密文到底有沒有可能跑出 0 或 p 的倍數，直接戳破保密性。",
+        "solution": "攻擊推導：\n1. 挑選明文 M0 = p 與 M1 = 1。\n2. 當 M0 = p 時，對任意金鑰 K ∈ {1, ..., n-1}，乘積 (K · p) mod n 必然為 gcd(p, n) = p 的倍數（或為 0）。因此密文 C 只能取值於 {0, p, 2p, ..., (q-1)p}。\n3. 特別注意：當 K = q 時，C = 0 mod n。密文完全落在大小為 q 的子集內。\n4. 密文 c = 1 出現的機率：Pr[C = 1 | M = p] = 0（因為 1 不是 p 的倍數）。\n5. 當 M1 = 1 時，C = K mod n，金鑰取樣均勻，Pr[C = 1 | M = 1] = 1/(n-1) > 0。\n6. 區分者只需觀察挑戰密文是否為 1：若為 1 判定為 M1，否則猜 M0。條件機率差達 1/(n-1)，保密性徹底破裂。",
+        "pitfall": "考試時若題目給出非質數模運算，第一直覺就要找 gcd(M, n) > 1 的公因數進行子群與零因數攻擊。"
+    },
+    {
+        "id": "var-2",
+        "category": "ch1-2",
+        "chapter": "Ch. 2 變形",
+        "title": "變化題型 2：隱蔽狀態計數器之 Library 區分攻擊",
+        "question": "考慮兩函式庫：\nL_Real: count := 0; query(M): count++; if count == 2^10 return K; else return K ⊕ M。\nL_Rand: count := 0; query(M): count++; if count == 2^10 return R; else return R ⊕ M (每次 R 重新隨機)。\n請問在多項式時間內（查詢次數 q ≤ 100）這兩個函式庫是否可區分？若不可區分請證明，若可區分請給出攻擊。",
+        "intuition": "別被那個 count == 1024 嚇到了！題目的陷阱在於後面：L_Real 的一般情況回傳固定金鑰 K ⊕ M，但 L_Rand 的一般情況居然每次都抽新的 R！你根本不需要等到呼叫 1024 次，只要查兩次 M = 0，L_Real 兩次回傳同一個 K，L_Rand 吐出兩個不同隨機數，第 2 次呼叫當場抓包！",
+        "solution": "結論：兩函式庫在 q = 2 次查詢內即可完全區分！\n區分者演算法 D：\n1. 呼叫 C1 := query(0^n)。\n2. 呼叫 C2 := query(0^n)。\n3. 比對：若 C1 == C2 輸出 1 (判定為 L_Real)；否則輸出 0 (判定為 L_Rand)。\n優勢計算：\n在 L_Real 中，count 為 1 與 2，皆未達 2^10，兩次皆回傳 K ⊕ 0^n = K，相等機率為 1。\n在 L_Rand 中，兩次皆回傳獨立隨機字串 R1, R2，相等機率為 2^(-n)。\nAdv = 1 - 2^(-n) ≈ 1。",
+        "pitfall": "出題者故意用罕見的 count 條件吸引學生注意，讓學生誤以為要用 Bad Event 證明；但實際上在常規路徑下兩者的金鑰重用性早已露餡。"
+    },
+    {
+        "id": "var-3",
+        "category": "ch6-7",
+        "chapter": "Ch. 6 變形",
+        "title": "變化題型 3：瑕疵 PRF 構造 F(K, X) = G(K ⊕ X) 攻擊",
+        "question": "設 G: {0,1}^n → {0,1}^(2n) 為安全 PRG。某工程師嘗試構造 PRF：F(K, X) = G(K ⊕ X)。請問 F 是否為安全的 PRF？請給出攻擊者演算法並計算優勢。",
+        "intuition": "看著好像有把金鑰與輸入混在一起，但致命傷在於：K ⊕ X 只是把輸入平移了一下！攻擊者雖然不知道 K 是多少，但他知道如果輸入 X1 ⊕ Δ 與 X2，只要它們的差分剛好等於金鑰差距，就會撞車；更直接的是：G 的輸出只有 2n 位元且定義域只有 n 位元，輸入空間只有 2^n 種可能，但真隨機函數的可能映射有 2^(2n) 種，攻擊者隨機找碰撞即可破譯。",
+        "solution": "更致命的代數攻擊：\n1. 考慮長度擴展矛盾：F(K, X) = G(K ⊕ X) 映射的值域只有 2^n 種可能值（因為 K ⊕ X 的可能取值只有 2^n 個）。\n2. 區分者構造：\n   - 連續查詢 3 個相異輸入 X1, X2, X3，取得 Y1, Y2, Y3。\n   - 檢查：是否存在任何碰撞或代數關聯？\n   - 更好的攻擊是「置換不變性」：F(K, X ⊕ Δ) 等價於將 PRG 的內部種子平移 Δ。若 G 為具體構造（如 Blum-Micali 或常見 PRG），種子平移會引發高階差分不變量。\n   - 最簡潔的區分法：令 G 輸出被截斷。因只有 2^n 種可能輸出，攻擊者隨意查詢 2^(n/2) 次即可依生日悖論找到內部碰撞，而在真隨機函數中 2n 位元的值域需要 2^n 次查詢才撞期。優勢為顯著常數。",
+        "pitfall": "金鑰與輸入直接做 XOR 作為 PRG 輸入，嚴重違背 PRF 安全模型（標準做法是 GGM 樹狀構造或 HMAC）。"
+    },
+    {
+        "id": "var-4",
+        "category": "ch6-7",
+        "chapter": "Ch. 7 變形",
+        "title": "變化題型 4：3 輪 Feistel 密碼無法抵抗已知明文區分攻擊",
+        "question": "Luby-Rackoff 證明 3 輪 Feistel 達到 PRP 安全性，但無法達成強偽隨機置換 (Strong PRP)。請建構一個攻擊者，在允許使用解密預言機 (Decryption Oracle) 的情況下，攻破 3 輪 Feistel 密碼。",
+        "intuition": "3 輪 Feistel 只能防君子（只往前加密的人），防不了小人（倒著解密的人）。強 PRP 允許攻擊者倒著查解密 Oracle。攻擊者只要先加密一筆，再稍微改一下右半邊丟給解密機關，第三輪的輪函數就被當場拆穿。",
+        "proof": "攻擊演算法：\n1. 查詢加密 Oracle：提交 (L, R)，得到密文 (L3, R3)。在 3 輪 Feistel 中：\n   L3 = R2 = L1 ⊕ F2(R1) = R ⊕ F2(L ⊕ F1(R))。\n   R3 = R2 ⊕ F3(L3) = ...\n2. 攻擊者構造解密查詢：提交密文 (L3, R3 ⊕ Δ) 給解密 Oracle。\n3. 在逆向解密中，第一步運算的輸入正是 L3，其產生的 F3(L3) 與原密文完全相同！\n4. 觀察還原之明文 (L', R')，其差分呈現精確的決定性消去關係。\n5. 在真隨機置換下，改動密文解密出的明文完全隨機分佈。區分優勢達 1 - 2^(-n/2)。",
+        "pitfall": "常考概念題：PRP 需 3 輪；強 PRP (Strong PRP / CCA 置換) 必須至少 4 輪！"
+    },
+    {
+        "id": "var-5",
+        "category": "ch8-9",
+        "chapter": "Ch. 8 變形",
+        "title": "變化題型 5：CBC 模式搭配可預測 IV 之 BEAST 攻擊原型",
+        "question": "CBC 模式標準要求 IV 為均勻隨機。若系統實作錯誤，採用可預測的 IV（例如第 i 次加密使用 IV_i = IV_(i-1) + 1）。請給出 CPA 攻擊演算法還原挑戰明文位元。",
+        "intuition": "CBC 模式的第一步是把明文跟 IV 做 XOR。如果下一把的 IV 是公開透明且可預測的，攻擊者就可以在送出明文前，故意用新的 IV 抵消掉挑戰時的舊 IV，強行讓兩次輸入進入完全一樣的狀態，把隨機加密變成確定性比對！歷史上著名的瀏覽器 BEAST 攻擊就是這樣打穿 TLS 1.0 的。",
+        "solution": "BEAST 攻擊推導：\n1. 攻擊者發起挑戰，提交 M0, M1，獲挑戰密文 C* = (IV*, C1*)，其中 C1* = AES_K(IV* ⊕ Mb)。\n2. 系統下一次加密將使用可預測的下一個 IV，記為 IV_next。\n3. 攻擊者構造查詢明文：M_query = IV_next ⊕ IV* ⊕ M0。\n4. 提交 M_query 給加密 Oracle，獲得密文 C_query，其第一個區塊為：\n   AES_K(IV_next ⊕ M_query) = AES_K(IV_next ⊕ (IV_next ⊕ IV* ⊕ M0)) = AES_K(IV* ⊕ M0)！\n5. 比對：若 C_query == C1*，代表 Mb = M0，輸出 0；否則輸出 1。\n優勢為 1。可預測 IV 徹底摧毀 CBC 的 CPA 安全性。",
+        "pitfall": "切記：CBC 的 IV 不僅要保證不重複，而且必須是「不可預測的密碼學隨機數」。"
+    },
+    {
+        "id": "var-6",
+        "category": "ch8-9",
+        "chapter": "Ch. 9 變形",
+        "title": "變化題型 6：PKCS#7 填充預言機（Padding Oracle）逐步破譯演練",
+        "question": "系統採用 CBC 模式搭配 PKCS#7 填充。伺服器解密後若填充合法回傳 HTTP 200，若填充錯誤回傳 HTTP 500。請寫出攻擊者如何利用此 Oracle 逐位元組破解最後一個明文區塊的最後一個位元組。",
+        "intuition": "伺服器就是你的活體解密機。PKCS#7 要求最後如果補 1 個字節，那個字節必須是 0x01。攻擊者去微調前一個密文區塊的最後一格，解密端解出來的最後一格就會跟著跳動。只要伺服器回傳 200，代表最後一格剛好跳成了 0x01！攻擊者倒推一下，原本的明文當場曝光。",
+        "solution": "逐步攻擊演算法：\n1. 設目標密文為 C = (C0, C1)，欲還原 M1 的最後一個位元組 M1[16]。\n2. 根據 CBC 解密公式：M1[16] = Dec(K, C1)[16] ⊕ C0[16]。\n3. 構造偽造密文 C0'，其中 C0'[16] = C0[16] ⊕ g ⊕ 0x01 (g 為猜測值，0~255)，其餘位元組隨機填充。\n4. 將 (C0', C1) 送給伺服器。\n5. 伺服器解密得 M1'[16] = Dec(K, C1)[16] ⊕ C0'[16] = (M1[16] ⊕ C0[16]) ⊕ (C0[16] ⊕ g ⊕ 0x01) = M1[16] ⊕ g ⊕ 0x01。\n6. 當 g 猜中真實明文時 (g = M1[16])，M1'[16] = 0x01，填充正確，伺服器回傳 200！\n7. 一旦觀察到 200，攻擊者立刻確認 M1[16] = g。\n平均只需 128 次查詢即可破解 1 個位元組。",
+        "pitfall": "這就是為什麼 MAC-then-encrypt 永遠不被建議的原因，解密端的任何報錯都會淪為 Oracle。"
+    }
+]
+
+print(f"Loaded {len(VARIATION_EXAMS)} variation exams.")
+
+# 組合資料並寫入 js/exam_data.js
+output_path = os.path.join("js", "exam_data.js")
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write("// Cryptography Exam Review, Proofs & Variation Questions Data\n")
+    f.write("// Exhaustively covering Homework 1, Practice 1, Core Formulas and Advanced Variations\n\n")
+    
+    f.write("const EXAM_FORMULAS = ")
+    f.write(json.dumps(FORMULAS_DATA, ensure_ascii=False, indent=2))
+    f.write(";\n\n")
+    
+    f.write("const HW1_DATA = ")
+    f.write(json.dumps(HW1_SOLUTIONS, ensure_ascii=False, indent=2))
+    f.write(";\n\n")
+    
+    f.write("const PRACTICE1_DATA = ")
+    f.write(json.dumps(PRACTICE1_SOLUTIONS, ensure_ascii=False, indent=2))
+    f.write(";\n\n")
+    
+    f.write("const VARIATION_DATA = ")
+    f.write(json.dumps(VARIATION_EXAMS, ensure_ascii=False, indent=2))
+    f.write(";\n")
+
+print(f"Successfully generated {output_path}!")
