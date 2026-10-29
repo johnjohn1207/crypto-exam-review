@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作業一核心概念關鍵與萬用證明攻略 | 現代密碼學期中複習</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                        sans: ['"Inter"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- KaTeX CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        :root { --header-height: 64px; }
+        .katex { font-size: 1.05em; }
+        .katex-display { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- 全域頂部導覽列 (Dynamic CSS variable: --header-height) -->
+    <header id="site-header" class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 transition-all duration-200">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition group">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 group-hover:scale-125 transition-transform shadow-sm shadow-amber-400/50"></span>
+                    <span class="font-bold text-white tracking-wide text-sm sm:text-base">現代密碼學期中考複習平台</span>
+                </a>
+                <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-amber-500/10 text-amber-300 border border-amber-500/30">
+                    範圍至 1-5 Sec 1
+                </span>
+            </div>
+            
+            <nav id="site-nav" class="flex items-center gap-1 sm:gap-1.5 text-xs overflow-x-auto no-scrollbar py-0.5">
+                <a href="index.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至互動實驗室與核心教材總覽">
+                    <span>互動總覽</span>
+                </a>
+                <a href="notes.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至精華講義閱讀手冊">
+                    <span>講義筆記</span>
+                </a>
+                <a href="exam.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至考點變化題解析">
+                    <span>考點變化題</span>
+                </a>
+                <a href="homework_practice.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至作業與練習全解">
+                    <span>作業練習全解</span>
+                </a>
+                <a href="hw1_summary.html" class="px-2.5 py-1.5 rounded-lg border border-cyan-500/70 bg-cyan-950/90 text-cyan-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至作業一核心概念與萬用證明攻略">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>
+                    <span>作業一攻略</span>
+                </a>
+                <a href="proof_sheet.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至必考形式證明一覽表">
+                    <span>證明一覽表</span>
+                </a>
+                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700/80 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 專題 Hero 橫幅 -->
+    <section class="bg-gradient-to-b from-cyan-950/30 via-slate-900 to-slate-950 border-b border-slate-800/80 px-4 py-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-3">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono">
+                    <span>作業一關鍵思維萃取</span>
+                    <span class="text-slate-600">|</span>
+                    <span>萬用證明公式庫</span>
+                    <span class="text-slate-600">|</span>
+                    <span class="text-emerald-400 font-bold">銜接練習一完全手冊</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                    作業一核心概念關鍵與萬用證明攻略
+                </h1>
+                <p class="text-slate-400 text-sm max-w-3xl leading-relaxed">
+                    本頁面專門為銜接「練習一」打造。系統性濃縮作業一所涵蓋之 7 大核心密碼學思維：<strong>運算子改換與單射要求</strong>、<strong>模十運算與加法群</strong>、<strong>前後加密與差分相消</strong>、<strong>函式庫等價與區分器設計</strong>、<strong>單次保密性推導</strong>、<strong>PRG/PRF 安全檢驗</strong>以及 <strong>CPA 安全判定準則</strong>。提供直觀大腦模型、嚴謹數學邏輯與考場標準推導模版。
+                </p>
+                <div class="p-3 rounded-xl bg-rose-950/20 border border-rose-500/30 text-xs text-rose-300 font-mono flex items-center gap-2">
+                    <span class="font-bold text-rose-400">考綱紅線嚴正宣告：</span>
+                    <span>授課教授明確裁定考試範圍至「投影片 1-5 Section 1」。Ch. 9 選擇密文攻擊（CCA）、Padding Oracle 攻擊與認證加密（AE）超出範圍，本站已全數剔除，複習時請專注於前置章節。</span>
+                </div>
+            </div>
+
+            <!-- 數據統計指標 -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-2.5 shrink-0 text-center font-mono">
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
+                    <div class="text-xs text-slate-400">涵蓋作業題</div>
+                    <div class="text-xl font-bold text-cyan-400">9 題全析</div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
+                    <div class="text-xs text-slate-400">核心思維模組</div>
+                    <div class="text-xl font-bold text-amber-400">7 大主題</div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
+                    <div class="text-xs text-slate-400">萬用證明模版</div>
+                    <div class="text-xl font-bold text-emerald-400">4 套藍圖</div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
+                    <div class="text-xs text-slate-400">超出範圍排除</div>
+                    <div class="text-xl font-bold text-rose-400">100%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 快速目錄錨點導覽列 -->
+    <nav class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky z-40 px-4 py-2.5 text-xs font-mono overflow-x-auto no-scrollbar" style="top: var(--header-height, 64px);">
+        <div class="max-w-7xl mx-auto flex items-center gap-2 whitespace-nowrap">
+            <span class="text-slate-500 font-semibold mr-1">快速導航：</span>
+            <a href="#mod1" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">1. 運算子與單射</a>
+            <a href="#mod2" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">2. 模運算與有限群</a>
+            <a href="#mod3" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">3. 前後加密與差分</a>
+            <a href="#mod4" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">4. 函式庫與區分器</a>
+            <a href="#mod5" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">5. 單次保密推導</a>
+            <a href="#mod6" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">6. PRG/PRF 檢驗</a>
+            <a href="#mod7" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">7. CPA 判定準則</a>
+            <a href="#blueprints" class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition">4 大萬用推導藍圖</a>
+            <a href="#bridge" class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition">練習一銜接對照</a>
+        </div>
+    </nav>
+
+    <!-- 主內容區塊 -->
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-12 flex-grow">
+
+        <!-- 區塊一：7 大核心概念主題模組 -->
+        <section class="space-y-6">
+            <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span>一、 作業一 7 大核心密碼學思維模組</span>
+                    </h2>
+                    <p class="text-slate-400 text-xs mt-1 font-mono">深入剖析各題核心因果、數學本質、直觀心智模型與考場解題框架</p>
+                </div>
+            </div>
+
+            <!-- 主題 1：運算子替換與正確性判讀 -->
+            <article id="mod1" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">模組 1</span>
+                        <span class="text-xs text-slate-400 font-mono">題源：作業一 1(a)</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Ch. 1-2 完善保密與正確性約束</span>
+                </div>
+
+                <h3 class="text-lg font-bold text-white">運算子改換與單射要求（AND 運算的資訊毀滅性）</h3>
+
+                <!-- 大腦模型 -->
+                <div class="bg-emerald-950/40 border-l-4 border-emerald-400 p-4 rounded-r-xl text-xs sm:text-sm">
+                    <div class="font-bold text-emerald-300 font-mono mb-1">直觀秒懂大腦模型：黑色油漆效應</div>
+                    <div class="text-emerald-100 leading-relaxed font-sans">
+                        AND 運算就像刷上一層黑色油漆。只要金鑰給了 0，無論你的秘密是 0 還是 1，塗上去全部變成 0。資訊一旦被毀滅，解密端就絕無可能逆向還原，因此解密正確性破功；同時，若攻擊者在密文中截獲 1，他立刻能斷定明文絕不可能是 0（因為 0 AND 任何數都無法湊出 1），機密當場洩漏，保密性立刻瓦解。
+                    </div>
+                </div>
+
+                <!-- 數學本質與推導邏輯 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="font-bold text-indigo-300 font-mono">數學本質：單射（Injectivity）是正確性的命脈</div>
+                        <p class="text-slate-300 leading-relaxed">
+                            解密正確性定義為 $\text{Dec}(K, \text{Enc}(K, M)) = M$ 恆成立。這意味著對任意固定的金鑰 $k$，加密函數 $f_k(m) = \text{Enc}(k, m)$ 必須為<strong>單射映射（Injective Function）</strong>。<br>
+                            布林 AND 運算於 $k=0$ 時產生映射碰撞：
+                            $$0 \wedge 0 = 0 \quad \text{且} \quad 0 \wedge 1 = 0$$
+                            兩不同明文映射至同一密文，逆函數不存在，因此<strong>不具備解密正確性</strong>。
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="font-bold text-amber-300 font-mono">保密性判定：條件機率不相等</div>
+                        <p class="text-slate-300 leading-relaxed">
+                            夏農完善保密性要求密文出現的機率與明文完全獨立。檢驗密文 $C=1$ 之條件機率：
+                            $$\Pr[C = 1 \mid M = 0] = \Pr[K \wedge 0 = 1] = 0$$
+                            $$\Pr[C = 1 \mid M = 1] = \Pr[K \wedge 1 = 1] = \Pr[K = 1] = \frac{1}{2}$$
+                            由於 $0 \neq \frac{1}{2}$，違反獨立性，因此<strong>不具備完善保密性</strong>。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 考場速記公式膠囊 -->
+                <div class="p-3 rounded-xl bg-slate-950 border border-amber-500/30 text-xs font-mono space-y-1">
+                    <span class="text-amber-400 font-bold block">考場作答一秒速記：</span>
+                    <div class="text-slate-200">
+                        正確性反例：$k=0 \implies \text{Enc}(0, 0) = \text{Enc}(0, 1) = 0$（非單射不可逆）<br>
+                        保密性反例：$\Pr[C=1 \mid M=0] = 0 \neq \frac{1}{2} = \Pr[C=1 \mid M=1]$（條件機率不等）
+                    </div>
+                </div>
+            </article>
+
+            <!-- 主題 2：有限群與模十 OTP -->
+            <article id="mod2" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">模組 2</span>
+                        <span class="text-xs text-slate-400 font-mono">題源：作業一 1(b)</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Ch. 1-2 有限群論與均勻性保持</span>
+                </div>
+
+                <h3 class="text-lg font-bold text-white">有限群模運算 OTP（模 10 加法與加法反元素之唯一性）</h3>
+
+                <!-- 大腦模型 -->
+                <div class="bg-emerald-950/40 border-l-4 border-emerald-400 p-4 rounded-r-xl text-xs sm:text-sm">
+                    <div class="font-bold text-emerald-300 font-mono mb-1">直觀秒懂大腦模型：鐘面撥針模型</div>
+                    <div class="text-emerald-100 leading-relaxed font-sans">
+                        想像一個 10 格的時鐘（數字 0 到 9）。加密就是從明文起點順時針撥動 $K$ 格，解密就是逆時針撥回 $K$ 格，必定回到原點，這就是解密正確性；若金鑰 $K$ 是由完全公正的十面骰子均勻擲出，那麼不論起點是指向幾號，指針最終停在任何一格的機率都是完全相等的 $\frac{1}{10}$。偷看終點對猜測起點毫無幫助，這就是完善保密性。
+                    </div>
+                </div>
+
+                <!-- 數學本質與推導邏輯 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="font-bold text-indigo-300 font-mono">正確性推導：反元素抵消</div>
+                        <p class="text-slate-300 leading-relaxed">
+                            在整數模 10 算術加法群 $(\mathbb{Z}_{10}, +)$ 中：
+                            $$\text{Dec}(K, \text{Enc}(K, M)) = ((K + M) \bmod 10 - K) \bmod 10$$
+                            $$= (K + M - K) \bmod 10 = M \bmod 10 = M$$
+                            運算閉合且精確抵消，解密正確無誤。
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="font-bold text-amber-300 font-mono">保密性證明：同餘方程唯一解</div>
+                        <p class="text-slate-300 leading-relaxed">
+                            對任意固定明文 $m \in \mathbb{Z}_{10}$ 與密文 $c \in \mathbb{Z}_{10}$：
+                            $$\Pr[C = c \mid M = m] = \Pr[(K + m) \bmod 10 = c]$$
+                            在阿貝爾群 $\mathbb{Z}_{10}$ 中，同餘式 $K \equiv c - m \pmod{10}$ <strong>存在唯一整數解</strong> $k^* = (c - m) \bmod 10$。因為 $K$ 均勻分佈於 $\{0, \dots, 9\}$，得：
+                            $$\Pr[K = k^*] = \frac{1}{10}$$
+                            條件機率恆為 $\frac{1}{10}$，與明文完全無關，達成完善保密性。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 考場速記公式膠囊 -->
+                <div class="p-3 rounded-xl bg-slate-950 border border-amber-500/30 text-xs font-mono space-y-1">
+                    <span class="text-amber-400 font-bold block">考場作答必備得分關鍵句：</span>
+                    <div class="text-slate-200">
+                        「因為 $\mathbb{Z}_{10}$ 為有限阿貝爾群，每個元素皆具唯一加法反元素，方程式 $K \equiv c - m \pmod{10}$ 在金鑰空間中存在唯一解，故 $\Pr[C=c \mid M=m] = \frac{1}{10}$。」
+                    </div>
+                </div>
+            </article>
+
+            <!-- 主題 3：前後加密與金鑰重用缺陷 -->
+            <article id="mod3" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">模組 3</span>
+                        <span class="text-xs text-slate-400 font-mono">題源：作業一 1(c)</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Ch. 1-2 金鑰重用破綻（Two-Time Pad）</span>
+                </div>
+
+                <h3 class="text-lg font-bold text-white">前後加密與金鑰長度不足（Two-Time Pad 差分消除攻擊）</h3>
+
+                <!-- 大腦模型 -->
+                <div class="bg-emerald-950/40 border-l-4 border-emerald-400 p-4 rounded-r-xl text-xs sm:text-sm">
+                    <div class="font-bold text-emerald-300 font-mono mb-1">直觀秒懂大腦模型：兩張半透明紙重疊相消</div>
+                    <div class="text-emerald-100 leading-relaxed font-sans">
+                        加密兩段訊息卻共用同一把鑰匙。攻擊者將前後兩段密文拿來做 XOR 運算，金鑰與自身相消（$K \oplus K = 0$），遮罩瞬間人間蒸發，直接露出兩份明文的差距。就像把兩張印了雜訊的半透明紙疊在一起，雜訊相互抵消，浮現出兩份公文的差異輪廓。
+                    </div>
+                </div>
+
+                <!-- 攻擊形式證明與萃取資訊 -->
+                <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl text-xs sm:text-sm space-y-3">
+                    <div class="font-bold text-cyan-300 font-mono">差分消除基本算式：</div>
+                    <div class="bg-slate-900 p-3 rounded-lg font-mono text-cyan-200">
+                        $$C_1 \oplus C_2 = (K \oplus M_1) \oplus (K \oplus M_2) = (K \oplus K) \oplus (M_1 \oplus M_2) = M_1 \oplus M_2$$
+                    </div>
+                    <div class="font-bold text-indigo-300 font-mono pt-1">攻擊者可萃取的 4 大資訊維度：</div>
+                    <ul class="list-decimal pl-5 space-y-1.5 text-slate-300">
+                        <li><strong>位元差分值（Bitwise Difference）</strong>：直接掌握兩段明文在哪些位元上相同、哪些位元上相異。</li>
+                        <li><strong>明文重複性洩漏（Redundancy Detection）</strong>：若前後兩段明文相同（$M_1 = M_2$），則密文差分必為全零字串：$C_1 \oplus C_2 = 0^n$。</li>
+                        <li><strong>已知標頭破譯（Crib Dragging）</strong>：若協定前段為固定格式（已知 $M_1$），可直接無痛還原後段秘密：$M_2 = (C_1 \oplus C_2) \oplus M_1$。</li>
+                        <li><strong>區分挑戰勝率 100%</strong>：提交 $M^{(0)} = (0^n, 0^n)$ 與 $M^{(1)} = (0^n, 1^n)$，檢驗 $C_1 \oplus C_2 \stackrel{?}{=} 0^n$，優勢 $\mathbf{Adv} = 1$。</li>
+                    </ul>
+                </div>
+            </article>
+
+            <!-- 主題 4：函式庫不可區分性與區分器設計 -->
+            <article id="mod4" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">模組 4</span>
+                        <span class="text-xs text-slate-400 font-mono">題源：作業一 2(a), 2(b)</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Ch. 2 函式庫不可區分性（Library Indistinguishability）</span>
+                </div>
+
+                <h3 class="text-lg font-bold text-white">函式庫判定雙雄：等價化簡 vs 跨查詢一致性區分</h3>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- 2(a)：等價不可區分 -->
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="font-bold text-emerald-400 font-mono text-xs">狀況 A：完全等價不可區分（作業 2a）</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono">$\mathcal{L}_1 \equiv \mathcal{L}_2$</span>
+                        </div>
+                        <div class="text-xs text-slate-300 leading-relaxed space-y-2">
+                            <p><strong>大腦模型</strong>：精心設計的障眼法。看表面程式碼有 if/else 分支，實際上 if 裡外的值完全一樣。</p>
+                            <div class="bg-slate-900 p-2.5 rounded font-mono text-slate-200">
+                                當 $M = R_1$ 時代入 else 公式：<br>
+                                $M \oplus R_1 \oplus R_2 = R_1 \oplus R_1 \oplus R_2 = 0^n \oplus R_2 = R_2$
+                            </div>
+                            <p><strong>核心邏輯</strong>：if 分支完全冗餘，整台機器無論輸入什麼，永遠都在回傳 $M \oplus (R_1 \oplus R_2)$。令 $K' = R_1 \oplus R_2$，根據 OTP 獨立隨機數相加性質，$K'$ 亦為純隨機字串。故 $\mathcal{L}_2$ 行為與 $\mathcal{L}_1$（回傳 $M \oplus K$）完全等價，I/O 分佈完全一致。</p>
+                        </div>
+                    </div>
+
+                    <!-- 2(b)：可區分與區分器架構 -->
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="font-bold text-rose-400 font-mono text-xs">狀況 B：可區分攻破（作業 2b）</span>
+                            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-mono">$\mathcal{L}_C \not\equiv \mathcal{L}_D$</span>
+                        </div>
+                        <div class="text-xs text-slate-300 leading-relaxed space-y-2">
+                            <p><strong>大腦模型</strong>：真金不怕火煉，冒牌貨開箱吐香蕉。$\mathcal{L}_C$ 鎖著真實金鑰，放蘋果進去開箱必定還是蘋果；$\mathcal{L}_D$ 只是每次隨機吐數的無腦發牌機。</p>
+                            <div class="bg-slate-900 p-2.5 rounded font-mono text-rose-200 space-y-1">
+                                <div>區分器程式 $D$：</div>
+                                <div>1. 呼叫 $C := \text{enc}(0^n)$</div>
+                                <div>2. 呼叫 $M' := \text{dec}(C)$</div>
+                                <div>3. 若 $M' == 0^n$ 輸出 1；否則輸出 0</div>
+                            </div>
+                            <p><strong>優勢計算</strong>：<br>
+                            在 $\mathcal{L}_C$ 中，$\text{dec}(\text{enc}(0^n)) = 0^n$ 恆成立，勝率為 1；在 $\mathcal{L}_D$ 中，$\text{dec}$ 獨立隨機抽樣，命中 $0^n$ 機率為 $2^{-n}$。<br>
+                            $$\mathbf{Adv} = |1 - 2^{-n}| \approx 1$$
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 主題 5：單次保密性推導與固定差分分析 -->
+            <article id="mod5" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">模組 5</span>
+                        <span class="text-xs text-slate-400 font-mono">題源：作業一 3</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Ch. 2 單次保密性（One-Time Secrecy / IND-OTS）</span>
+                </div>
+
+                <h3 class="text-lg font-bold text-white">單次保密性推導（$\Sigma'$ 派生密文固定差分安全分析）</h3>
+
+                <div class="bg-emerald-950/40 border-l-4 border-emerald-400 p-4 rounded-r-xl text-xs sm:text-sm">
+                    <div class="font-bold text-emerald-300 font-mono mb-1">直觀秒懂大腦模型：影子模型</div>
+                    <div class="text-emerald-100 leading-relaxed font-sans">
+                        雖然這個方案一口氣產出兩個密文 $(C_1, C_2)$，且第二個密文固定是第一個密文的逐位元反轉（$C_2 = C_1 \oplus 1^n$）。但只要第一個密文 $C_1 = K \oplus M$ 本身是完美的均勻隨機亂碼，第二個密文就只是隨機數的影子。只要金鑰只用一次，對於任何明文，密文對永遠都是「一個均勻隨機字串 + 它的反轉」，完全不依賴於明文內容，因此依然達成單次完善保密。
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl text-xs sm:text-sm space-y-2">
+                    <div class="font-bold text-amber-300 font-mono">考場辨析心法：差分常數 vs 差分明文</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-300 pt-1">
+                        <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30">
+                            <span class="font-bold text-emerald-400 block mb-1 font-mono">差分與明文無關（安全）：</span>
+                            若密文差分 $C_1 \oplus C_2 = \Delta$ 為與明文無關的固定常數（如 $1^n$），密文對聯合分佈不隨明文改變，<strong>單次保密性依然成立</strong>。
+                        </div>
+                        <div class="p-3 rounded-lg bg-rose-950/20 border border-rose-500/30">
+                            <span class="font-bold text-rose-400 block mb-1 font-mono">差分包含明文差（破功）：</span>
+                            若密文差分 $C_1 \oplus C_2 = M_1 \oplus M_2$（金鑰相消），則密文差分直接洩漏明文資訊，<strong>保密性徹底崩潰</strong>。
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 主題 6：PRG 與 PRF 安全檢驗 -->
+            <article id="mod6" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">模組 6</span>
+                        <span class="text-xs text-slate-400 font-mono">題源：作業一 4(a), 4(b)</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Ch. 5-6 偽隨機生成器與偽隨機函數檢驗</span>
+                </div>
+
+                <h3 class="text-lg font-bold text-white">PRG 與 PRF 安全檢驗（種子洩漏與線性差分攻擊）</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <!-- PRG 種子洩漏 -->
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="font-bold text-indigo-300 font-mono">PRG 串接禁忌：輸出不可公開種子</div>
+                        <p class="text-slate-300 leading-relaxed">
+                            構造 $H(S) = A \parallel B \parallel C \parallel D$，其中 $A \parallel B = G(S)$ 且 $C \parallel D = G(B)$。<br>
+                            <strong>致命傷</strong>：中間狀態種子 $B$ 被直接暴露在第二個區塊！<br>
+                            <strong>區分器演算法</strong>：
+                            輸入 $W = w_1 \parallel w_2 \parallel w_3 \parallel w_4$。區分器本地重新執行 $G(w_2)$，比對是否等於 $w_3 \parallel w_4$。若是輸出 1，否則輸出 0。<br>
+                            $$\Pr[D(H(S)) = 1] = 1 \quad \text{vs} \quad \Pr[D(\text{Random}) = 1] = 2^{-2\lambda}$$
+                            優勢 $\mathbf{Adv} = 1 - 2^{-2\lambda} \approx 1$，一秒識破。
+                        </p>
+                    </div>
+
+                    <!-- PRF 線性差分 -->
+                    <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2">
+                        <div class="font-bold text-amber-300 font-mono">PRF 非線性要求：線性構造必死</div>
+                        <p class="text-slate-300 leading-relaxed">
+                            構造 $F(K, X) = G(K) \oplus X$。<br>
+                            <strong>致命傷</strong>：純線性操作導致金鑰項在差分中被完全消去：
+                            $$F(K, X_1) \oplus F(K, X_2) = (G(K) \oplus X_1) \oplus (G(K) \oplus X_2) = X_1 \oplus X_2$$
+                            <strong>區分器演算法</strong>：
+                            查詢 $X_1 = 0^n$ 得 $Y_1$，查詢 $X_2 = 1^n$ 得 $Y_2$。檢驗 $Y_1 \oplus Y_2 \stackrel{?}{=} 1^n$。<br>
+                            真實 PRF 滿足率為 1；真隨機函數輸出獨立，滿足率僅為 $2^{-n}$。優勢 $\mathbf{Adv} \approx 1$。
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 主題 7：選擇明文安全 (CPA) 檢測準則 -->
+            <article id="mod7" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">模組 7</span>
+                        <span class="text-xs text-slate-400 font-mono">題源：作業一 5(a)</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">Ch. 8 選擇明文安全（IND-CPA Security）</span>
+                </div>
+
+                <h3 class="text-lg font-bold text-white">選擇明文安全（CPA）4 大經典架構檢測準則</h3>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 font-mono">
+                                <th class="py-3 px-3 w-48">加密方案構造</th>
+                                <th class="py-3 px-3 w-28 text-center">CPA 安全性</th>
+                                <th class="py-3 px-3">核心判斷機制與因果邏輯</th>
+                                <th class="py-3 px-3 w-40">考場破譯/得分點</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 font-sans">
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="py-3 px-3 font-mono text-cyan-300">$(R, F(K, R) \oplus M)$</td>
+                                <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">CPA 安全</span></td>
+                                <td class="py-3 px-3 text-slate-300">隨機數 $R$ 做為 PRF 的輸入。只要 $R$ 不碰撞（生日界限 $\frac{q^2}{2^\lambda}$），每次加密皆使用全新獨立的偽隨機遮罩。</td>
+                                <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">標準隨機化 PRF 加密</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="py-3 px-3 font-mono text-rose-300">$(R, F(K, M) \oplus R)$</td>
+                                <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono font-bold">CPA 潰敗</span></td>
+                                <td class="py-3 px-3 text-slate-300">隨機數 $R$ 放在最外層！前後兩半 XOR 直接相消：$C_1 \oplus C_2 = R \oplus (F(K, M) \oplus R) = F(K, M)$，完全喪失隨機化保護。</td>
+                                <td class="py-3 px-3 text-rose-300 font-mono text-[11px]">差分消去 $R$，優勢 $\approx 1$</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="py-3 px-3 font-mono text-rose-300">AES in ECB 模式</td>
+                                <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono font-bold">CPA 潰敗</span></td>
+                                <td class="py-3 px-3 text-slate-300">決定性加密（Deterministic Encryption）。相同明文區塊永遠產出相同密文區塊，無法抵抗多區塊重現攻擊。</td>
+                                <td class="py-3 px-3 text-rose-300 font-mono text-[11px]">提交相同區塊比對重複性</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="py-3 px-3 font-mono text-cyan-300">AES in CTR（隨機 IV）</td>
+                                <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">CPA 安全</span></td>
+                                <td class="py-3 px-3 text-slate-300">隨機選擇初始 IV。在生日界限之查詢量內，計數器輸入空間不重疊，金鑰串流不可區分於真隨機。</td>
+                                <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">串流加密標準範例</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <!-- 區塊二：考綱紅線公告（CCA 超出範圍特別提醒） -->
+        <section class="bg-rose-950/20 border border-rose-500/40 rounded-2xl p-5 sm:p-6 shadow-xl space-y-3">
+            <div class="flex items-center gap-2 text-rose-400 font-bold text-base font-mono">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span>期中考考試範圍紅線叮嚀：Ch. 9 CCA / Padding Oracle / AE 嚴禁浪費時間</span>
+            </div>
+            <div class="text-slate-300 text-xs sm:text-sm leading-relaxed space-y-2">
+                <p>授課教授已明確說明：期中考試範圍上限為<strong>投影片 1-5 Section 1（對應 CPA 安全性與分組密碼模式）</strong>。補充資料與後續章節<strong>不在考試範圍內</strong>：</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-xs">
+                    <div class="p-2.5 rounded bg-slate-950/70 border border-rose-500/30 text-rose-200">
+                        <span class="font-bold text-rose-400 block">1. 選擇密文攻擊（CCA）</span>
+                        IND-CCA1 / IND-CCA2 解密 Oracle 查詢博弈
+                    </div>
+                    <div class="p-2.5 rounded bg-slate-950/70 border border-rose-500/30 text-rose-200">
+                        <span class="font-bold text-rose-400 block">2. 填充預言機攻擊</span>
+                        PKCS#7 Padding Oracle 旁路解密技術
+                    </div>
+                    <div class="p-2.5 rounded bg-slate-950/70 border border-rose-500/30 text-rose-200">
+                        <span class="font-bold text-rose-400 block">3. 認證加密（AE）</span>
+                        Encrypt-then-MAC、CCM、GCM 認證加密模式
+                    </div>
+                </div>
+                <p class="text-rose-300 text-xs pt-1">
+                    在閱讀「練習一」題目時，若遇到練習一第 12、13、25、26、34 題或作業一第 5(b) 題，<strong>請直接果斷跳過</strong>，切勿因鑽研超出範圍之艱深解密博弈而消耗寶貴備考精力。
+                </p>
+            </div>
+        </section>
+
+        <!-- 區塊三：四大萬用推導藍圖（考場必背公式與架構） -->
+        <section id="blueprints" class="space-y-6">
+            <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span>二、 考場奪分必備：四大萬用證明推導藍圖</span>
+                    </h2>
+                    <p class="text-slate-400 text-xs mt-1 font-mono">標準化作答框架，直接套用即可確保邏輯閉環與拿滿所有推導步驟分數</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- 藍圖 1：完善保密展開三步法 -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                        <span class="font-bold text-amber-300 font-mono text-sm">藍圖 1：完善保密性展開三步法</span>
+                        <span class="text-[10px] font-mono text-slate-500">適用：保密性充要條件與 OTP</span>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-amber-400 font-bold block">【步驟 1：寫出保密核心等式】</span>
+                            $$\Pr[M = m \mid C = c] = \Pr[M = m]$$
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-amber-400 font-bold block">【步驟 2：利用貝氏定理反轉】</span>
+                            $$\Pr[M = m \mid C = c] = \frac{\Pr[C = c \mid M = m] \cdot \Pr[M = m]}{\Pr[C = c]}$$
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-amber-400 font-bold block">【步驟 3：兩邊消去導出充要條件】</span>
+                            代入後消去 $\Pr[M = m] > 0$，直接導得：
+                            $$\Pr[C = c \mid M = m] = \Pr[C = c]$$
+                            對任意兩筆明文 $m_0, m_1$，必定滿足 $\Pr[C=c \mid M=m_0] = \Pr[C=c \mid M=m_1]$。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 藍圖 2：區分器演算法與優勢標準模版 -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                        <span class="font-bold text-cyan-300 font-mono text-sm">藍圖 2：區分器演算法與優勢標準模版</span>
+                        <span class="text-[10px] font-mono text-slate-500">適用：函式庫判定、PRG/PRF 破譯</span>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-cyan-400 font-bold block">【步驟 1：定義查詢策略】</span>
+                            查詢 Oracle 特定值（例如差分明文對 $X_1 = 0^n, X_2 = 1^n$ 或串聯查詢 $\text{enc}$ 後 $\text{dec}$）。
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-cyan-400 font-bold block">【步驟 2：設計輸出判定準則】</span>
+                            若回傳結果滿足目標不變量（如 $Y_1 \oplus Y_2 == 1^n$），輸出 1；否則輸出 0。
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-cyan-400 font-bold block">【步驟 3：優勢精確計算】</span>
+                            $$\mathbf{Adv}_D = |\Pr[D^{\text{Real}} = 1] - \Pr[D^{\text{Rand}} = 1]|$$
+                            $$= |1 - 2^{-n}| \approx 1 \quad (\text{不可忽略，安全性破功})$$
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 藍圖 3：線性差分消除驗證公式 -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                        <span class="font-bold text-indigo-300 font-mono text-sm">藍圖 3：線性差分消除驗證公式</span>
+                        <span class="text-[10px] font-mono text-slate-500">適用：Two-Time Pad、線性 PRF</span>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-indigo-400 font-bold block">【步驟 1：列出密文或輸出向量】</span>
+                            $$C_1 = K \oplus M_1, \quad C_2 = K \oplus M_2$$
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-indigo-400 font-bold block">【步驟 2：執行差分運算消去金鑰】</span>
+                            $$C_1 \oplus C_2 = (K \oplus M_1) \oplus (K \oplus M_2) = (K \oplus K) \oplus (M_1 \oplus M_2) = M_1 \oplus M_2$$
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-indigo-400 font-bold block">【步驟 3：構造區分明文完成閉環】</span>
+                            提交 $M_0 = (0^n, 0^n)$ 與 $M_1 = (0^n, 1^n)$，利用差分是否為 $0^n$ 達到 100% 區分。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 藍圖 4：反例構造與抽屜原理否定模版 -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                        <span class="font-bold text-rose-300 font-mono text-sm">藍圖 4：反例構造與抽屜原理否定模版</span>
+                        <span class="text-[10px] font-mono text-slate-500">適用：證非單射、證金鑰空間下界</span>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-rose-400 font-bold block">【步驟 1：反設金鑰數量少於明文】</span>
+                            假設 $|\mathcal{K}| < |\mathcal{M}|$。隨機固定合法密文 $c$（$\Pr[C=c] > 0$）。
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-rose-400 font-bold block">【步驟 2：抽屜原理解密空間上限】</span>
+                            因為解密為確定性函數，能解出的明文集合 $S(c)$ 滿足 $|S(c)| \le |\mathcal{K}| < |\mathcal{M}|$。
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-950 font-mono text-slate-200 space-y-1">
+                            <span class="text-rose-400 font-bold block">【步驟 3：抓出零機率明文製造矛盾】</span>
+                            必存在漏網明文 $m^* \notin S(c)$ 使得 $\Pr[C=c \mid M=m^*] = 0 \neq \Pr[C=c]$，矛盾成立！
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 區塊四：作業一與練習一銜接對照表 -->
+        <section id="bridge" class="space-y-6">
+            <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span>三、 實戰銜接：作業一思維直通「練習一」題目對照表</span>
+                    </h2>
+                    <p class="text-slate-400 text-xs mt-1 font-mono">將作業一學會的核心邏輯直接映射至練習一題目，秒速破題解題</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 font-mono">
+                            <th class="py-3.5 px-4 w-40">作業一習得概念</th>
+                            <th class="py-3.5 px-4 w-44">對應練習一核心題號</th>
+                            <th class="py-3.5 px-4">解題思維如何直接套用？</th>
+                            <th class="py-3.5 px-4 w-28 text-center">直接前往</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/80 font-sans">
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="py-3 px-4 font-bold text-white font-mono">夏農保密與 OTP 運算</td>
+                            <td class="py-3 px-4 text-amber-300 font-mono">練習一 15, 29, 31, 32</td>
+                            <td class="py-3 px-4 text-slate-300">
+                                直接套用【藍圖 1】全機率展開消去 $\Pr[M=m]$，或使用【藍圖 4】抽屜原理否定 $|K| < |M|$。
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="homework_practice.html" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition font-mono text-[11px] border border-slate-700">查看題解</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="py-3 px-4 font-bold text-white font-mono">函式庫等價與區分</td>
+                            <td class="py-3 px-4 text-cyan-300 font-mono">練習一 16, 17, 18</td>
+                            <td class="py-3 px-4 text-slate-300">
+                                遇到 if/else 先代數化簡；遇到未知隨機數先檢驗是否有加解密一致性可利用【藍圖 2】區分。
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="homework_practice.html" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition font-mono text-[11px] border border-slate-700">查看題解</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="py-3 px-4 font-bold text-white font-mono">PRG 展開與種子洩漏</td>
+                            <td class="py-3 px-4 text-indigo-300 font-mono">練習一 19, 20</td>
+                            <td class="py-3 px-4 text-slate-300">
+                                檢視 PRG 輸出是否包含內部狀態。若有直接本地重算比對；若無則利用混淆論證（Hybrid Argument）歸約。
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="homework_practice.html" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition font-mono text-[11px] border border-slate-700">查看題解</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="py-3 px-4 font-bold text-white font-mono">PRF 線性差分破壞</td>
+                            <td class="py-3 px-4 text-rose-300 font-mono">練習一 23, 24</td>
+                            <td class="py-3 px-4 text-slate-300">
+                                檢視函數構造是否為純線性加減（如 $F(K, X) = K \oplus X$）。套用【藍圖 3】一發差分即破。
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="homework_practice.html" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition font-mono text-[11px] border border-slate-700">查看題解</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="py-3 px-4 font-bold text-white font-mono">CPA 隨機化與分組密碼</td>
+                            <td class="py-3 px-4 text-emerald-300 font-mono">練習一 27, 28, 30, 33</td>
+                            <td class="py-3 px-4 text-slate-300">
+                                檢視隨機數是在 PRF 裡面還是外面；決定性模式（ECB）必定非 CPA 安全；CTR 模式驗證 IV 不碰撞。
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                <a href="homework_practice.html" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition font-mono text-[11px] border border-slate-700">查看題解</a>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40 transition bg-rose-950/10">
+                            <td class="py-3 px-4 font-bold text-rose-400 font-mono">Ch. 9 課堂超出範圍題</td>
+                            <td class="py-3 px-4 text-rose-400 font-mono">練習一 12, 13, 25, 26, 34</td>
+                            <td class="py-3 px-4 text-rose-300 font-medium">
+                                超出範圍紅線！屬於選擇密文攻擊（CCA）與認證加密（AE），老師明確裁定不考，直接跳過不讀！
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono text-[10px] border border-rose-500/30">直接略過</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500 font-mono">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p>現代與後量子密碼學導論・作業一核心概念關鍵與萬用證明攻略（範圍至 1-5 Section 1）</p>
+            <p class="text-[11px] text-slate-600">Introduction to Modern Cryptography by Katz & Lindell | The Joy of Cryptography by Mike Rosulek</p>
+        </div>
+    </footer>
+
+    <!-- 浮動置頂按鈕 -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" id="back-to-top" class="fixed bottom-6 right-6 p-3 rounded-full bg-slate-800/90 hover:bg-cyan-600 text-slate-300 hover:text-white border border-slate-700 shadow-xl transition-all opacity-0 pointer-events-none z-50">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    btn.classList.remove('opacity-0', 'pointer-events-none');
+                } else {
+                    btn.classList.add('opacity-0', 'pointer-events-none');
+                }
+            });
+
+            // 觸發 KaTeX
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+    </script>
+    <script id="header-sync-script">
+    function syncHeaderHeight() {
+        const header = document.getElementById('site-header') || document.querySelector('header');
+        if (header) {
+            const h = Math.ceil(header.getBoundingClientRect().height);
+            document.documentElement.style.setProperty('--header-height', `${h}px`);
+        }
+    }
+    window.addEventListener('resize', syncHeaderHeight);
+    window.addEventListener('orientationchange', syncHeaderHeight);
+    document.addEventListener('DOMContentLoaded', syncHeaderHeight);
+    setTimeout(syncHeaderHeight, 50);
+    setTimeout(syncHeaderHeight, 200);
+    setTimeout(syncHeaderHeight, 600);
+    </script>
+</body>
+</html>
