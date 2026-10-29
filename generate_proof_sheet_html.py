@@ -372,53 +372,66 @@ HTML_CONTENT = """<!DOCTYPE html>
             }
         }
 
-        // 渲染表格視角
+                // 渲染表格視角（完整展示所有推導步驟，無省略截斷）
         function renderTableView(items) {
             const tbody = document.getElementById('proof-table-body');
             tbody.innerHTML = items.map((item, idx) => `
                 <tr class="hover:bg-slate-800/40 transition">
-                    <td class="py-3 px-4 text-center font-mono text-slate-400 font-bold">${idx + 1}</td>
-                    <td class="py-3 px-4">
+                    <td class="py-3.5 px-4 text-center font-mono text-slate-400 font-bold">${idx + 1}</td>
+                    <td class="py-3.5 px-4">
                         <div class="font-bold text-white text-xs">${item.title}</div>
                         <div class="text-[10px] text-amber-300 font-mono mt-0.5">${item.source}</div>
                     </td>
-                    <td class="py-3 px-4 font-mono">
+                    <td class="py-3.5 px-4 font-mono">
                         <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">${item.chapter}</span>
                     </td>
-                    <td class="py-3 px-4">
+                    <td class="py-3.5 px-4">
                         <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono">${item.technique}</span>
                     </td>
-                    <td class="py-3 px-4 text-slate-300 text-xs font-sans leading-relaxed">
+                    <td class="py-3.5 px-4 text-slate-300 text-xs font-sans leading-relaxed min-w-[240px]">
                         ${escapeHtml(item.target)}
                     </td>
-                    <td class="py-3 px-4 text-slate-300 text-xs font-sans leading-relaxed">
-                        <ol class="list-decimal list-inside space-y-1">
-                            ${item.steps.slice(0, 3).map(s => `<li>${escapeHtml(s)}</li>`).join('')}
-                            ${item.steps.length > 3 ? `<li class="text-slate-500 font-mono text-[11px]">...（共 ${item.steps.length} 步驟）</li>` : ''}
-                        </ol>
+                    <td class="py-3.5 px-4 text-slate-300 text-xs font-sans leading-relaxed min-w-[420px]">
+                        <div class="space-y-2">
+                            ${item.steps.map((s, sIdx) => {
+                                const parts = s.split('】');
+                                const stepTag = parts.length > 1 ? parts[0] + '】' : `【步驟 ${sIdx + 1}】`;
+                                const stepBody = parts.length > 1 ? parts.slice(1).join('】') : s;
+                                return `
+                                <div class="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800/90 text-xs shadow-sm">
+                                    <span class="font-bold text-amber-300 font-mono text-[11px] block mb-1">
+                                        ${escapeHtml(stepTag)}
+                                    </span>
+                                    <div class="text-slate-200 leading-relaxed font-sans">
+                                        ${escapeHtml(stepBody)}
+                                    </div>
+                                </div>
+                                `;
+                            }).join('')}
+                        </div>
                     </td>
-                    <td class="py-3 px-4 text-center">
-                        <button onclick="copyProofText('${item.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700 whitespace-nowrap">
-                            📋 複製證明
+                    <td class="py-3.5 px-4 text-center">
+                        <button onclick="copyProofText('${item.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700 whitespace-nowrap shadow-sm">
+                            複製證明
                         </button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        // 渲染卡片視角
+                // 渲染卡片視角（層級分明之詳細推導結構）
         function renderCardsView(items) {
             const container = document.getElementById('cards-view-container');
             container.innerHTML = items.map(item => `
-                <article class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg space-y-4">
+                <article class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-2.5 pb-3 border-b border-slate-800/80">
                         <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono">⚡ 形式證明</span>
-                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-800 text-slate-300 border border-slate-700">${item.chapter}</span>
-                            <span class="text-xs text-slate-400 font-mono">來源：${item.source}</span>
+                            <span class="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono">形式證明</span>
+                            <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-slate-800 text-slate-300 border border-slate-700">${item.chapter}</span>
+                            <span class="text-xs text-slate-400 font-mono">出處來源：${item.source}</span>
                         </div>
-                        <button onclick="copyProofText('${item.id}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700">
-                            📋 複製證明
+                        <button onclick="copyProofText('${item.id}')" class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700 shadow-sm flex items-center gap-1">
+                            <span>複製證明</span>
                         </button>
                     </div>
 
@@ -428,39 +441,67 @@ HTML_CONTENT = """<!DOCTYPE html>
 
                     <!-- 目標命題與核心手法 -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div class="md:col-span-2 bg-indigo-950/20 border-l-4 border-indigo-500 p-3 rounded-r-xl text-xs sm:text-sm">
-                            <div class="font-bold text-indigo-300 font-mono mb-1">🎯 目標命題 (Formal Proposition)</div>
-                            <div class="text-slate-200">${escapeHtml(item.target)}</div>
+                        <div class="md:col-span-2 bg-indigo-950/20 border-l-4 border-indigo-500 p-3.5 rounded-r-xl text-xs sm:text-sm">
+                            <div class="font-bold text-indigo-300 font-mono mb-1 flex items-center gap-1.5">
+                                <span>待證命題（Formal Proposition）</span>
+                            </div>
+                            <div class="text-slate-200 leading-relaxed">${escapeHtml(item.target)}</div>
                         </div>
-                        <div class="bg-amber-950/20 border-l-4 border-amber-500 p-3 rounded-r-xl text-xs sm:text-sm">
-                            <div class="font-bold text-amber-300 font-mono mb-1">🛠️ 核心證明手法</div>
-                            <div class="text-amber-200">${escapeHtml(item.technique)}</div>
+                        <div class="bg-amber-950/20 border-l-4 border-amber-500 p-3.5 rounded-r-xl text-xs sm:text-sm">
+                            <div class="font-bold text-amber-300 font-mono mb-1 flex items-center gap-1.5">
+                                <span>核心證明手法</span>
+                            </div>
+                            <div class="text-amber-200 leading-relaxed font-mono">${escapeHtml(item.technique)}</div>
                         </div>
                     </div>
 
-                    <!-- 關鍵推導步驟 -->
-                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs sm:text-sm shadow-inner space-y-2">
-                        <div class="font-bold text-indigo-300 font-mono flex items-center justify-between">
-                            <span>📐 嚴謹形式推導步驟 (Step-by-Step Formal Proof)</span>
-                            <span class="text-[10px] text-slate-500">LaTeX Supported</span>
+                    <!-- 關鍵嚴謹推導步驟（每步獨立卡片） -->
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 sm:p-5 text-xs sm:text-sm shadow-inner space-y-3">
+                        <div class="font-bold text-amber-300 font-mono flex items-center justify-between pb-2.5 border-b border-slate-800/80">
+                            <span class="flex items-center gap-2">
+                                <span>嚴謹形式推導完整步驟（Step-by-Step Formal Proof）</span>
+                                <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] border border-amber-500/40 font-mono">完整推導閉環</span>
+                            </span>
+                            <span class="text-[11px] text-slate-400 font-mono">共 ${item.steps.length} 個詳細推導環節</span>
                         </div>
-                        <div class="proof-code-block text-slate-200 leading-relaxed space-y-1.5">
-                            ${item.steps.map(s => `<p>${escapeHtml(s)}</p>`).join('')}
+                        <div class="space-y-3">
+                            ${item.steps.map((s, sIdx) => {
+                                const parts = s.split('】');
+                                const stepTag = parts.length > 1 ? parts[0] + '】' : `【步驟 ${sIdx + 1}】`;
+                                const stepBody = parts.length > 1 ? parts.slice(1).join('】') : s;
+                                return `
+                                <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/90 shadow-sm space-y-1.5">
+                                    <div class="flex items-center justify-between">
+                                        <span class="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold">
+                                            ${escapeHtml(stepTag)}
+                                        </span>
+                                        <span class="text-[10px] font-mono text-slate-500">環節 ${sIdx + 1} / ${item.steps.length}</span>
+                                    </div>
+                                    <div class="text-slate-200 text-xs sm:text-sm leading-relaxed font-sans pt-1">
+                                        ${escapeHtml(stepBody)}
+                                    </div>
+                                </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
 
                     <!-- 演算法或破譯準則 -->
                     ${item.algorithm ? `
-                    <div class="bg-cyan-950/20 border-l-4 border-cyan-500 p-3 rounded-r-xl text-xs sm:text-sm">
-                        <div class="font-bold text-cyan-300 font-mono mb-1">⚙️ 攻擊區分者演算法或判定準則</div>
-                        <div class="text-cyan-100 font-mono whitespace-pre-wrap">${escapeHtml(item.algorithm)}</div>
+                    <div class="bg-cyan-950/20 border-l-4 border-cyan-500 p-3.5 rounded-r-xl text-xs sm:text-sm">
+                        <div class="font-bold text-cyan-300 font-mono mb-1 flex items-center gap-1.5">
+                            <span>攻擊區分者演算法或判定準則（Adversary Algorithm & Criterion）</span>
+                        </div>
+                        <div class="text-cyan-100 font-mono whitespace-pre-wrap leading-relaxed">${escapeHtml(item.algorithm)}</div>
                     </div>` : ''}
 
                     <!-- 致命陷阱 -->
                     ${item.pitfall ? `
-                    <div class="bg-rose-950/20 border-l-4 border-rose-500 p-3 rounded-r-xl text-xs sm:text-sm">
-                        <div class="font-bold text-rose-300 font-mono mb-1">⚠️ 考試致命扣分陷阱 (Fatal Pitfall)</div>
-                        <div class="text-rose-200">${escapeHtml(item.pitfall)}</div>
+                    <div class="bg-rose-950/20 border-l-4 border-rose-500 p-3.5 rounded-r-xl text-xs sm:text-sm">
+                        <div class="font-bold text-rose-300 font-mono mb-1 flex items-center gap-1.5">
+                            <span>考試評分易錯致命陷阱（Fatal Pitfalls & Exam Traps）</span>
+                        </div>
+                        <div class="text-rose-200 leading-relaxed">${escapeHtml(item.pitfall)}</div>
                     </div>` : ''}
                 </article>
             `).join('');

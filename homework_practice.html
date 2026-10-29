@@ -492,8 +492,10 @@ ${escapeHtml(item.intuition)}
                                 <span>📐 形式化嚴謹證明與推導 (Formal Proof & Steps)</span>
                                 <span class="text-[10px] text-slate-500 font-mono">LaTeX Supported</span>
                             </div>
-                            <div id="proof-text-${item.id}" class="proof-code-block text-slate-200 leading-relaxed">
+                            <div id="proof-text-${item.id}" class="text-slate-200 leading-relaxed space-y-2">
+                                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 font-sans whitespace-pre-wrap leading-relaxed shadow-sm">
 ${escapeHtml(item.proof)}
+                                </div>
                             </div>
                         </div>` : ''}
                     </div>
