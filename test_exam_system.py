@@ -44,7 +44,7 @@ for bad_mod in ["mod-5", "mod-6", "mod-7"]:
 print("Check 4 passed: js/data.js verified (out-of-scope modules excluded).")
 
 # 2. Check HTML files exist, have KaTeX, and have site-nav
-PAGES = ["index.html", "notes.html", "exam.html", "homework_practice.html", "hw1_summary.html", "proof_sheet.html"]
+PAGES = ["index.html", "notes.html", "exam.html", "homework_practice.html", "hw1_summary.html", "p1_summary.html", "proof_sheet.html"]
 for p in PAGES:
     assert os.path.exists(p), f"Missing page: {p}"
     with open(p, "r", encoding="utf-8") as f:
@@ -54,14 +54,14 @@ for p in PAGES:
     assert "--header-height" in html, f"--header-height CSS variable missing in {p}"
     assert "header-sync-script" in html, f"header-sync-script missing in {p}"
     assert "top-16" not in html, f"Legacy hardcoded top-16 found in {p} (causes button blocking)!"
-print("Check 5 passed: All 6 pages exist and have KaTeX, universal site-nav, and dynamic UI/UX header sync.")
+print("Check 5 passed: All 7 pages exist and have KaTeX, universal site-nav, and dynamic UI/UX header sync.")
 
-# 3. Check cross navigation across all 6 pages
+# 3. Check cross navigation across all 7 pages
 for p in PAGES:
     with open(p, "r", encoding="utf-8") as f:
         html = f.read()
     for target_page in PAGES:
         assert f'href="{target_page}"' in html, f"{p} missing link to {target_page}"
 
-print("Check 6 passed: Complete cross-navigation verified across all 6 pages!")
+print("Check 6 passed: Complete cross-navigation verified across all 7 pages!")
 print("All validation checks passed successfully!")
