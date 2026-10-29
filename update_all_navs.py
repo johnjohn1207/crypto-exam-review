@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Sync navigation across all 7 pages using the refined UI/UX navigation architecture.
+Sync navigation across all 8 pages using the refined UI/UX navigation architecture.
 """
 import re
 
@@ -13,11 +13,12 @@ PAGES = [
     {"file": "homework_practice.html", "id": "homework_practice"},
     {"file": "hw1_summary.html", "id": "hw1_summary"},
     {"file": "p1_summary.html", "id": "p1_summary"},
+    {"file": "mock_exam.html", "id": "mock_exam"},
     {"file": "proof_sheet.html", "id": "proof_sheet"}
 ]
 
 def make_nav(current_id):
-    def get_btn(page_id, href, title, label, is_amber=False, is_cyan=False, is_emerald=False):
+    def get_btn(page_id, href, title, label, is_amber=False, is_cyan=False, is_emerald=False, is_purple=False):
         is_active = (current_id == page_id)
         if is_active:
             if is_amber:
@@ -29,6 +30,9 @@ def make_nav(current_id):
             elif is_emerald:
                 border_bg = "border-emerald-500/70 bg-emerald-950/90 text-emerald-200 font-semibold shadow-sm"
                 dot = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>'
+            elif is_purple:
+                border_bg = "border-purple-500/70 bg-purple-950/90 text-purple-200 font-semibold shadow-sm"
+                dot = '<span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse shrink-0"></span>'
             else:
                 border_bg = "border-indigo-500/70 bg-indigo-950/90 text-indigo-200 font-semibold shadow-sm"
                 dot = '<span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shrink-0"></span>'
@@ -47,6 +51,7 @@ def make_nav(current_id):
     btn_hw = get_btn("homework_practice", "homework_practice.html", "切換至作業與練習全解", "作業練習全解")
     btn_hw1_summary = get_btn("hw1_summary", "hw1_summary.html", "切換至作業一核心概念與萬用證明攻略", "作業一攻略", is_cyan=True)
     btn_p1_summary = get_btn("p1_summary", "p1_summary.html", "切換至練習一核心考點精華與極簡證明攻略", "練習一攻略", is_emerald=True)
+    btn_mock_exam = get_btn("mock_exam", "mock_exam.html", "切換至期中全真模擬試卷（滿分100）", "模擬試卷", is_purple=True)
     btn_proof = get_btn("proof_sheet", "proof_sheet.html", "切換至必考形式證明一覽表", "證明一覽表", is_amber=True)
 
     github_svg = f'''<a href="{GITHUB_REPO_URL}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700/80 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
@@ -60,6 +65,7 @@ def make_nav(current_id):
                 {btn_hw}
                 {btn_hw1_summary}
                 {btn_p1_summary}
+                {btn_mock_exam}
                 {btn_proof}
                 {github_svg}
             </nav>'''
@@ -73,4 +79,4 @@ for page in PAGES:
         f.write(html)
     print(f"Synchronized nav in {page['file']}")
 
-print("All 7 navigation bars synchronized successfully!")
+print("All 8 navigation bars synchronized successfully!")
