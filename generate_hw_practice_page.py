@@ -41,6 +41,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
     <style>
+        :root { --header-height: 64px; }
         .katex { font-size: 1.05em; }
         .katex-display { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -154,7 +155,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </section>
 
     <!-- 控制面板：篩選器、純證明開關、視角模式與即時搜尋 -->
-    <section class="bg-slate-900/90 border-b border-slate-800 sticky top-16 z-40 px-4 py-3 shadow-md">
+    <section id="control-panel" class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky z-40 px-4 py-2.5 shadow-md transition-all" style="top: var(--header-height, 64px);">
         <div class="max-w-7xl mx-auto flex flex-col gap-3">
             
             <!-- 第一排：題目來源分頁與「只看證明題」開關 -->
@@ -678,6 +679,21 @@ ${escapeHtml(item.proof)}
             document.getElementById('count-p1_c').textContent = `(${counts.p1_c})`;
             document.getElementById('proof-count').textContent = counts.proof;
         }
+    </script>
+    <script id="header-sync-script">
+    function syncHeaderHeight() {
+        const header = document.getElementById('site-header') || document.querySelector('header');
+        if (header) {
+            const h = Math.ceil(header.getBoundingClientRect().height);
+            document.documentElement.style.setProperty('--header-height', `${h}px`);
+        }
+    }
+    window.addEventListener('resize', syncHeaderHeight);
+    window.addEventListener('orientationchange', syncHeaderHeight);
+    document.addEventListener('DOMContentLoaded', syncHeaderHeight);
+    setTimeout(syncHeaderHeight, 50);
+    setTimeout(syncHeaderHeight, 200);
+    setTimeout(syncHeaderHeight, 600);
     </script>
 </body>
 </html>

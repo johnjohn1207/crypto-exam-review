@@ -42,12 +42,32 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
+
+    <style id="custom-ui-ux-enhancements">
+        :root {
+            --header-height: 64px;
+        }
+        .katex { font-size: 1.05em; }
+        .katex-display { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .sticky-control-panel {
+            position: sticky;
+            top: var(--header-height, 64px);
+            z-index: 40;
+        }
+    </style>
+
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-white">
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between py-2.5 md:py-0 md:h-16 gap-2.5 md:gap-4">
+        <!-- Top Global Header -->
+    <header id="site-header" class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between min-h-[3.75rem] py-2 gap-2.5 md:gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-md font-mono text-sm shrink-0">
                     Ψ
@@ -56,49 +76,66 @@
                     <h1 class="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-2">
                         現代與後量子密碼學導論
                         <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 hidden sm:inline-block">
-                            Part 1: Provable Security
+                            考綱範圍：投影片 1-5 Sec 1
                         </span>
                     </h1>
                     <p class="text-[11px] text-slate-400 font-mono hidden md:block">Introduction to Modern and Post-quantum Cryptography Review Portal</p>
                 </div>
             </div>
 
-            <!-- Tab Buttons -->
-            <nav id="site-nav" class="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-0.5">
-                <button onclick="switchTab('summaries')" data-tab="summaries"
-                    class="nav-tab-btn px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-lg border border-transparent transition flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                    <span>📖 章節重點</span>
-                </button>
-                <button onclick="switchTab('playgrounds')" data-tab="playgrounds"
-                    class="nav-tab-btn px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-lg border border-transparent transition flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                    <span>⚙️ 互動實驗室</span>
-                </button>
-                <button onclick="switchTab('quizzes')" data-tab="quizzes"
-                    class="nav-tab-btn px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-lg border border-transparent transition flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                    <span>✍️ 題目練習</span>
-                </button>
-                <button onclick="switchTab('glossary')" data-tab="glossary"
-                    class="nav-tab-btn px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-lg border border-transparent transition flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                    <span>🔍 名詞檢索</span>
-                </button>
-    <a href="notes.html" class="ml-2 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition flex items-center gap-1 shadow shrink-0" title="切換至講義筆記">
-                    <span>📖 講義筆記</span>
+            <!-- Global Portals Navigation -->
+            <nav id="site-nav" class="flex items-center gap-1 sm:gap-1.5 text-xs overflow-x-auto no-scrollbar py-0.5">
+                <a href="index.html" class="px-2.5 py-1.5 rounded-lg border border-indigo-500/70 bg-indigo-950/90 text-indigo-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至互動實驗室與核心教材總覽">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shrink-0"></span>
+                    <span>互動總覽</span>
                 </a>
-                <a href="exam.html" class="ml-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition flex items-center gap-1 shadow shrink-0" title="切換至考點變化題解析">
-                    <span>🎯 考點變化題</span>
+                <a href="notes.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至精華講義閱讀手冊">
+                    <span>講義筆記</span>
                 </a>
-                <a href="homework_practice.html" class="ml-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition flex items-center gap-1 shadow shrink-0" title="切換至作業與練習全解">
-                    <span>📝 作業練習全解</span>
+                <a href="exam.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至考點變化題解析">
+                    <span>考點變化題</span>
                 </a>
-                <a href="proof_sheet.html" class="ml-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-amber-950/80 border border-amber-700/60 text-amber-300 hover:bg-amber-900 transition flex items-center gap-1 shadow shrink-0" title="切換至必考形式證明一覽表">
-                    <span>📐 證明一覽表</span>
+                <a href="homework_practice.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至作業與練習全解">
+                    <span>作業練習全解</span>
                 </a>
-                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
+                <a href="proof_sheet.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至必考形式證明一覽表">
+                    <span>證明一覽表</span>
+                </a>
+                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700/80 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
                 </a>
             </nav>
         </div>
     </header>
+
+    <!-- Secondary Interactive Tools Sub-Navigation Bar -->
+    <div id="sub-nav-bar" class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky z-30 px-4 py-2 shadow-sm transition-all" style="top: var(--header-height, 64px);">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-1.5 p-1 bg-slate-950/90 rounded-xl border border-slate-800 text-xs font-medium">
+                <button onclick="switchTab('summaries')" data-tab="summaries"
+                    class="nav-tab-btn px-3 py-1.5 rounded-lg border border-transparent transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>章節重點</span>
+                </button>
+                <button onclick="switchTab('playgrounds')" data-tab="playgrounds"
+                    class="nav-tab-btn px-3 py-1.5 rounded-lg border border-transparent transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>互動實驗室</span>
+                </button>
+                <button onclick="switchTab('quizzes')" data-tab="quizzes"
+                    class="nav-tab-btn px-3 py-1.5 rounded-lg border border-transparent transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>題目練習</span>
+                </button>
+                <button onclick="switchTab('glossary')" data-tab="glossary"
+                    class="nav-tab-btn px-3 py-1.5 rounded-lg border border-transparent transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>名詞檢索</span>
+                </button>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs font-mono">
+                <span class="px-2.5 py-1 rounded-lg bg-cyan-950/70 text-cyan-300 border border-cyan-800/60 font-semibold">
+                    期中複習專用・純考綱範圍（Ch. 1-8）
+                </span>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content Workspace -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -107,7 +144,7 @@
         <section id="view-summaries" class="tab-view">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
                 <!-- Left Sidebar: Modules List -->
-                <aside class="lg:col-span-1 space-y-3 sticky top-20">
+                <aside class="lg:col-span-1 space-y-3 sticky" style="top: calc(var(--header-height, 64px) + 54px);">
                     <div class="flex items-center justify-between px-1">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">知識模組導覽</span>
                         <span class="text-[11px] text-slate-500 font-mono">6 個章節</span>
@@ -141,7 +178,7 @@
         <section id="view-quizzes" class="tab-view hidden">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
                 <!-- Left Filter & Stats -->
-                <aside class="lg:col-span-1 sticky top-20" id="quiz-filter-container">
+                <aside class="lg:col-span-1 sticky" style="top: calc(var(--header-height, 64px) + 54px);" id="quiz-filter-container">
                     <!-- Populated by app.js -->
                 </aside>
 
@@ -173,5 +210,22 @@
     <script src="js/data.js"></script>
     <script src="js/playgrounds.js"></script>
     <script src="js/app.js"></script>
+
+    <script id="header-sync-script">
+    function syncHeaderHeight() {
+        const header = document.getElementById('site-header') || document.querySelector('header');
+        if (header) {
+            const h = Math.ceil(header.getBoundingClientRect().height);
+            document.documentElement.style.setProperty('--header-height', `${h}px`);
+        }
+    }
+    window.addEventListener('resize', syncHeaderHeight);
+    window.addEventListener('orientationchange', syncHeaderHeight);
+    document.addEventListener('DOMContentLoaded', syncHeaderHeight);
+    setTimeout(syncHeaderHeight, 50);
+    setTimeout(syncHeaderHeight, 200);
+    setTimeout(syncHeaderHeight, 600);
+    </script>
+
 </body>
 </html>

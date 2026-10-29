@@ -66,77 +66,101 @@
             .note-card { break-inside: avoid; border: 1px solid #ccc !important; background: transparent !important; }
         }
     </style>
+
+    <style id="custom-ui-ux-enhancements">
+        :root {
+            --header-height: 64px;
+        }
+        .katex { font-size: 1.05em; }
+        .katex-display { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .sticky-control-panel {
+            position: sticky;
+            top: var(--header-height, 64px);
+            z-index: 40;
+        }
+    </style>
+
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200">
 
     <!-- Top Reading Progress Bar -->
     <div id="reading-progress-bar" style="width: 0%;"></div>
 
-    <!-- Header Toolbar -->
-    <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/90 border-b border-slate-800 transition-colors duration-200" id="main-header">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-            
-            <!-- Left: Brand / Title -->
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="flex items-center gap-2 group text-slate-300 hover:text-white transition">
-                    <span class="w-7 h-7 rounded-lg bg-cyan-600/30 border border-cyan-500/50 flex items-center justify-center font-mono font-bold text-cyan-300 text-xs">
-                        📖
+        <!-- Header Toolbar -->
+    <header id="site-header" class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/95 border-b border-slate-800 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+            <!-- Row 1: Brand & Global Nav -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5 pb-2 border-b border-slate-800/60">
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="flex items-center gap-2 group text-slate-300 hover:text-white transition">
+                        <span class="w-7 h-7 rounded-lg bg-cyan-600/30 border border-cyan-500/50 flex items-center justify-center font-mono font-bold text-cyan-300 text-xs">
+                            Ψ
+                        </span>
+                        <span class="font-bold text-sm tracking-tight">現代與後量子密碼學導論</span>
+                    </a>
+                    <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 hidden sm:inline-block">
+                        精華講義閱讀手冊（Ch. 1-8）
                     </span>
-                    <span class="font-bold text-sm tracking-tight hidden sm:inline-block">密碼學精華閱讀手冊</span>
-                </a>
-                <span class="text-xs text-slate-500 hidden md:inline">| 全教材 8 大章節精煉版</span>
-            </div>
-
-            <!-- Center: Search Input -->
-            <div class="relative w-44 sm:w-64">
-                <input type="text" id="quick-search" placeholder="搜尋筆記重點（如 PRG, Shannon）..."
-                    class="w-full bg-slate-950/80 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
-            </div>
-
-            <!-- Right: Reader Settings & Switch -->
-            <div class="flex items-center gap-2">
-                <!-- Font size controls -->
-                <div class="flex items-center border border-slate-700 rounded-lg overflow-hidden bg-slate-950 text-xs text-slate-400">
-                    <button id="font-dec-btn" class="px-2 py-1 hover:bg-slate-800 hover:text-slate-200 transition" title="縮小字體">A-</button>
-                    <button id="font-inc-btn" class="px-2 py-1 hover:bg-slate-800 hover:text-slate-200 transition" title="放大字體">A+</button>
                 </div>
 
-                <!-- Theme switcher -->
-                <div class="flex items-center border border-slate-700 rounded-lg overflow-hidden bg-slate-950 text-xs">
-                    <button id="theme-dark-btn" class="px-2.5 py-1 text-cyan-400 bg-slate-800 transition" title="夜間深色">深色</button>
-                    <button id="theme-sepia-btn" class="px-2.5 py-1 text-slate-400 hover:text-slate-200 transition" title="羊皮紙暖色">紙張</button>
-                    <button id="theme-light-btn" class="px-2.5 py-1 text-slate-400 hover:text-slate-200 transition" title="純白護眼">明亮</button>
-                </div>
-
-                <!-- Print button -->
-                <button onclick="window.print()" class="hidden lg:flex items-center gap-1 border border-slate-700 hover:border-slate-500 px-2.5 py-1 rounded-lg text-xs text-slate-300 transition" title="列印或匯出為 PDF">
-                    <span>🖨️ 列印</span>
-                </button>
-
-                <!-- Back to Playground Link -->
-                <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium px-2.5 py-1 rounded-lg text-xs transition flex items-center gap-1 shadow">
-                    <span>⚙️ 互動平台</span>
+                <!-- Global Nav -->
+                <nav id="site-nav" class="flex items-center gap-1 sm:gap-1.5 text-xs overflow-x-auto no-scrollbar py-0.5">
+                <a href="index.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至互動實驗室與核心教材總覽">
+                    <span>互動總覽</span>
                 </a>
-
-                <!-- Link to Exam Page -->
-                <a href="exam.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium px-2.5 py-1 rounded-lg text-xs transition flex items-center gap-1 shadow">
-                    <span>🎯 考點變化題</span>
+                <a href="notes.html" class="px-2.5 py-1.5 rounded-lg border border-indigo-500/70 bg-indigo-950/90 text-indigo-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至精華講義閱讀手冊">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shrink-0"></span>
+                    <span>講義筆記</span>
                 </a>
-
-                <!-- Link to HW & Practice Page -->
-                <a href="homework_practice.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium px-2.5 py-1 rounded-lg text-xs transition flex items-center gap-1 shadow">
-                    <span>📝 作業練習全解</span>
+                <a href="exam.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至考點變化題解析">
+                    <span>考點變化題</span>
                 </a>
-
-                <!-- Link to Proof Sheet Page -->
-                <a href="proof_sheet.html" class="bg-amber-600 hover:bg-amber-500 text-white font-medium px-2.5 py-1 rounded-lg text-xs transition flex items-center gap-1 shadow">
-                    <span>📐 證明一覽表</span>
+                <a href="homework_practice.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至作業與練習全解">
+                    <span>作業練習全解</span>
                 </a>
-
-                <!-- GitHub Repo Link -->
-                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0" title="在 GitHub 查看原始碼">
+                <a href="proof_sheet.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至必考形式證明一覽表">
+                    <span>證明一覽表</span>
+                </a>
+                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700/80 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
                 </a>
+            </nav>
+            </div>
+
+            <!-- Row 2: Reading Utilities -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs">
+                <!-- Search -->
+                <div class="relative w-full sm:w-72">
+                    <input type="text" id="quick-search" placeholder="搜尋筆記重點（如 PRG, Shannon）..."
+                        class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center gap-3 ml-auto">
+                    <!-- Font size controls -->
+                    <div class="flex items-center border border-slate-700 rounded-lg overflow-hidden bg-slate-950 text-xs text-slate-400">
+                        <button id="font-dec-btn" class="px-2.5 py-1 hover:bg-slate-800 hover:text-slate-200 transition" title="縮小字體">A-</button>
+                        <button id="font-inc-btn" class="px-2.5 py-1 hover:bg-slate-800 hover:text-slate-200 transition" title="放大字體">A+</button>
+                    </div>
+
+                    <!-- Theme switcher -->
+                    <div class="flex items-center border border-slate-700 rounded-lg overflow-hidden bg-slate-950 text-xs">
+                        <button id="theme-dark-btn" class="px-2.5 py-1 text-cyan-400 bg-slate-800 transition" title="夜間深色">深色</button>
+                        <button id="theme-sepia-btn" class="px-2.5 py-1 text-slate-400 hover:text-slate-200 transition" title="羊皮紙暖色">紙張</button>
+                        <button id="theme-light-btn" class="px-2.5 py-1 text-slate-400 hover:text-slate-200 transition" title="純白護眼">明亮</button>
+                    </div>
+
+                    <!-- Print button -->
+                    <button onclick="window.print()" class="hidden sm:flex items-center gap-1 border border-slate-700 hover:border-slate-500 px-2.5 py-1 rounded-lg text-xs text-slate-300 transition" title="列印或匯出為 PDF">
+                        <span>列印</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -145,7 +169,7 @@
     <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-8">
         
         <!-- Left Sidebar: Table of Contents -->
-        <aside class="w-64 shrink-0 hidden lg:block sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto pr-2" id="toc-sidebar">
+        <aside class="w-64 shrink-0 hidden lg:block sticky self-start max-h-[calc(100vh-var(--header-height,64px)-32px)]" style="top: calc(var(--header-height, 64px) + 16px);" overflow-y-auto pr-2" id="toc-sidebar">
             <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
                 <span>章節目錄導覽</span>
                 <span class="text-[10px] text-slate-500 font-mono">8 MODULES</span>
@@ -161,7 +185,7 @@
         </main>
 
         <!-- Right Sidebar: On this Page Mini TOC (visible on wide screens) -->
-        <aside class="w-48 shrink-0 hidden xl:block sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto pl-2 border-l border-slate-800 text-xs" id="sub-toc-sidebar">
+        <aside class="w-48 shrink-0 hidden xl:block sticky self-start max-h-[calc(100vh-var(--header-height,64px)-32px)]" style="top: calc(var(--header-height, 64px) + 16px);" overflow-y-auto pl-2 border-l border-slate-800 text-xs" id="sub-toc-sidebar">
             <div class="font-bold text-slate-400 mb-3 uppercase tracking-wider text-[11px]">本章小節導覽</div>
             <div id="sub-toc-list" class="space-y-2 text-slate-500">
                 <!-- Populated when scrolling/clicking -->
@@ -499,5 +523,22 @@
             ReaderApp.init();
         });
     </script>
+
+    <script id="header-sync-script">
+    function syncHeaderHeight() {
+        const header = document.getElementById('site-header') || document.querySelector('header');
+        if (header) {
+            const h = Math.ceil(header.getBoundingClientRect().height);
+            document.documentElement.style.setProperty('--header-height', `${h}px`);
+        }
+    }
+    window.addEventListener('resize', syncHeaderHeight);
+    window.addEventListener('orientationchange', syncHeaderHeight);
+    document.addEventListener('DOMContentLoaded', syncHeaderHeight);
+    setTimeout(syncHeaderHeight, 50);
+    setTimeout(syncHeaderHeight, 200);
+    setTimeout(syncHeaderHeight, 600);
+    </script>
+
 </body>
 </html>
