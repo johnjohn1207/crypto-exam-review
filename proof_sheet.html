@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>期中考必考形式證明精華一覽表 | 現代密碼學（範圍至 1-5 Section 1）</title>
+    <title>期中考必考形式證明精華一覽表 | 現代密碼學（直觀大腦模型與速記版）</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -42,34 +42,23 @@
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
-        .proof-code-block {
-            font-family: "JetBrains Mono", monospace;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- 全域頂部導覽列 -->
-    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between py-2.5 md:py-0 md:h-16 gap-2.5 md:gap-4">
+    <!-- 全域頂部導覽列 (Dynamic CSS variable: --header-height) -->
+    <header id="site-header" class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 transition-all duration-200">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-                <a href="index.html" class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-md font-mono text-sm shrink-0">
-                    Ψ
+                <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition group">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 group-hover:scale-125 transition-transform shadow-sm shadow-amber-400/50"></span>
+                    <span class="font-bold text-white tracking-wide text-sm sm:text-base">現代密碼學期中考複習平台</span>
                 </a>
-                <div>
-                    <h1 class="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-2">
-                        現代與後量子密碼學導論
-                        <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800 hidden sm:inline-block">
-                            考試範圍：截至 1-5 Section 1
-                        </span>
-                    </h1>
-                    <p class="text-[11px] text-slate-400 font-mono hidden md:block">Master Cryptographic Proofs Cheat Sheet</p>
-                </div>
+                <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-amber-500/10 text-amber-300 border border-amber-500/30">
+                    範圍至 1-5 Sec 1
+                </span>
             </div>
-
-            <!-- 跨頁整合導覽列 -->
+            
             <nav id="site-nav" class="flex items-center gap-1 sm:gap-1.5 text-xs overflow-x-auto no-scrollbar py-0.5">
                 <a href="index.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="切換至互動實驗室與核心教材總覽">
                     <span>互動總覽</span>
@@ -99,17 +88,17 @@
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="space-y-2">
                 <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
-                    <span>📐 期中考必備武器庫</span>
+                    <span>期中考必備武器庫</span>
                     <span class="text-slate-600">|</span>
-                    <span>嚴格限定至 1-5 Section 1</span>
+                    <span>直觀大腦模型與極簡分步推導</span>
                     <span class="text-slate-600">|</span>
-                    <span class="text-emerald-400 font-bold">27 題核心證明歸納</span>
+                    <span class="text-emerald-400 font-bold">27 題核心證明全收錄</span>
                 </div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                     期中考必考形式證明精華一覽表
                 </h2>
                 <p class="text-slate-400 text-sm max-w-3xl leading-relaxed">
-                    本一覽表專門針對考試中佔分最高的形式化證明題（Formal Proofs）進行結構化整理。已依照出題範圍精確裁切至<strong>投影片 1-5 Section 1（Ch. 1, 2, 4, 5, 6, 7, 8）</strong>，並完全排除尚未教授之 Ch. 9（選擇密文攻擊 CCA、Padding Oracle、認證加密 AE）等補充題材，防止備考誤導。
+                    本一覽表專門針對考試中佔分最高的形式化證明題進行結構化重構。已依照出題範圍精確裁切至<strong>投影片 1-5 Section 1（Ch. 1, 2, 4, 5, 6, 7, 8）</strong>，並完全排除尚未教授之 Ch. 9（CCA、Padding Oracle、AE）。全篇採用<strong>「秒懂大腦模型」</strong>、<strong>「簡明白話分步推導」</strong>與<strong>「考場一秒速記公式」</strong>，去除晦澀抽象符號，步步因果清晰，兼顧直觀好懂與考場嚴謹得分。
                 </p>
             </div>
 
@@ -120,16 +109,16 @@
                     <div class="text-xl font-bold text-amber-400">27</div>
                 </div>
                 <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
-                    <div class="text-xs text-slate-400">考試邊界</div>
-                    <div class="text-xl font-bold text-indigo-400">1.5 Sec 1</div>
+                    <div class="text-xs text-slate-400">大腦模型</div>
+                    <div class="text-xl font-bold text-emerald-400">100%</div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
+                    <div class="text-xs text-slate-400">速記公式</div>
+                    <div class="text-xl font-bold text-cyan-400">27 條</div>
                 </div>
                 <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
                     <div class="text-xs text-slate-400">排除非範圍</div>
                     <div class="text-xl font-bold text-rose-400">100%</div>
-                </div>
-                <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
-                    <div class="text-xs text-slate-400">形式化推導</div>
-                    <div class="text-xl font-bold text-cyan-400">LaTeX</div>
                 </div>
             </div>
         </div>
@@ -164,10 +153,10 @@
                 <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs shrink-0">
                     <span class="text-slate-500 text-[11px] px-1.5 font-mono">展示模式:</span>
                     <button onclick="setViewLayout('table')" id="layout-table" class="layout-btn px-2.5 py-1 rounded-lg transition bg-amber-600 text-white font-medium" title="精華矩陣一覽表（快速橫向比較）">
-                        📊 矩陣一覽表
+                        矩陣一覽表
                     </button>
                     <button onclick="setViewLayout('cards')" id="layout-cards" class="layout-btn px-2.5 py-1 rounded-lg transition text-slate-400 hover:text-white" title="詳細推導卡片（逐步展開推導式）">
-                        🗂️ 詳細推導卡片
+                        詳細推導卡片
                     </button>
                 </div>
             </div>
@@ -196,7 +185,7 @@
 
                 <!-- 搜尋框 -->
                 <div class="relative w-full sm:w-64 shrink-0">
-                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="搜尋命題、手法、區分者、定理..."
+                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="搜尋命題、手法、大腦模型、公式..."
                         class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 pl-8 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 transition">
                     <svg class="w-3.5 h-3.5 absolute left-2.5 top-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -224,13 +213,13 @@
             <table class="w-full text-left text-xs border-collapse">
                 <thead>
                     <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 font-mono">
-                        <th class="py-3.5 px-4 font-semibold w-16 text-center">編號</th>
-                        <th class="py-3.5 px-4 font-semibold w-36">主題與題號來源</th>
-                        <th class="py-3.5 px-4 font-semibold w-28">章節</th>
-                        <th class="py-3.5 px-4 font-semibold w-36">核心證明手法</th>
-                        <th class="py-3.5 px-4 font-semibold">目標命題 (Proposition)</th>
-                        <th class="py-3.5 px-4 font-semibold">關鍵推導步驟 (Key Steps)</th>
-                        <th class="py-3.5 px-4 font-semibold w-32 text-center">操作</th>
+                        <th class="py-3.5 px-4 font-semibold w-14 text-center">編號</th>
+                        <th class="py-3.5 px-4 font-semibold w-40">主題與題號來源</th>
+                        <th class="py-3.5 px-4 font-semibold w-24">章節</th>
+                        <th class="py-3.5 px-4 font-semibold w-36">核心手法</th>
+                        <th class="py-3.5 px-4 font-semibold min-w-[280px]">目標命題與大腦模型</th>
+                        <th class="py-3.5 px-4 font-semibold min-w-[420px]">簡易分步推導 (Step-by-Step)</th>
+                        <th class="py-3.5 px-4 font-semibold w-28 text-center">操作</th>
                     </tr>
                 </thead>
                 <tbody id="proof-table-body" class="divide-y divide-slate-800/80">
@@ -304,10 +293,10 @@
                 // 2. 手法過濾
                 if (currentTech !== 'all') {
                     const tech = (item.technique || '').toLowerCase();
-                    if (currentTech === 'contradiction' && !tech.includes('反證') && !tech.includes('界限')) return false;
+                    if (currentTech === 'contradiction' && !tech.includes('反證') && !tech.includes('界限') && !tech.includes('抽屜')) return false;
                     if (currentTech === 'distinguisher' && !tech.includes('區分') && !tech.includes('優勢') && !tech.includes('測試')) return false;
-                    if (currentTech === 'differential' && !tech.includes('差分') && !tech.includes('消除')) return false;
-                    if (currentTech === 'hybrid' && !tech.includes('混淆') && !tech.includes('hybrid')) return false;
+                    if (currentTech === 'differential' && !tech.includes('差分') && !tech.includes('消除') && !tech.includes('碰撞')) return false;
+                    if (currentTech === 'hybrid' && !tech.includes('混淆') && !tech.includes('hybrid') && !tech.includes('中繼')) return false;
                 }
                 // 3. 關鍵字搜尋
                 if (currentSearchQuery.trim() !== '') {
@@ -316,9 +305,11 @@
                     const sourceMatch = (item.source || '').toLowerCase().includes(q);
                     const techMatch = (item.technique || '').toLowerCase().includes(q);
                     const targetMatch = (item.target || '').toLowerCase().includes(q);
+                    const intuitionMatch = (item.intuition || '').toLowerCase().includes(q);
+                    const formulaMatch = (item.formula_capsule || '').toLowerCase().includes(q);
                     const stepsMatch = (item.steps || []).join(' ').toLowerCase().includes(q);
                     const pitfallMatch = (item.pitfall || '').toLowerCase().includes(q);
-                    if (!titleMatch && !sourceMatch && !techMatch && !targetMatch && !stepsMatch && !pitfallMatch) {
+                    if (!titleMatch && !sourceMatch && !techMatch && !targetMatch && !intuitionMatch && !formulaMatch && !stepsMatch && !pitfallMatch) {
                         return false;
                     }
                 }
@@ -366,7 +357,7 @@
             }
         }
 
-                // 渲染表格視角（完整展示所有推導步驟，無省略截斷）
+        // 渲染表格視角（含直觀大腦模型與速記公式）
         function renderTableView(items) {
             const tbody = document.getElementById('proof-table-body');
             tbody.innerHTML = items.map((item, idx) => `
@@ -382,8 +373,20 @@
                     <td class="py-3.5 px-4">
                         <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono">${item.technique}</span>
                     </td>
-                    <td class="py-3.5 px-4 text-slate-300 text-xs font-sans leading-relaxed min-w-[240px]">
-                        ${escapeHtml(item.target)}
+                    <td class="py-3.5 px-4 text-slate-300 text-xs font-sans leading-relaxed min-w-[280px]">
+                        <div class="space-y-2">
+                            <div class="text-slate-200 text-xs">${escapeHtml(item.target)}</div>
+                            ${item.intuition ? `
+                            <div class="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-200 leading-relaxed font-sans shadow-inner">
+                                <span class="font-bold text-emerald-400 font-mono block text-[10px] mb-0.5">直觀秒懂大腦模型：</span>
+                                ${escapeHtml(item.intuition)}
+                            </div>` : ''}
+                            ${item.formula_capsule ? `
+                            <div class="p-2 rounded-lg bg-amber-950/30 border border-amber-500/30 text-xs text-amber-200 font-mono overflow-x-auto shadow-inner">
+                                <span class="font-bold text-amber-400 block text-[10px] mb-0.5">考場速記：</span>
+                                ${escapeHtml(item.formula_capsule)}
+                            </div>` : ''}
+                        </div>
                     </td>
                     <td class="py-3.5 px-4 text-slate-300 text-xs font-sans leading-relaxed min-w-[420px]">
                         <div class="space-y-2">
@@ -396,7 +399,7 @@
                                     <span class="font-bold text-amber-300 font-mono text-[11px] block mb-1">
                                         ${escapeHtml(stepTag)}
                                     </span>
-                                    <div class="text-slate-200 leading-relaxed font-sans">
+                                    <div class="text-slate-200 leading-relaxed font-sans whitespace-pre-wrap">
                                         ${escapeHtml(stepBody)}
                                     </div>
                                 </div>
@@ -413,7 +416,7 @@
             `).join('');
         }
 
-                // 渲染卡片視角（層級分明之詳細推導結構）
+        // 渲染卡片視角（秒懂大腦模型置頂、考場速記公式、簡易分步推導）
         function renderCardsView(items) {
             const container = document.getElementById('cards-view-container');
             container.innerHTML = items.map(item => `
@@ -433,13 +436,26 @@
                         <span>${item.title}</span>
                     </h3>
 
+                    <!-- 直觀秒懂大腦模型（置頂大亮點） -->
+                    ${item.intuition ? `
+                    <div class="bg-gradient-to-r from-emerald-950/50 via-slate-900/60 to-slate-900/40 border-l-4 border-emerald-400 p-4 rounded-r-xl shadow-md space-y-1.5">
+                        <div class="font-bold text-emerald-300 font-mono text-xs sm:text-sm flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <span>直觀秒懂大腦模型（Intuitive Mental Model）</span>
+                            </span>
+                            <span class="text-[10px] text-emerald-400/90 font-mono bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">白話直觀理解</span>
+                        </div>
+                        <div class="text-emerald-100 text-xs sm:text-sm leading-relaxed font-sans">${escapeHtml(item.intuition)}</div>
+                    </div>` : ''}
+
                     <!-- 目標命題與核心手法 -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div class="md:col-span-2 bg-indigo-950/20 border-l-4 border-indigo-500 p-3.5 rounded-r-xl text-xs sm:text-sm">
                             <div class="font-bold text-indigo-300 font-mono mb-1 flex items-center gap-1.5">
                                 <span>待證命題（Formal Proposition）</span>
                             </div>
-                            <div class="text-slate-200 leading-relaxed">${escapeHtml(item.target)}</div>
+                            <div class="text-slate-200 leading-relaxed font-sans">${escapeHtml(item.target)}</div>
                         </div>
                         <div class="bg-amber-950/20 border-l-4 border-amber-500 p-3.5 rounded-r-xl text-xs sm:text-sm">
                             <div class="font-bold text-amber-300 font-mono mb-1 flex items-center gap-1.5">
@@ -449,14 +465,27 @@
                         </div>
                     </div>
 
-                    <!-- 關鍵嚴謹推導步驟（每步獨立卡片） -->
+                    <!-- 考場一秒速記公式膠囊 -->
+                    ${item.formula_capsule ? `
+                    <div class="bg-gradient-to-r from-amber-950/30 via-slate-900/40 to-slate-900/30 border border-amber-500/40 rounded-xl p-3.5 shadow-sm space-y-1.5">
+                        <div class="font-bold text-amber-300 font-mono text-xs flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>考場一秒速記公式膠囊（Core Formula Capsule）</span>
+                            </span>
+                            <span class="text-[10px] text-amber-400/90 font-mono bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30">核心得分式</span>
+                        </div>
+                        <div class="text-amber-100 font-mono text-xs sm:text-sm bg-slate-950/85 px-3.5 py-2.5 rounded-lg border border-amber-500/20 overflow-x-auto">${escapeHtml(item.formula_capsule)}</div>
+                    </div>` : ''}
+
+                    <!-- 關鍵簡易推導步驟（每步獨立卡片） -->
                     <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 sm:p-5 text-xs sm:text-sm shadow-inner space-y-3">
                         <div class="font-bold text-amber-300 font-mono flex items-center justify-between pb-2.5 border-b border-slate-800/80">
                             <span class="flex items-center gap-2">
-                                <span>嚴謹形式推導完整步驟（Step-by-Step Formal Proof）</span>
-                                <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] border border-amber-500/40 font-mono">完整推導閉環</span>
+                                <span>簡易形式推導完整步驟（Step-by-Step Formal Proof）</span>
+                                <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] border border-amber-500/40 font-mono">步步因果明確</span>
                             </span>
-                            <span class="text-[11px] text-slate-400 font-mono">共 ${item.steps.length} 個詳細推導環節</span>
+                            <span class="text-[11px] text-slate-400 font-mono">共 ${item.steps.length} 個推導環節</span>
                         </div>
                         <div class="space-y-3">
                             ${item.steps.map((s, sIdx) => {
@@ -464,14 +493,14 @@
                                 const stepTag = parts.length > 1 ? parts[0] + '】' : `【步驟 ${sIdx + 1}】`;
                                 const stepBody = parts.length > 1 ? parts.slice(1).join('】') : s;
                                 return `
-                                <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/90 shadow-sm space-y-1.5">
+                                <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/90 shadow-sm space-y-2">
                                     <div class="flex items-center justify-between">
                                         <span class="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold">
                                             ${escapeHtml(stepTag)}
                                         </span>
                                         <span class="text-[10px] font-mono text-slate-500">環節 ${sIdx + 1} / ${item.steps.length}</span>
                                     </div>
-                                    <div class="text-slate-200 text-xs sm:text-sm leading-relaxed font-sans pt-1">
+                                    <div class="text-slate-200 text-xs sm:text-sm leading-relaxed font-sans whitespace-pre-wrap">
                                         ${escapeHtml(stepBody)}
                                     </div>
                                 </div>
@@ -484,7 +513,7 @@
                     ${item.algorithm ? `
                     <div class="bg-cyan-950/20 border-l-4 border-cyan-500 p-3.5 rounded-r-xl text-xs sm:text-sm">
                         <div class="font-bold text-cyan-300 font-mono mb-1 flex items-center gap-1.5">
-                            <span>攻擊區分者演算法或判定準則（Adversary Algorithm & Criterion）</span>
+                            <span>攻擊區分者演算法或破譯準則（Adversary Algorithm & Criterion）</span>
                         </div>
                         <div class="text-cyan-100 font-mono whitespace-pre-wrap leading-relaxed">${escapeHtml(item.algorithm)}</div>
                     </div>` : ''}
@@ -574,7 +603,29 @@
             const item = PROOF_SHEET_DATA.find(x => x.id === id);
             if (!item) return;
 
-            const textToCopy = `【${item.title}】(${item.chapter}・${item.source})\n\n[核心手法]\n${item.technique}\n\n[目標命題]\n${item.target}\n\n[推導步驟]\n${item.steps.join('\n')}\n\n[演算法/準則]\n${item.algorithm}\n\n[致命陷阱]\n${item.pitfall}`;
+            const textToCopy = `【${item.title}】(${item.chapter}・${item.source})
+
+[直觀大腦模型]
+${item.intuition || ''}
+
+[待證命題]
+${item.target}
+
+[核心手法]
+${item.technique}
+
+[考場速記公式]
+${item.formula_capsule || ''}
+
+[推導步驟]
+${item.steps.join('
+')}
+
+[演算法/破譯準則]
+${item.algorithm || ''}
+
+[致命陷阱]
+${item.pitfall || ''}`;
             navigator.clipboard.writeText(textToCopy).then(() => {
                 alert(`已成功複製【${item.title}】的完整形式證明至剪貼簿！`);
             }).catch(err => {
@@ -595,25 +646,29 @@
         }
 
         function updateFilterSummary() {
-            let parts = [];
-            if (currentChapter === 'all') parts.push('全部章節證明');
-            else if (currentChapter === 'ch1-2') parts.push('Ch 1-2 完善保密');
-            else if (currentChapter === 'ch4-5') parts.push('Ch 4-5 計算安全');
-            else if (currentChapter === 'ch6-7') parts.push('Ch 6-7 PRF/PRP');
-            else if (currentChapter === 'ch8') parts.push('Ch 8 CPA 安全');
+            const chapNames = {
+                'all': '全部章節證明',
+                'ch1-2': 'Ch 1-2 完善保密與函式庫',
+                'ch4-5': 'Ch 4-5 計算安全與 PRG',
+                'ch6-7': 'Ch 6-7 PRF/PRP 與 Feistel',
+                'ch8': 'Ch 8 選擇明文安全 CPA'
+            };
+            const techNames = {
+                'all': '全部手法',
+                'contradiction': '反證法與空間極限',
+                'distinguisher': '區分者歸約與優勢',
+                'differential': '差分不變量破壞',
+                'hybrid': '混淆論證技術'
+            };
 
+            let desc = chapNames[currentChapter];
             if (currentTech !== 'all') {
-                if (currentTech === 'contradiction') parts.push('反證法/界限');
-                if (currentTech === 'distinguisher') parts.push('區分者歸約');
-                if (currentTech === 'differential') parts.push('差分不變量');
-                if (currentTech === 'hybrid') parts.push('混淆論證');
+                desc += ` + ${techNames[currentTech]}`;
             }
-
             if (currentSearchQuery.trim() !== '') {
-                parts.push(`包含關鍵字 "${currentSearchQuery.trim()}"`);
+                desc += ` + 搜尋「${currentSearchQuery.trim()}」`;
             }
-
-            document.getElementById('current-filter-desc').textContent = parts.join(' ・ ');
+            document.getElementById('current-filter-desc').textContent = desc;
         }
 
         function updateCounts() {
