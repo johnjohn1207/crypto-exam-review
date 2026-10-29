@@ -714,26 +714,43 @@ VARIATION_EXAMS = [
 
 print(f"Loaded {len(VARIATION_EXAMS)} variation exams.")
 
+# 嚴格過濾考試範圍：截至投影片 1.5 Section 1（剔除 Ch. 9 / CCA / Padding Oracle / AE）
+OUT_OF_SCOPE_FORMULA_IDS = set(["form-9", "form-10"])
+OUT_OF_SCOPE_HW1_IDS = set(["hw1-5b"])
+OUT_OF_SCOPE_PRACTICE1_IDS = set(["p1-12", "p1-13", "p1-25", "p1-26", "p1-34"])
+OUT_OF_SCOPE_VAR_IDS = set(["var-6"])
+
+IN_SCOPE_FORMULAS = [f for f in FORMULAS_DATA if f["id"] not in OUT_OF_SCOPE_FORMULA_IDS]
+IN_SCOPE_HW1 = [h for h in HW1_SOLUTIONS if h["id"] not in OUT_OF_SCOPE_HW1_IDS]
+IN_SCOPE_PRACTICE1 = [p for p in PRACTICE1_SOLUTIONS if p["id"] not in OUT_OF_SCOPE_PRACTICE1_IDS]
+IN_SCOPE_VARIATIONS = [v for v in VARIATION_EXAMS if v["id"] not in OUT_OF_SCOPE_VAR_IDS]
+
+print(f"Exam Scope Filtering Applied (Up to Slides 1.5 Section 1):")
+print(f"  Formulas: {len(FORMULAS_DATA)} -> {len(IN_SCOPE_FORMULAS)}")
+print(f"  HW1: {len(HW1_SOLUTIONS)} -> {len(IN_SCOPE_HW1)}")
+print(f"  Practice 1: {len(PRACTICE1_SOLUTIONS)} -> {len(IN_SCOPE_PRACTICE1)}")
+print(f"  Variations: {len(VARIATION_EXAMS)} -> {len(IN_SCOPE_VARIATIONS)}")
+
 # 組合資料並寫入 js/exam_data.js
 output_path = os.path.join("js", "exam_data.js")
 with open(output_path, "w", encoding="utf-8") as f:
-    f.write("// Cryptography Exam Review, Proofs & Variation Questions Data\n")
-    f.write("// Exhaustively covering Homework 1, Practice 1, Core Formulas and Advanced Variations\n\n")
-    
+    f.write("// Cryptography Exam Review Data (Filtered strictly up to Slides 1.5 Section 1)\n")
+    f.write("// In-Scope Coverage: Ch. 1, 2, 4, 5, 6, 7, 8 (Excluding Ch. 9 CCA/AE/Padding Oracle)\n\n")
+
     f.write("const EXAM_FORMULAS = ")
-    f.write(json.dumps(FORMULAS_DATA, ensure_ascii=False, indent=2))
+    f.write(json.dumps(IN_SCOPE_FORMULAS, ensure_ascii=False, indent=2))
     f.write(";\n\n")
-    
+
     f.write("const HW1_DATA = ")
-    f.write(json.dumps(HW1_SOLUTIONS, ensure_ascii=False, indent=2))
+    f.write(json.dumps(IN_SCOPE_HW1, ensure_ascii=False, indent=2))
     f.write(";\n\n")
-    
+
     f.write("const PRACTICE1_DATA = ")
-    f.write(json.dumps(PRACTICE1_SOLUTIONS, ensure_ascii=False, indent=2))
+    f.write(json.dumps(IN_SCOPE_PRACTICE1, ensure_ascii=False, indent=2))
     f.write(";\n\n")
-    
+
     f.write("const VARIATION_DATA = ")
-    f.write(json.dumps(VARIATION_EXAMS, ensure_ascii=False, indent=2))
+    f.write(json.dumps(IN_SCOPE_VARIATIONS, ensure_ascii=False, indent=2))
     f.write(";\n")
 
 print(f"Successfully generated {output_path}!")

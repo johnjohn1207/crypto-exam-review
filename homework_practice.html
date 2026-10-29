@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>作業一與練習一 題目詳解・形式證明與核心觀念全覽平台 | 現代密碼學</title>
+    <title>作業一與練習一 題目詳解・形式證明與核心觀念全覽平台 | 現代密碼學（範圍至 1-5 Section 1）</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -60,11 +60,11 @@
                 <div>
                     <h1 class="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-2">
                         現代與後量子密碼學導論
-                        <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 hidden sm:inline-block">
-                            作業與練習專屬獨立頁面
+                        <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800 hidden sm:inline-block">
+                            考試範圍：截至 1-5 Section 1
                         </span>
                     </h1>
-                    <p class="text-[11px] text-slate-400 font-mono hidden md:block">Homework 1 & Practice 1 Comprehensive Solutions & Proofs</p>
+                    <p class="text-[11px] text-slate-400 font-mono hidden md:block">Homework 1 & Practice 1 In-Scope Solutions & Proofs</p>
                 </div>
             </div>
 
@@ -79,9 +79,12 @@
                 <a href="exam.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1 shrink-0" title="切換至考點變化題">
                     <span>考點與變化題</span>
                 </a>
-                <a href="homework_practice.html" class="px-2.5 py-1.5 rounded-lg border border-indigo-500/60 bg-indigo-950/80 text-indigo-200 font-semibold transition flex items-center gap-1 shadow-sm shrink-0" title="當前頁面：作業與練習全解">
+                <a href="homework_practice.html" class="px-2.5 py-1.5 rounded-lg border border-indigo-500/60 bg-indigo-950/80 text-indigo-200 font-semibold transition flex items-center gap-1 shadow-sm shrink-0" title="切換至作業與練習全解">
                     <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
                     <span>作業練習全解</span>
+                </a>
+                <a href="proof_sheet.html" class="px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1 shrink-0" title="切換至必考形式證明一覽表">
+                    <span>📐 證明一覽表</span>
                 </a>
                 <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -90,42 +93,55 @@
         </div>
     </header>
 
+    <!-- 範圍限定提示橫幅 -->
+    <div class="bg-amber-950/40 border-b border-amber-800/60 px-4 py-2 text-xs text-amber-200">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold">精準考綱對齊</span>
+                <span>考試範圍嚴格截止於<strong>投影片 1-5 Section 1（CPA Security 與區塊密碼模式）</strong>。已自動扣除尚未教授之 Ch. 9（CCA、Padding Oracle 與認證加密 AE）等 6 道題目，避免備考誤導。</span>
+            </div>
+            <a href="proof_sheet.html" class="underline hover:text-white font-mono flex items-center gap-1 font-semibold">
+                <span>👉 查看【期中考必考形式證明精華一覽表】</span>
+            </a>
+        </div>
+    </div>
+
     <!-- 專題 Hero 橫幅 -->
     <section class="bg-gradient-to-b from-indigo-950/40 via-slate-900 to-slate-950 border-b border-slate-800/80 px-4 py-8">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="space-y-2">
                 <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-mono">
-                    <span>📚 課堂評量獨立專頁</span>
+                    <span>📚 課堂評量範圍全解</span>
                     <span class="text-slate-600">|</span>
-                    <span>44 題完整收錄</span>
+                    <span>38 題精準考綱</span>
                     <span class="text-slate-600">|</span>
-                    <span class="text-amber-400 font-bold">27 題形式化證明</span>
+                    <span class="text-amber-400 font-bold">24 題形式化證明</span>
                 </div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                     作業一與練習一 題目詳解・嚴謹形式證明與核心觀念
                 </h2>
                 <p class="text-slate-400 text-sm max-w-3xl leading-relaxed">
-                    完整涵蓋「作業一」（10 題）與「練習一」（34 題，含 Part A 選擇、Part B 簡答、Part C 課本進階證明題）。針對證明題型進行零省略形式化推導，輔以產品經理視角之白話直觀直覺與考點防錯剖析，支援 KaTeX 數學式渲染與證明複製。
+                    精準收錄「作業一」（9 題）與「練習一」（29 題，含 Part A 選擇 11 題、Part B 簡答 11 題、Part C 課本進階證明 7 題）。針對證明題型進行零省略形式化推導，輔以白話直觀直覺與考點防錯剖析，支援 KaTeX 數學式渲染與證明複製。
                 </p>
             </div>
 
             <!-- 數據統計看板 -->
             <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-2.5 shrink-0 text-center font-mono">
                 <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
-                    <div class="text-xs text-slate-400">收錄總題數</div>
-                    <div class="text-xl font-bold text-indigo-400">44</div>
+                    <div class="text-xs text-slate-400">考綱題數</div>
+                    <div class="text-xl font-bold text-indigo-400">38</div>
                 </div>
                 <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
                     <div class="text-xs text-slate-400">形式證明題</div>
-                    <div class="text-xl font-bold text-amber-400">27</div>
+                    <div class="text-xl font-bold text-amber-400">24</div>
                 </div>
                 <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
                     <div class="text-xs text-slate-400">涵蓋章節</div>
-                    <div class="text-xl font-bold text-cyan-400">Ch 1-9</div>
+                    <div class="text-xl font-bold text-cyan-400">Ch 1-8</div>
                 </div>
                 <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl shadow-sm">
-                    <div class="text-xs text-slate-400">核心觀念</div>
-                    <div class="text-xl font-bold text-emerald-400">100%</div>
+                    <div class="text-xs text-slate-400">扣除非考綱</div>
+                    <div class="text-xl font-bold text-emerald-400">-6 題</div>
                 </div>
             </div>
         </div>
@@ -139,26 +155,26 @@
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <div class="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
                     <button onclick="setSourceFilter('all')" id="src-all" class="src-btn px-3 py-1.5 rounded-lg font-medium transition bg-indigo-600 text-white shadow-sm">
-                        全部題目 <span id="count-all" class="text-[10px] opacity-80">(44)</span>
+                        全部題目 <span id="count-all" class="text-[10px] opacity-80">(38)</span>
                     </button>
                     <button onclick="setSourceFilter('hw1')" id="src-hw1" class="src-btn px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white">
-                        作業一全解 <span id="count-hw1" class="text-[10px] opacity-80">(10)</span>
+                        作業一全解 <span id="count-hw1" class="text-[10px] opacity-80">(9)</span>
                     </button>
                     <button onclick="setSourceFilter('p1_a')" id="src-p1_a" class="src-btn px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white">
-                        練習一 Part A 選擇 <span id="count-p1_a" class="text-[10px] opacity-80">(13)</span>
+                        練習一 Part A 選擇 <span id="count-p1_a" class="text-[10px] opacity-80">(11)</span>
                     </button>
                     <button onclick="setSourceFilter('p1_b')" id="src-p1_b" class="src-btn px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white">
-                        練習一 Part B 簡答 <span id="count-p1_b" class="text-[10px] opacity-80">(13)</span>
+                        練習一 Part B 簡答 <span id="count-p1_b" class="text-[10px] opacity-80">(11)</span>
                     </button>
                     <button onclick="setSourceFilter('p1_c')" id="src-p1_c" class="src-btn px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white">
-                        練習一 Part C 證明 <span id="count-p1_c" class="text-[10px] opacity-80">(8)</span>
+                        練習一 Part C 證明 <span id="count-p1_c" class="text-[10px] opacity-80">(7)</span>
                     </button>
                 </div>
 
                 <!-- 純證明題切換開關 (Proof Only Toggle) -->
                 <button onclick="toggleProofOnly()" id="proof-only-btn" class="px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition border-amber-500/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 shadow-sm shrink-0">
                     <span id="proof-toggle-indicator" class="w-2 h-2 rounded-full bg-amber-400"></span>
-                    <span>⚡ 只看形式證明題 (<span id="proof-count">27</span>)</span>
+                    <span>⚡ 只看形式證明題 (<span id="proof-count">24</span>)</span>
                 </button>
             </div>
 
@@ -179,8 +195,8 @@
                     <button onclick="setChapterFilter('ch6-7')" id="chap-ch6-7" class="chap-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-400 hover:text-white shrink-0">
                         Ch 6-7 PRF/PRP 與 Feistel
                     </button>
-                    <button onclick="setChapterFilter('ch8-9')" id="chap-ch8-9" class="chap-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-400 hover:text-white shrink-0">
-                        Ch 8-9 CPA/CCA 與認證加密
+                    <button onclick="setChapterFilter('ch8')" id="chap-ch8" class="chap-btn px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-400 hover:text-white shrink-0">
+                        Ch 8 選擇明文安全 CPA
                     </button>
                 </div>
 
@@ -220,7 +236,7 @@
             正在顯示：<span class="text-indigo-400 font-semibold" id="current-filter-desc">全部題目</span>
         </div>
         <div>
-            共檢索到 <span class="text-white font-bold text-sm" id="result-count">44</span> 題
+            共檢索到 <span class="text-white font-bold text-sm" id="result-count">38</span> 題
         </div>
     </div>
 
@@ -244,7 +260,7 @@
     <!-- 頁尾 -->
     <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500 font-mono">
         <div class="max-w-7xl mx-auto px-4 space-y-2">
-            <p>現代與後量子密碼學導論・作業一與練習一 形式證明全覽</p>
+            <p>現代與後量子密碼學導論・作業一與練習一 形式證明全覽（範圍至 1-5 Section 1）</p>
             <p class="text-[11px] text-slate-600">Introduction to Modern Cryptography by Katz & Lindell | The Joy of Cryptography by Mike Rosulek</p>
         </div>
     </footer>
@@ -261,7 +277,7 @@
     <script>
         // 狀態管理
         let currentSource = 'all';        // 'all' | 'hw1' | 'p1_a' | 'p1_b' | 'p1_c'
-        let currentChapter = 'all';       // 'all' | 'ch1-2' | 'ch4-5' | 'ch6-7' | 'ch8-9'
+        let currentChapter = 'all';       // 'all' | 'ch1-2' | 'ch4-5' | 'ch6-7' | 'ch8'
         let currentProofOnly = false;     // true | false
         let currentViewMode = 'dual';     // 'dual' | 'proof' | 'concept' | 'practice'
         let currentSearchQuery = '';
@@ -298,8 +314,12 @@
                     return false;
                 }
                 // 3. 章節過濾
-                if (currentChapter !== 'all' && item.category !== currentChapter) {
-                    return false;
+                if (currentChapter !== 'all') {
+                    if (currentChapter === 'ch8') {
+                        if (!item.category.includes('ch8')) return false;
+                    } else if (item.category !== currentChapter) {
+                        return false;
+                    }
                 }
                 // 4. 搜尋關鍵字
                 if (currentSearchQuery.trim() !== '') {
@@ -583,13 +603,7 @@ ${escapeHtml(item.proof)}
             const item = HW_PRACTICE_DATA.find(x => x.id === id);
             if (!item) return;
 
-            const textToCopy = `【${item.title}】
-
-[核心觀念]
-${item.concept}
-
-[形式證明與推導]
-${item.proof}`;
+            const textToCopy = `【${item.title}】\n\n[核心觀念]\n${item.concept}\n\n[形式證明與推導]\n${item.proof}`;
             navigator.clipboard.writeText(textToCopy).then(() => {
                 alert(`已成功複製【${item.title}】的嚴謹證明至剪貼簿！`);
             }).catch(err => {
@@ -606,7 +620,6 @@ ${item.proof}`;
             document.getElementById('search-input').value = '';
             document.getElementById('clear-search').classList.add('hidden');
 
-            // 重設按鈕外觀
             setSourceFilter('all');
             setChapterFilter('all');
             const proofBtn = document.getElementById('proof-only-btn');
@@ -631,7 +644,7 @@ ${item.proof}`;
                 if (currentChapter === 'ch1-2') parts.push('Ch 1-2 夏農保密');
                 if (currentChapter === 'ch4-5') parts.push('Ch 4-5 可忽略函數與 PRG');
                 if (currentChapter === 'ch6-7') parts.push('Ch 6-7 PRF/PRP');
-                if (currentChapter === 'ch8-9') parts.push('Ch 8-9 CPA/CCA');
+                if (currentChapter === 'ch8') parts.push('Ch 8 CPA 安全');
             }
 
             if (currentSearchQuery.trim() !== '') {

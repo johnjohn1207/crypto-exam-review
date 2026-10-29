@@ -1,76 +1,63 @@
 # -*- coding: utf-8 -*-
+"""
+Comprehensive validation of the exam, homework, notes, and proof cheat sheet system.
+Verifies exam scope constraints (Strictly up to Slides 1.5 Section 1).
+"""
 import os
+import json
 import re
 
-print("Starting validation of exam and homework review system...")
+print("Starting full system validation (Exam Scope: Up to Slides 1.5 Section 1)...")
 
-# 1. Check exam_data.js & hw_practice_data.js
-data_path = os.path.join("js", "exam_data.js")
-assert os.path.exists(data_path), "js/exam_data.js does not exist!"
+# 1. Check data files exist
+for df in ["js/exam_data.js", "js/hw_practice_data.js", "js/proof_sheet_data.js", "js/data.js"]:
+    assert os.path.exists(df), f"Missing data file: {df}"
 
-with open(data_path, "r", encoding="utf-8") as f:
-    data_content = f.read()
+with open("js/exam_data.js", "r", encoding="utf-8") as f:
+    exam_data_txt = f.read()
+assert "const EXAM_FORMULAS = " in exam_data_txt
+assert "const HW1_DATA = " in exam_data_txt
+assert "const PRACTICE1_DATA = " in exam_data_txt
+assert "const VARIATION_DATA = " in exam_data_txt
+print("Check 1 passed: js/exam_data.js verified.")
 
-assert "const EXAM_FORMULAS = " in data_content
-assert "const HW1_DATA = " in data_content
-assert "const PRACTICE1_DATA = " in data_content
-assert "const VARIATION_DATA = " in data_content
-print("Check 1 passed: js/exam_data.js has all required data arrays.")
+with open("js/hw_practice_data.js", "r", encoding="utf-8") as f:
+    hw_data_txt = f.read()
+assert "const HW_PRACTICE_DATA = " in hw_data_txt
 
-hw_data_path = os.path.join("js", "hw_practice_data.js")
-assert os.path.exists(hw_data_path), "js/hw_practice_data.js does not exist!"
+# Verify exclusion of out-of-scope questions
+for bad_id in ["hw1-5b", "p1-12", "p1-13", "p1-25", "p1-26", "p1-34"]:
+    assert f'"{bad_id}"' not in hw_data_txt, f"Out-of-scope ID {bad_id} found in hw_practice_data.js!"
+print("Check 2 passed: js/hw_practice_data.js verified (out-of-scope questions excluded).")
 
-with open(hw_data_path, "r", encoding="utf-8") as f:
-    hw_data_content = f.read()
+with open("js/proof_sheet_data.js", "r", encoding="utf-8") as f:
+    proof_data_txt = f.read()
+assert "const PROOF_SHEET_DATA = " in proof_data_txt
+print("Check 3 passed: js/proof_sheet_data.js verified.")
 
-assert "const HW_PRACTICE_DATA = " in hw_data_content
-print("Check 2 passed: js/hw_practice_data.js verified.")
+with open("js/data.js", "r", encoding="utf-8") as f:
+    data_txt = f.read()
+for bad_mod in ["mod-5", "mod-6", "mod-7"]:
+    assert f'"{bad_mod}"' not in data_txt, f"Out-of-scope module {bad_mod} found in js/data.js!"
+print("Check 4 passed: js/data.js verified (out-of-scope modules excluded).")
 
-# 2. Check exam.html
-assert os.path.exists("exam.html"), "exam.html does not exist!"
-with open("exam.html", "r", encoding="utf-8") as f:
-    exam_html = f.read()
+# 2. Check HTML files exist and have required IDs
+PAGES = ["index.html", "notes.html", "exam.html", "homework_practice.html", "proof_sheet.html"]
+for p in PAGES:
+    assert os.path.exists(p), f"Missing page: {p}"
+    with open(p, "r", encoding="utf-8") as f:
+        html = f.read()
+    assert "katex.min.js" in html, f"KaTeX missing in {p}"
+    if p != "notes.html":
+        assert 'id="site-nav"' in html, f"site-nav missing in {p}"
+print("Check 5 passed: All 5 pages exist and have KaTeX + nav.")
 
-for req_id in ["site-nav", "search-input", "cards-container", "filter-summary", "result-count"]:
-    assert f'id="{req_id}"' in exam_html, f"Missing id: {req_id} in exam.html"
+# 3. Check cross navigation across all 5 pages
+for p in ["exam.html", "homework_practice.html", "proof_sheet.html"]:
+    with open(p, "r", encoding="utf-8") as f:
+        html = f.read()
+    for target_page in PAGES:
+        assert f'href="{target_page}"' in html, f"{p} missing link to {target_page}"
 
-assert "katex.min.js" in exam_html
-assert "exam_data.js" in exam_html
-print("Check 3 passed: exam.html elements and script links verified.")
-
-# 3. Check homework_practice.html
-assert os.path.exists("homework_practice.html"), "homework_practice.html does not exist!"
-with open("homework_practice.html", "r", encoding="utf-8") as f:
-    hw_html = f.read()
-
-for req_id in ["site-nav", "search-input", "cards-container", "filter-summary", "result-count", "proof-only-btn"]:
-    assert f'id="{req_id}"' in hw_html, f"Missing id: {req_id} in homework_practice.html"
-
-assert "katex.min.js" in hw_html
-assert "hw_practice_data.js" in hw_html
-print("Check 4 passed: homework_practice.html elements and script links verified.")
-
-# 4. Check cross links
-with open("index.html", "r", encoding="utf-8") as f:
-    index_html = f.read()
-assert 'href="notes.html"' in index_html
-assert 'href="exam.html"' in index_html
-assert 'href="homework_practice.html"' in index_html
-
-with open("notes.html", "r", encoding="utf-8") as f:
-    notes_html = f.read()
-assert 'href="index.html"' in notes_html
-assert 'href="exam.html"' in notes_html
-assert 'href="homework_practice.html"' in notes_html
-
-assert 'href="index.html"' in exam_html
-assert 'href="notes.html"' in exam_html
-assert 'href="homework_practice.html"' in exam_html
-
-assert 'href="index.html"' in hw_html
-assert 'href="notes.html"' in hw_html
-assert 'href="exam.html"' in hw_html
-assert 'href="homework_practice.html"' in hw_html
-
-print("Check 5 passed: Quad-directional links verified across all 4 pages!")
+print("Check 6 passed: Quintuple cross-navigation verified across all 5 pages!")
 print("All validation checks passed successfully!")

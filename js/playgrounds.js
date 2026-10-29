@@ -704,15 +704,8 @@ const PLAYGROUNDS_REGISTRY = [
         containerId: 'playground-feistel'
     },
     {
-        id: 'po',
-        title: '3. Padding Oracle (PKCS#7) 逐步解密操作',
-        description: '模擬 CBC 模式伺服器填充預言機反饋，以多項式次數逆推中間值與明文。',
-        init: () => PaddingOracleLab.init(),
-        containerId: 'playground-padding-oracle'
-    },
-    {
         id: 'sg',
-        title: '4. IND-CPA 安全遊戲攻防演習',
+        title: '3. IND-CPA 安全遊戲攻防演習',
         description: '比較確定性加密與隨機化加密在面對選擇明文攻擊時的優勢度收斂差異。',
         init: () => SecurityGameLab.init(),
         containerId: 'playground-security-game'

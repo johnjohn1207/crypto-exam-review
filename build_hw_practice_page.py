@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 Standalone builder for Homework 1 and Practice 1 comprehensive data and webpage.
-Executes data processing and updates homework_practice.html.
+Filtered strictly up to Slides 1.5 Section 1 (Excludes Ch. 9 CCA/Padding Oracle/AE).
 """
 import json
 import os
 import re
 import sys
 
-print("Building Homework 1 & Practice 1 dedicated page and dataset...")
+print("Building Homework 1 & Practice 1 in-scope dataset (Up to Slides 1.5 Section 1)...")
 
 import build_exam_data
 
@@ -24,8 +24,7 @@ HW1_CONCEPTS = {
     "hw1-3": "單次保密性（One-Time Secrecy / IND-OTS）定義。派生密文 $C_2 = C_1 \\oplus 1^n$ 具備雙射一對一確定性，密文對分佈不依賴於挑戰明文 $M_b$，區分優勢嚴格為 0。",
     "hw1-4a": "偽隨機產生器（PRG）安全性定義與內部中間狀態隱藏原則。串接結構（Cascaded PRG）若直接在輸出公開中間種子 $B$，攻擊者可直接本地計算 $G(B)$ 並比對後續區塊，區分優勢達 $1 - 2^{-2\\lambda}$。",
     "hw1-4b": "偽隨機函數（PRF）非線性要求與線性差分攻擊。線性構造 $F(K, X) = G(K) \\oplus X$ 具有恆等輸出差分 $F(K, X_1) \\oplus F(K, X_2) = X_1 \\oplus X_2$，與真隨機函數的獨立性矛盾。",
-    "hw1-5a": "選擇明文安全模型（IND-CPA Security）、加密方案隨機化必要性（Randomized Encryption）、PRF 評估輸入不重複原則與 ECB 模式之決定性破綻。",
-    "hw1-5b": "選擇密文安全模型（IND-CCA2）、認證加密（Authenticated Encryption, AE）、Encrypt-then-MAC 正規結構之健全性，以及 MAC-then-encrypt 遭遇 Padding Oracle 攻擊之根源。"
+    "hw1-5a": "選擇明文安全模型（IND-CPA Security）、加密方案隨機化必要性（Randomized Encryption）、PRF 評估輸入不重複原則與 ECB 模式之決定性破綻。"
 }
 
 P1_CONCEPTS = {
@@ -40,8 +39,6 @@ P1_CONCEPTS = {
     "p1-9": "2 輪 Feistel 差分不變量：當兩筆輸入右半部相同時，輸出左半部的 XOR 差分恆等於輸入左半部的 XOR 差分，金鑰完全抵消。",
     "p1-10": "PRF 黃金法則（Golden Rule of PRFs）：在同一個金鑰下，絕不可傳入重複輸入給 PRF，保證輸出等價於獨立真隨機字串。",
     "p1-11": "現代密碼學語意安全洩漏邊界：所有標準加密方案允許且不可避免洩漏明文的長度 $|M|$。",
-    "p1-12": "串流加密的可鍛造性（Malleability）：CTR 模式缺乏密文完整性保護，翻轉密文字元會以 100% 確定性翻轉解密後明文的對應字元。",
-    "p1-13": "Encrypt-and-MAC 之明文相等性洩漏（Equality Leakage）：決定性 MAC 直接作用於明文，相同明文生成相同標籤，破壞 IND-CPA。",
     "p1-14": "OTP 理論與工程實務之鴻溝：金鑰同步衝突、快閃記憶體 Wear Leveling 物理殘留、金鑰分發網路爆炸（$O(N^2)$ 通道瓶頸）。",
     "p1-15": "IND-OTS 挑戰者博弈架構：利用全機率公式與條件對稱性，嚴格推導 $\\Pr[b' = b] = \\frac{1}{2}$，證明 OTP 之完美不可區分性。",
     "p1-16": "偽可證明安全辨析：混淆 XOR 運算與 OTP 的本質、金鑰長度不足、Two-time pad 災難與伺服器單點故障。",
@@ -53,28 +50,31 @@ P1_CONCEPTS = {
     "p1-22": "OTP 實務瓶頸與 PRG 必要性：突破夏農金鑰長度限制 $|\\mathcal{K}| \\ge |\\mathcal{M}|$，以短金鑰種子偽隨機展開長串流。",
     "p1-23": "PRF 與 PRP 綜合對比：定義差異、雙射約束、PRF/PRP Switching Lemma 降級引理與生日碰撞必然性。",
     "p1-24": "決定性加密必破 CPA 定理：雙查詢區分者演算法建構、相等性測試與實務重放安全破壞。",
-    "p1-25": "CTR 模式格式預言機（Format/Null-Oracle）側信道攻擊：逐位元組位元翻轉推導與 $128 \\times \\text{Length}$ 查詢量計算。",
-    "p1-26": "認證加密遭遇跨工作階段重放攻擊情境，以及附加驗證資料（AAD / Associated Data）綁定機制。",
     "p1-27": "模 $n$ 乘法 OTP 之質數條件：有限環 $\\mathbb{Z}_n$ 乘法群 $\\mathbb{Z}_n^\\times$、群階數 $\\phi(n)=n-1$ 與零因子分析，證明 $n$ 為質數時密文均勻分佈。",
     "p1-28": "模 10 乘法加密無單次保密性嚴格反例證明：利用合數環零因子 $5 \\times 2 \\equiv 0 \\pmod{10}$ 導致機率退化。",
     "p1-29": "夏農金鑰長度下界定理 $|\\mathcal{K}| \\ge |\\mathcal{M}|$ 嚴格反證法：解密可能像集合 $S(c) = \\{\\text{Dec}(k, c) \\mid k \\in \\mathcal{K}\\}$ 與鴿籠原理。",
     "p1-30": "PRG 反饋型構造安全判定：狀態隱藏構造之 Hybrid Proof 歸納法，與狀態洩漏構造之攻擊演算法。",
     "p1-31": "$H(K, X) = F(K, X) \\oplus F(K, 0^n)$ 非安全 PRF 證明：零輸入全零漏洞與區分優勢計算 $\\mathbf{Adv} = 1 - 2^{-m}$。",
     "p1-32": "線性輪函數 Feistel 任意輪數必破證明：$\\mathbb{F}_2^w$ 仿射空間奇偶差分守恆與 4 點差分區分者建構。",
-    "p1-33": "$|\\mathcal{M}| = |\\mathcal{C}|$ 且具備正確性之加密方案絕不可能達成 CPA 安全：有限集單射即雙射引理與決定性加密必然性證明。",
-    "p1-34": "重複加密兩次之雙區塊方案非 CCA 安全證明：構造等價合法密文 $(C_1^*, C_1^*)$ 繞過挑戰限制打穿解密 Oracle。"
+    "p1-33": "$|\\mathcal{M}| = |\\mathcal{C}|$ 且具備正確性之加密方案絕不可能達成 CPA 安全：有限集單射即雙射引理與決定性加密必然性證明。"
 }
 
+# 排除範圍外題目（Ch. 9 CCA、Padding Oracle、AE）
+OUT_OF_SCOPE_IDS = set(["hw1-5b", "p1-12", "p1-13", "p1-25", "p1-26", "p1-34"])
+
+# 考點證明題集合（In-scope Proofs）
 PROOF_IDS = set([
-    "hw1-1a", "hw1-1b", "hw1-1c", "hw1-2a", "hw1-2b", "hw1-3", "hw1-4a", "hw1-4b", "hw1-5a", "hw1-5b",
-    "p1-9", "p1-15", "p1-17", "p1-18", "p1-19", "p1-21", "p1-23", "p1-24", "p1-25",
-    "p1-27", "p1-28", "p1-29", "p1-30", "p1-31", "p1-32", "p1-33", "p1-34"
+    "hw1-1a", "hw1-1b", "hw1-1c", "hw1-2a", "hw1-2b", "hw1-3", "hw1-4a", "hw1-4b", "hw1-5a",
+    "p1-9", "p1-15", "p1-17", "p1-18", "p1-19", "p1-21", "p1-23", "p1-24",
+    "p1-27", "p1-28", "p1-29", "p1-30", "p1-31", "p1-32", "p1-33"
 ])
 
 PROCESSED_ITEMS = []
 
 for h in raw_hw1:
     item_id = h["id"]
+    if item_id in OUT_OF_SCOPE_IDS:
+        continue
     PROCESSED_ITEMS.append({
         "id": item_id,
         "source": "作業一",
@@ -94,6 +94,8 @@ for h in raw_hw1:
 
 for p in raw_p1:
     item_id = p["id"]
+    if item_id in OUT_OF_SCOPE_IDS:
+        continue
     part_str = p.get("part", "Part A")
     source_tag = "p1_a" if "Part A" in part_str else ("p1_b" if "Part B" in part_str else "p1_c")
     PROCESSED_ITEMS.append({
@@ -116,9 +118,11 @@ for p in raw_p1:
 
 output_js_path = os.path.join("js", "hw_practice_data.js")
 with open(output_js_path, "w", encoding="utf-8") as f:
-    f.write("// Homework 1 & Practice 1 Comprehensive Proofs, Solutions and Concepts Data\n")
+    f.write("// In-Scope Homework 1 & Practice 1 Data (Strictly up to Slides 1.5 Section 1)\n")
+    f.write("// Excludes Ch. 9 CCA/AE/Padding Oracle (hw1-5b, p1-12, p1-13, p1-25, p1-26, p1-34)\n\n")
     f.write("const HW_PRACTICE_DATA = ")
     f.write(json.dumps(PROCESSED_ITEMS, ensure_ascii=False, indent=2))
     f.write(";\n")
 
-print(f"Generated {output_js_path} with {len(PROCESSED_ITEMS)} items ({len(PROOF_IDS)} proofs).")
+print(f"Generated {output_js_path} with {len(PROCESSED_ITEMS)} in-scope items ({len(PROOF_IDS)} proofs).")
+print(f"Excluded {len(OUT_OF_SCOPE_IDS)} out-of-scope items.")

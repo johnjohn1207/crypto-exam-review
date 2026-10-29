@@ -1,4 +1,6 @@
-// Homework 1 & Practice 1 Comprehensive Proofs, Solutions and Concepts Data
+// In-Scope Homework 1 & Practice 1 Data (Strictly up to Slides 1.5 Section 1)
+// Excludes Ch. 9 CCA/AE/Padding Oracle (hw1-5b, p1-12, p1-13, p1-25, p1-26, p1-34)
+
 const HW_PRACTICE_DATA = [
   {
     "id": "hw1-1a",
@@ -142,22 +144,6 @@ const HW_PRACTICE_DATA = [
     "intuition": "(i) 每次抽新號碼牌 R 當 PRF 輸入，遮罩每次不同，安全。\n(ii) 隨機數 R 居然直接加在最外層，攻擊者把前後兩半 XOR 一下，R 就消失了，直接露出決定性的 F(K, M)，必死。\n(iii) ECB 就像直接印章，明文長一樣印出來就長一樣，必死。\n(iv) 隨機選 IV 跑計數器，每次金鑰串流都不一樣，安全。",
     "proof": "(i) 達成 CPA 安全：標準隨機化 PRF 加密。碰撞機率受限於 q^2 / 2^(λ+1)，由 PRF 安全性保證密文不可區分於真隨機串。\n\n(ii) 未達成 CPA 安全：\n攻擊：密文 (C1, C2) = (R, F(K, M) ⊕ R)。計算 C1 ⊕ C2 = F(K, M)，R 徹底抵消。\n攻擊者提交 M0 = 0^n, M1 = 1^n 得挑戰密文 (C1*, C2*)，計算 V* = C1* ⊕ C2* = F(K, Mb)。再查詢加密 Oracle 明文 M0 得 (C1', C2')，計算 V' = C1' ⊕ C2' = F(K, M0)。若 V* == V' 猜 0 否則猜 1，優勢為 1 - 2^(-λ) ≈ 1。\n\n(iii) 未達成 CPA 安全：\n攻擊：ECB 為確定性加密。攻擊者提交 M0 = 0^128 || 0^128 與 M1 = 0^128 || 1^128。取得密文 C* = C1* || C2*。若 C1* == C2* 輸出 0 否則輸出 1，優勢為 1。\n\n(iv) 達成 CPA 安全：隨機選取 IV，在生日界限內 counter 空間不碰撞，偽隨機串流達成 IND-CPA。",
     "pitfall": "注意 (ii) 的隨機數 R 沒有放在 PRF 裡面！放在外面會被線性 XOR 直接消除，這是極具殺傷力的考卷陷阱。",
-    "answer": null
-  },
-  {
-    "id": "hw1-5b",
-    "source": "作業一",
-    "source_tag": "hw1",
-    "part": "作業一",
-    "chapter": "Ch. 9",
-    "category": "ch8-9",
-    "title": "作業一 5(b)：三種認證加密組合正規之 CCA / AE 評估",
-    "is_proof": true,
-    "question": "評估下列組合方案是否提供 CCA 安全性與認證加密 (AE) 並簡要說明：\n(i) Encrypt-then-MAC: C = Enc(Ke, M), T = MAC(Km, C), 輸出 (C, T)\n(ii) Encrypt-and-MAC: C = Enc(Ke, M), T = MAC(Km, M), 輸出 (C, T)\n(iii) MAC-then-encrypt: T = MAC(Km, M), C = Enc(Ke, M || T), 輸出 C",
-    "concept": "選擇密文安全模型（IND-CCA2）、認證加密（Authenticated Encryption, AE）、Encrypt-then-MAC 正規結構之健全性，以及 MAC-then-encrypt 遭遇 Padding Oracle 攻擊之根源。",
-    "intuition": "(i) 先包裝再貼防偽標籤：檢查有問題直接拒絕，完全不開箱，最安全（達到 CCA 與 AE）。\n(ii) 標籤跟包裝並行：標籤直接對明文打，明文如果一樣標籤就一樣，連 CPA 都不保證，根本不具備安全性。\n(iii) 先貼標籤再打包裝：必須先拆開包裝才能驗證標籤，解密端一旦報出「填充錯誤」就成了攻擊者的預言機（如 SSL 的 POODLE 漏洞），通訊直接被破譯，一般不提供 CCA/AE。",
-    "proof": "(i) 提供 CCA 安全性且達到 AE：在獨立金鑰下，Encrypt-then-MAC 保證任何被篡改的密文皆會被 MAC 攔截拋棄，解密端絕不處理非法密文，徹底免疫 CCA 與 Padding Oracle 攻擊。\n\n(ii) 不提供 CCA 且未達 AE：MAC 為決定性函數，標籤 T = MAC(Km, M) 洩漏兩筆密文是否來自相同明文（Equality Leakage），甚至未達 CPA 安全。\n\n(iii) 通常不提供 CCA 且未達 AE：解密端必須「先解密、後查驗 MAC」。若解密過程暴露填充錯誤（如 CBC 模式 PKCS#7 錯誤），攻擊者可發動 Padding Oracle 攻擊還原全部明文（歷史案例：TLS 1.0-1.2 之 Lucky Thirteen 漏洞）。",
-    "pitfall": "考試問「何者為標準認證加密」，唯一正確推薦的通用正規永遠是 Encrypt-then-MAC。",
     "answer": null
   },
   {
@@ -348,40 +334,6 @@ const HW_PRACTICE_DATA = [
     "answer": "C"
   },
   {
-    "id": "p1-12",
-    "source": "練習一 (Part A)",
-    "source_tag": "p1_a",
-    "part": "Part A",
-    "number": "12",
-    "chapter": "Ch. 9",
-    "category": "ch8-9",
-    "title": "練習一 第 12 題：CTR 模式易受 CCA 攻擊之弱點",
-    "is_proof": false,
-    "question": "(Ch. 9) What property makes CTR mode vulnerable to chosen-ciphertext attacks?\nA. It uses weak encryption\nB. It is malleable – bit flips in the ciphertext cause predictable changes in the plaintext\nC. It requires too much memory",
-    "concept": "串流加密的可鍛造性（Malleability）：CTR 模式缺乏密文完整性保護，翻轉密文字元會以 100% 確定性翻轉解密後明文的對應字元。",
-    "intuition": "CTR 模式像黏土一樣任人揉捏（可塑性）。密文第 5 個位元翻轉一下，解密後的明文第 5 個位元也必定精確翻轉。攻擊者隨便改一個字送給解密機關，就能套出秘密，CCA 防禦直接破防。",
-    "proof": "正確答案為 B。CTR 模式結構為 C = M ⊕ keystream，具備線性可塑性，翻轉密文會精確反應在解密明文上，使攻擊者能構造有效關聯密文攻破 IND-CCA。\n選項 A 錯誤：CTR 加密本身具備強固的 CPA 安全性。",
-    "pitfall": "Malleability 是 CCA 的最大死敵。想要抗 CCA，必須消除可塑性（加 MAC）。",
-    "answer": "B"
-  },
-  {
-    "id": "p1-13",
-    "source": "練習一 (Part A)",
-    "source_tag": "p1_a",
-    "part": "Part A",
-    "number": "13",
-    "chapter": "Ch. 9",
-    "category": "ch8-9",
-    "title": "練習一 第 13 題：Encrypt-and-MAC 未達 CPA 安全之原因",
-    "is_proof": false,
-    "question": "(Ch. 9) Why is Encrypt-and-MAC not even CPA-secure?\nA. The encryption is too weak\nB. The MAC key is exposed\nC. The MAC is computed on the plaintext, leaking equality information",
-    "concept": "Encrypt-and-MAC 之明文相等性洩漏（Equality Leakage）：決定性 MAC 直接作用於明文，相同明文生成相同標籤，破壞 IND-CPA。",
-    "intuition": "MAC 是個死板的檢查章，同樣的文件蓋出來的章永遠一模一樣。Encrypt-and-MAC 居然把明文的檢查章大搖大擺貼在密文外面。只要兩次加密的文件內容相同，外面的檢查章就完全一樣，偷看的人一眼就看出「這兩份文件是一樣的」。",
-    "proof": "正確答案為 C。MAC 為決定性演算法，標籤 T = MAC(Km, M) 直接反映明文內容。對相同明文加密兩次必產生相同標籤，直接洩漏明文相等性，違背 IND-CPA。\n選項 A 與 B 與根本原因無關。",
-    "pitfall": "MAC 的目的是防止篡改（完整性），絕不保證機密性！",
-    "answer": "C"
-  },
-  {
     "id": "p1-14",
     "source": "練習一 (Part B)",
     "source_tag": "p1_b",
@@ -569,40 +521,6 @@ const HW_PRACTICE_DATA = [
     "answer": null
   },
   {
-    "id": "p1-25",
-    "source": "練習一 (Part B)",
-    "source_tag": "p1_b",
-    "part": "Part B",
-    "number": "25",
-    "chapter": "Ch. 9",
-    "category": "ch8-9",
-    "title": "練習一 第 25 題：CTR 模式之 Format / Null-oracle 攻擊深度剖析",
-    "is_proof": true,
-    "question": "(Ch. 9) Format oracle 攻擊：(a) 解釋 Null-oracle 對 CTR 模式之攻擊機制與致命性；(b) 描述實務暴露場景；(c) 計算還原 1KB 檔案所需查詢次數與可行性。",
-    "concept": "CTR 模式格式預言機（Format/Null-Oracle）側信道攻擊：逐位元組位元翻轉推導與 $128 \\times \\text{Length}$ 查詢量計算。",
-    "intuition": "解密端像一個猜數字遊戲的計時器，只要解出來剛好是 0x00 它就叮咚響一下。攻擊者把密文逐位元加上自己的猜測值 g，只要伺服器叮咚響，代表「原本的字 XOR g = 0」，也就是原本的字就等於 g！每個位元組最多猜 256 次，整份檔案像剝洋蔥一樣被完整脫光光。",
-    "proof": "(a) 機制：C' = C ⊕ g，解密得 M' = M ⊕ g。若 Oracle 回傳解密為 null byte (0x00)，則 M ⊕ g = 0 ⇒ M = g。致命性：CTR 具備線性可塑性且缺乏完整性認證，使攻擊者能逐位元組還原明文。\n(b) 實務場景：API 解析 XML/JSON 時遇到非預期 null byte 拋出特定語法錯誤；Padding 錯誤碼差異。\n(c) 查詢量：1KB = 1024 bytes。每 byte 平均查 128 次，總量 1024 × 128 = 131,072 次。以每秒千次請求計僅需約 2 分鐘，攻擊極度可行。",
-    "pitfall": "IND-CPA 完全無法抵禦這類 Active Oracle Attack，必須使用 AEAD。",
-    "answer": null
-  },
-  {
-    "id": "p1-26",
-    "source": "練習一 (Part B)",
-    "source_tag": "p1_b",
-    "part": "Part B",
-    "number": "26",
-    "chapter": "Ch. 9",
-    "category": "ch8-9",
-    "title": "練習一 第 26 題：認證加密重放攻擊場景與 Associated Data 防禦",
-    "is_proof": false,
-    "question": "(Ch. 9) 說明認證加密遭遇重放攻擊之情境，以及附加資料 (AD) 如何解決此漏洞。",
-    "concept": "認證加密遭遇跨工作階段重放攻擊情境，以及附加驗證資料（AAD / Associated Data）綁定機制。",
-    "intuition": "AE 認證加密就像一張簽了名的支票，小偷雖然沒辦法偷改支票上的金額，但他把這張合法的支票拿去銀行重複兌現一百次！這就是重放攻擊。解法就是在支票的備註欄（AD）寫上「第 105 號交易」，銀行看過第 105 號之後，第二次看到直接報警。",
-    "proof": "重放場景：AE 保證單一密文之機密與不可篡改性，但不維護連線狀態。攻擊者攔截合法扣款密文並重複發送，接收端驗證成功導致重複執行。\nAD 防禦機制：將不需加密的狀態元數據（遞增序號 Sequence Number, Session ID, Timestamp）放入 AD 參與 MAC 計算。接收端檢驗序號過期即拋棄，攻擊者篡改 AD 則 MAC 驗證失敗。",
-    "pitfall": "AD 雖然是明文傳輸不加密，但它受到 MAC 的密碼學完整性認證保護，無法被篡改。",
-    "answer": null
-  },
-  {
     "id": "p1-27",
     "source": "練習一 (Part C)",
     "source_tag": "p1_c",
@@ -719,23 +637,6 @@ const HW_PRACTICE_DATA = [
     "intuition": "如果空間一樣大，又要求不能解密錯誤，那每個明文就只能綁定一個密文，絕對不能隨機擲骰子變出新花樣（也就是必然是確定性加密）。而只要是確定性加密，連續加密兩次同樣的訊息，密文一模一樣，CPA 當場暴斃。",
     "proof": "證明步驟：\n1. 由正確性：Dec(K, Enc(K, M)) = M 保證 Enc(K, ·) 必須為單射 (Injective)。\n2. 有限集單射且 |M| = |C| 保證 Enc(K, ·) 為雙射 (Bijective)。\n3. 雙射意味著每個明文對應唯一密文，演算法絕不可具備隨機性，必須為確定性 (Deterministic)。\n4. 任何確定性加密方案，攻擊者查詢相同 M 兩次，以優勢 1 - 2^(-|C|) ≈ 1 攻破 CPA。\n5. 故 |M| = |C| 之正確方案絕不可能達 CPA 安全。",
     "pitfall": "此題完美串聯了「代數雙射性」與「CPA 隨機化必要性」。",
-    "answer": null
-  },
-  {
-    "id": "p1-34",
-    "source": "練習一 (Part C)",
-    "source_tag": "p1_c",
-    "part": "Part C",
-    "number": "34",
-    "chapter": "Ch. 9",
-    "category": "ch8-9",
-    "title": "練習一 第 34 題 (Ex 9.21)：重複加密兩次之雙區塊方案 CCA 破譯",
-    "is_proof": true,
-    "question": "Ex 9.21 (Ch. 9) Enc'(K, M) = (C1, C2) 分別加密兩次，解密時檢查兩半部解密結果是否一致。證明即使基礎方案安全，新方案依然不具備 CCA 安全性。",
-    "concept": "重複加密兩次之雙區塊方案非 CCA 安全證明：構造等價合法密文 $(C_1^*, C_1^*)$ 繞過挑戰限制打穿解密 Oracle。",
-    "intuition": "解密端像個嚴格的考官，要求你繳交兩份一模一樣的考卷複本才給過。攻擊者拿到了挑戰密文 (C1*, C2*)，雖然不能直接問考官這份密文，但他把第一份考卷直接影印一份，湊成 (C1*, C1*) 送交解密！考官一看：兩份解出來都一樣，於是開開心心地把答案直接唸出來給攻擊者聽。",
-    "proof": "CCA 攻擊演算法：\n1. 提交 M0 ≠ M1 給挑戰 Oracle，獲挑戰密文 C* = (C1*, C2*)。\n2. 因基礎方案具隨機性，C1* ≠ C2* 具壓倒性機率成立。\n3. 構造竄改密文 C' = (C1*, C1*)。顯然 C' ≠ C*，為合法 CCA 解密查詢！\n4. 送交解密 Oracle Dec'。解密端計算 Dec(K, C1*) = Mb 且 Dec(K, C1*) = Mb，兩者一致，Oracle 成功回傳 Mb！\n5. 攻擊者獲得 Mb，優勢為 1，完全攻破 CCA 安全性。",
-    "pitfall": "CCA 規則只禁止詢問「挑戰密文本身 C*」。只要構造出 C' ≠ C* 且能通過檢查，就能合法利用解密 Oracle。",
     "answer": null
   }
 ];
