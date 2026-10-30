@@ -609,9 +609,34 @@ HTML_CONTENT = """<!DOCTYPE html>
             const item = PROOF_SHEET_DATA.find(x => x.id === id);
             if (!item) return;
 
-            const textToCopy = `【${item.title}】(${item.chapter}・${item.source})\n\n[直觀大腦模型]\n${item.intuition || ''}\n\n[待證命題]\n${item.target}\n\n[核心手法]\n${item.technique}\n\n[考場速記公式]\n${item.formula_capsule || ''}\n\n[推導步驟]\n${item.steps.join('\n')}\n\n[演算法/破譯準則]\n${item.algorithm || ''}\n\n[致命陷阱]\n${item.pitfall || ''}`;
+            const nl = String.fromCharCode(10);
+            const textToCopy = [
+                '【' + item.title + '】(' + item.chapter + '・' + item.source + ')',
+                '',
+                '[直觀大腦模型]',
+                item.intuition || '',
+                '',
+                '[待證命題]',
+                item.target || '',
+                '',
+                '[核心手法]',
+                item.technique || '',
+                '',
+                '[考場速記公式]',
+                item.formula_capsule || '',
+                '',
+                '[推導步驟]',
+                (item.steps || []).join(nl),
+                '',
+                '[演算法/破譯準則]',
+                item.algorithm || '',
+                '',
+                '[致命陷阱]',
+                item.pitfall || ''
+            ].join(nl);
+
             navigator.clipboard.writeText(textToCopy).then(() => {
-                alert(`已成功複製【${item.title}】的完整形式證明至剪貼簿！`);
+                alert('已成功複製【' + item.title + '】的完整形式證明至剪貼簿！');
             }).catch(err => {
                 console.error("複製失敗:", err);
             });

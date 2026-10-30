@@ -64,4 +64,30 @@ for p in PAGES:
         assert f'href="{target_page}"' in html, f"{p} missing link to {target_page}"
 
 print("Check 6 passed: Complete cross-navigation verified across all 8 pages!")
+
+# 4. Check inline JavaScript syntax across all 8 pages
+import subprocess
+node_check_code = r"""
+const fs = require('fs');
+const pages = process.argv.slice(1);
+for (const p of pages) {
+    const html = fs.readFileSync(p, 'utf8');
+    const matches = [...html.matchAll(/<script[\s\S]*?>([\s\S]*?)<\/script>/gi)];
+    for (let i = 0; i < matches.length; i++) {
+        const code = matches[i][1];
+        if (code.trim() && !matches[i][0].includes('src=')) {
+            try {
+                new Function(code);
+            } catch (e) {
+                console.error(`SYNTAX_ERROR in ${p} script #${i}: ${e.message}`);
+                process.exit(1);
+            }
+        }
+    }
+}
+process.exit(0);
+"""
+res = subprocess.run(["node", "-e", node_check_code, *PAGES], capture_output=True, text=True)
+assert res.returncode == 0, f"Inline JS Syntax Check Failed:\n{res.stderr}\n{res.stdout}"
+print("Check 7 passed: All inline JavaScript scripts across all 8 pages validated syntax-error-free!")
 print("All validation checks passed successfully!")
