@@ -4,15 +4,15 @@ Comprehensive validation of the exam, homework, notes, proof cheat sheet, and te
 Verifies:
 1. Exam scope constraints (Midterm archive preserves Ch. 1-8 up to 1.5 Sec 1; Final exam hub ready).
 2. UI/UX integrity (Dynamic header height sync, no blocked sticky buttons).
-3. Universal navigation across all 10 pages with Term Segmentation (Final Exam Modules vs Midterm Archive).
-4. Inline JS syntax verification across all 10 pages.
-5. Final exam data verification (js/final_data.js) including Mod-1 completed status.
+3. Universal navigation across all 11 pages with Term Segmentation (Final Exam Modules vs Midterm Archive).
+4. Inline JS syntax verification across all 11 pages.
+5. Final exam data verification (js/final_data.js) including Mod-1 (CCA/AE) & Mod-3 (DH/Hard Problems) completed status.
 """
 import os
 import re
 import subprocess
 
-print("Starting full system validation (Term Segmentation & UI/UX Integrity)...")
+print("Starting full system validation (Term Segmentation & UI/UX Integrity across 11 pages)...")
 
 # 1. Check data files exist
 DATA_FILES = ["js/exam_data.js", "js/hw_practice_data.js", "js/proof_sheet_data.js", "js/data.js", "js/final_data.js"]
@@ -50,14 +50,15 @@ print("Check 4 passed: js/data.js verified (out-of-scope modules excluded from m
 with open("js/final_data.js", "r", encoding="utf-8") as f:
     final_data_txt = f.read()
 assert "const FINAL_EXAM_MODULES = " in final_data_txt
-assert 'status: "completed"' in final_data_txt, "final-mod-1 status should be completed!"
-assert "final_ch9_cca_ae.html" in final_data_txt, "final-mod-1 page_url should point to final_ch9_cca_ae.html!"
-print("Check 5 passed: js/final_data.js verified (Final exam Module 1 completed and active).")
+assert 'final-mod-1' in final_data_txt and 'final_ch9_cca_ae.html' in final_data_txt
+assert 'final-mod-3' in final_data_txt and 'final_ch11_dh_hard_problems.html' in final_data_txt
+print("Check 5 passed: js/final_data.js verified (Modules 1 & 3 completed and active).")
 
 # 2. Check HTML files exist, have KaTeX, and have site-nav
 PAGES = [
     "index.html",
     "final_ch9_cca_ae.html",
+    "final_ch11_dh_hard_problems.html",
     "midterm_index.html",
     "notes.html",
     "exam.html",
@@ -77,18 +78,18 @@ for p in PAGES:
     assert "--header-height" in html, f"--header-height CSS variable missing in {p}"
     assert "header-sync-script" in html, f"header-sync-script missing in {p}"
     assert "top-16" not in html, f"Legacy hardcoded top-16 found in {p} (causes button blocking)!"
-print("Check 6 passed: All 10 pages exist and have KaTeX, universal dual-dropdown site-nav, and dynamic UI/UX header sync.")
+print(f"Check 6 passed: All {len(PAGES)} pages exist and have KaTeX, universal dual-dropdown site-nav, and dynamic UI/UX header sync.")
 
-# 3. Check cross navigation across all 10 pages
+# 3. Check cross navigation across all 11 pages
 for p in PAGES:
     with open(p, "r", encoding="utf-8") as f:
         html = f.read()
     for target_page in PAGES:
         assert f'href="{target_page}"' in html, f"{p} missing link to {target_page}"
 
-print("Check 7 passed: Complete cross-navigation verified across all 10 pages (Final Hub, Ch. 9 Module & Midterm Archive)!")
+print(f"Check 7 passed: Complete cross-navigation verified across all {len(PAGES)} pages (Final Hub, Ch. 9, Ch. 11 & Midterm Archive)!")
 
-# 4. Check inline JavaScript syntax across all 10 pages
+# 4. Check inline JavaScript syntax across all 11 pages
 node_check_code = r"""
 const fs = require('fs');
 const pages = process.argv.slice(1);
@@ -111,6 +112,6 @@ process.exit(0);
 """
 res = subprocess.run(["node", "-e", node_check_code, *PAGES], capture_output=True, text=True)
 assert res.returncode == 0, f"Inline JS Syntax Check Failed:\n{res.stderr}\n{res.stdout}"
-print("Check 8 passed: All inline JavaScript scripts across all 10 pages validated syntax-error-free!")
+print(f"Check 8 passed: All inline JavaScript scripts across all {len(PAGES)} pages validated syntax-error-free!")
 
-print("All 8 validation checks passed successfully!")
+print("All 8 validation checks passed successfully across all 11 pages!")

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Sync navigation across all 10 pages using the Term-Segmented (Final Exam vs Midterm Archive) architecture.
+Sync navigation across all 11 pages using the Term-Segmented (Final Exam vs Midterm Archive) architecture.
 Pages:
 - Final Exam Hub: index.html
 - Final Exam Module 1: final_ch9_cca_ae.html
-- Midterm Archive: midterm_index.html, notes.html, exam.html, homework_practice.html, hw1_summary.html, p1_summary.html, mock_exam.html, proof_sheet.html
+- Final Exam Module 2: final_ch11_dh_hard_problems.html
+- Midterm Archive (8 pages): midterm_index.html, notes.html, exam.html, homework_practice.html, hw1_summary.html, p1_summary.html, mock_exam.html, proof_sheet.html
 """
 import re
 
@@ -13,6 +14,7 @@ GITHUB_REPO_URL = "https://github.com/johnjohn1207/crypto-exam-review"
 ALL_PAGES = [
     {"file": "index.html", "id": "final_hub", "name": "期末考專區總覽"},
     {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "name": "Ch. 9 CCA 與認證加密"},
+    {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "name": "1.7 困難問題與 DH"},
     {"file": "midterm_index.html", "id": "midterm_index", "name": "期中互動總覽"},
     {"file": "notes.html", "id": "notes", "name": "期中講義筆記"},
     {"file": "exam.html", "id": "exam", "name": "期中考點變化題"},
@@ -25,7 +27,8 @@ ALL_PAGES = [
 
 FINAL_PAGES = [
     {"file": "index.html", "id": "final_hub", "label": "⚡ 期末總覽主控台", "desc": "期末主控台與 6 大模組藍圖"},
-    {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "label": "📖 Ch. 9 CCA 與認證加密", "desc": "1-5 Sec 2 核心講義與題解"}
+    {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "label": "📖 Ch. 9 CCA 與認證加密", "desc": "1-5 Sec 2 核心講義與題解"},
+    {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "label": "🔑 1.7 困難問題與 DH", "desc": "DLP / CDH / DDH 與金鑰交換"}
 ]
 
 MIDTERM_PAGES = [
@@ -40,7 +43,7 @@ MIDTERM_PAGES = [
 ]
 
 def make_nav(current_id):
-    is_in_final = current_id in ["final_hub", "final_ch9"]
+    is_in_final = current_id in ["final_hub", "final_ch9", "final_ch11"]
     is_in_midterm = not is_in_final
 
     # 1. Final Exam Dropdown Button
@@ -68,7 +71,7 @@ def make_nav(current_id):
                     <div id="final-dropdown-menu" class="hidden group-hover:block absolute left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
                         <div class="px-3 py-1.5 text-[10px] font-mono text-emerald-400 bg-slate-950/60 flex items-center justify-between">
                             <span>期末進行中教材專區</span>
-                            <span class="text-xs">Ch. 9 完備</span>
+                            <span class="text-xs">已注入 2 模組</span>
                         </div>
                         <div class="py-1">
                             {final_menu_items}
@@ -170,4 +173,4 @@ def update_all_pages():
 
 if __name__ == "__main__":
     update_all_pages()
-    print("All 10 navigation bars successfully synchronized with Midterm/Final dual dropdown segmentation!")
+    print(f"All {len(ALL_PAGES)} navigation bars successfully synchronized with Midterm/Final dual dropdown segmentation!")

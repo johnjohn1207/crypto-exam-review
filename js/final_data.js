@@ -1,5 +1,5 @@
 // Final Exam Curriculum Framework Data (Post-Midterm Modules)
-// Covering Ch. 9 (CCA, Padding Oracle, AE) and subsequent Final Exam topics
+// Covering Ch. 9 (CCA, AE) and Ch. 11 (Hard Problems, Diffie-Hellman) and subsequent Final Exam topics
 
 const FINAL_EXAM_MODULES = [
   {
@@ -38,18 +38,19 @@ const FINAL_EXAM_MODULES = [
   {
     id: "final-mod-3",
     chapter: "Ch. 11",
-    title: "數論基礎與單向陷門置換 (Number Theory & TDP)",
-    status: "ready_for_materials",
-    badge: "公鑰密碼數學核心",
-    description: "公鑰密碼學之數論基石。歐幾里得演算法、模反元素、歐拉函數、費馬小定理、中國剩餘定理（CRT），以及離散對數問題（DLP）與 CDH / DDH 困難度假設。",
+    title: "困難問題、群論與 Diffie-Hellman 金鑰交換 (1.7)",
+    status: "completed",
+    badge: "已注入上線・點擊進入",
+    page_url: "final_ch11_dh_hard_problems.html",
+    description: "完整收錄投影片 1.7（P.1-49）。解析計算複雜度與非對稱密碼數學基石，涵蓋乘法循環群 ℤ*p、生成元、離散對數問題 (DLP)、Diffie-Hellman 協定運作與課堂手算實戰，深入 DDH ≤ CDH ≤ DLP 難題層級歸約、HKDF 白化、中間人攻擊 (MITM) 與 AKE 認證機制，以及 RSA 歷史先鋒與退役原因。",
     key_topics: [
-      "擴展歐幾里得演算法 (Extended Euclidean) 計算模反元素",
-      "歐拉函數 φ(n)、費馬小定理 (Fermat's Little Theorem) 與尤拉定理",
-      "中國剩餘定理 (Chinese Remainder Theorem, CRT) 快速運算",
-      "循環群 (Cyclic Groups)、生成元 (Generator) 與子群階數 Lagrange 定理",
-      "離散對數問題 (DLP)、計算 Diffie-Hellman (CDH) 與判定 Diffie-Hellman (DDH) 假定"
+      "模 p 乘法群 ℤ*p 四大公理、生成元與離散對數問題 (DLP)",
+      "Diffie-Hellman 協定流程與課堂手算實戰 (p=23, g=5 逐步化簡)",
+      "三大困難問題層級體系：DDH ≤ CDH ≤ DLP 歸約證明與勒讓德符號漏洞",
+      "實務工程鐵律：KDF 白化 (HKDF) 防範 Raccoon 時序側信道",
+      "中間人攻擊 (MITM) 步驟與認證金鑰交換 (AKE) 四大防禦體系"
     ],
-    expected_materials: ["數論講義", "模運算快速冪練習", "Diffie-Hellman 假定證明"]
+    expected_materials: ["投影片 1.7 困難問題與 DH (已完備)", "課堂手算實戰與歸約 (已上線)", "MITM 與 AKE 防禦全解 (已收錄)"]
   },
   {
     id: "final-mod-4",
