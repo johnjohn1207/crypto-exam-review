@@ -6,17 +6,18 @@ const FINAL_EXAM_MODULES = [
     id: "final-mod-1",
     chapter: "Ch. 9",
     title: "選擇密文攻擊 (CCA) 與認證加密 (AE)",
-    status: "ready_for_materials",
-    badge: "期末首要核心",
-    description: "自投影片 1-5 Section 2 接續。從單純保密（CPA）躍升至主動攻擊防禦（CCA），剖析解密預言機（Decryption Oracle）、PKCS#7 Padding Oracle 旁路攻擊以及 Encrypt-then-MAC / GCM 認證加密標準。",
+    status: "completed",
+    badge: "已注入上線・點擊進入",
+    page_url: "final_ch9_cca_ae.html",
+    description: "完整收錄投影片 1-5 Section 2 至 Section 2.2（P.15-85）。深入剖析解密預言機（Decryption Oracle）、延展性破壞、Null-Oracle 盲解、PKCS#7 Padding Oracle 攻擊、Encrypt-then-MAC 形式化證明、AES-GCM (GHASH) 與 AEAD 綁定機制。",
     key_topics: [
-      "IND-CCA1 (非適應性) 與 IND-CCA2 (適應性) 選擇密文安全性博弈",
-      "延展性 (Malleability) 概念與為何所有純延展密碼皆非 CCA 安全",
-      "PKCS#7 填充預言機攻擊 (Padding Oracle Attack) 逐位元解密數學原理",
-      "認證加密體系 (Authenticated Encryption): Encrypt-and-MAC, MAC-then-Encrypt, Encrypt-then-MAC 安全性定理",
-      "GCM (Galois/Counter Mode) 與 CCM 認證加密運作流程"
+      "CCA 安全性 Library 庫定義與解密預言機",
+      "延展性 (Malleability) 與 Null-Oracle 逐字節盲解推導",
+      "PKCS#7 Padding Oracle 攻擊 (POODLE 原理) 與 Timing 側信道",
+      "Encrypt-then-MAC vs Encrypt-and-MAC vs MAC-then-Encrypt 三大組合嚴格證明",
+      "AES-GCM (GHASH 有限體乘法) 與 AEAD 關聯資料防範重放攻擊"
     ],
-    expected_materials: ["投影片 1-5 Section 2", "作業二 / 練習二 CCA 題型", "Padding Oracle 形式證明"]
+    expected_materials: ["投影片 1-5 Section 2 (已完成注入)", "形式證明與區分器 (已完備)", "全真模擬測驗題庫 (已上線)"]
   },
   {
     id: "final-mod-2",

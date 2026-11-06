@@ -65,10 +65,37 @@
             </div>
             
             <nav id="site-nav" class="flex items-center gap-2 text-xs py-0.5">
-                <a href="index.html" class="px-3 py-1.5 rounded-lg border border-emerald-500/80 bg-emerald-950/90 text-emerald-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="前往期末考核心複習與教材工作區">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                    <span>⚡ 期末考專區 (進行中)</span>
-                </a>
+                <div class="relative group" id="final-zone-wrapper">
+                    <button type="button" onclick="toggleFinalMenu(event)" id="final-zone-btn" class="px-3 py-1.5 rounded-lg border border-emerald-500/80 bg-emerald-950/90 text-emerald-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                        <span>⚡ 期末考專區</span>
+                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <!-- Floating Dropdown Drawer -->
+                    <div id="final-dropdown-menu" class="hidden group-hover:block absolute left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
+                        <div class="px-3 py-1.5 text-[10px] font-mono text-emerald-400 bg-slate-950/60 flex items-center justify-between">
+                            <span>期末進行中教材專區</span>
+                            <span class="text-xs">Ch. 9 完備</span>
+                        </div>
+                        <div class="py-1">
+                            <a href="index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 bg-emerald-950/70 text-emerald-200 font-semibold border-l-2 border-emerald-400">
+                        <div>
+                            <div class="font-medium">⚡ 期末總覽主控台</div>
+                            <div class="text-[10px] text-slate-500 font-mono">期末主控台與 6 大模組藍圖</div>
+                        </div>
+                        <span class="text-[10px] text-emerald-400 font-mono shrink-0">目前頁面</span>
+                    </a>
+<a href="final_ch9_cca_ae.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">📖 Ch. 9 CCA 與認證加密</div>
+                            <div class="text-[10px] text-slate-500 font-mono">1-5 Sec 2 核心講義與題解</div>
+                        </div>
+                        
+                    </a>
+
+                        </div>
+                    </div>
+                </div>
                 <div class="relative group" id="midterm-archive-wrapper">
                     <button type="button" onclick="toggleMidtermMenu(event)" id="midterm-archive-btn" class="px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
                         <span>📦 期中考歷史歸檔 (8 大模組)</span>
@@ -380,29 +407,56 @@
             const container = document.getElementById('final-modules-container');
             if (!container || typeof FINAL_EXAM_MODULES === 'undefined') return;
 
-            container.innerHTML = FINAL_EXAM_MODULES.map(mod => `
-                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-emerald-500/40 transition">
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">${mod.chapter}</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-400 border border-slate-700">${mod.badge}</span>
-                        </div>
-                        <h3 class="font-bold text-white text-base">${mod.title}</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">${mod.description}</p>
-                    </div>
+            container.innerHTML = FINAL_EXAM_MODULES.map(mod => {
+                const isCompleted = mod.status === 'completed';
+                const cardBorder = isCompleted 
+                    ? 'border-emerald-500/60 bg-gradient-to-b from-emerald-950/30 to-slate-900 shadow-lg shadow-emerald-950/30 ring-1 ring-emerald-500/40' 
+                    : 'border-slate-800 bg-slate-900/90 hover:border-emerald-500/40';
+                const badgeStyle = isCompleted
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold'
+                    : 'bg-slate-800 text-slate-400 border-slate-700';
 
-                    <div class="space-y-2.5 pt-2 border-t border-slate-800/80">
-                        <div class="text-[11px] font-mono text-slate-300 font-semibold">核心預備知識點：</div>
-                        <ul class="text-[11px] text-slate-400 space-y-1 font-sans list-disc pl-4">
-                            ${mod.key_topics.slice(0, 3).map(t => `<li>${t}</li>`).join('')}
-                        </ul>
-                        <div class="p-2 rounded-lg bg-slate-950/70 border border-dashed border-slate-800 text-[10px] text-amber-400/90 font-mono flex items-center justify-between">
-                            <span>待注入教材：</span>
-                            <span class="text-slate-400">${mod.expected_materials.join(', ')}</span>
+                const actionButton = isCompleted && mod.page_url ? `
+                    <a href="${mod.page_url}" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 transition transform hover:-translate-y-0.5">
+                        <span>👉 進入 Ch. 9 完整講義與題解</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                ` : '';
+
+                const materialsBox = isCompleted ? `
+                    <div class="p-2.5 rounded-lg bg-emerald-950/50 border border-emerald-500/30 text-[10px] text-emerald-300 font-mono flex items-center justify-between">
+                        <span class="font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>教材狀態：</span>
+                        <span class="text-slate-300">投影片 1-5 Sec 2 (P.15-85) 完備</span>
+                    </div>
+                ` : `
+                    <div class="p-2 rounded-lg bg-slate-950/70 border border-dashed border-slate-800 text-[10px] text-amber-400/90 font-mono flex items-center justify-between">
+                        <span>待注入教材：</span>
+                        <span class="text-slate-400">${mod.expected_materials.join(', ')}</span>
+                    </div>
+                `;
+
+                return `
+                    <div class="border rounded-2xl p-5 shadow-sm space-y-3 flex flex-col justify-between transition ${cardBorder}">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">${mod.chapter}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-mono border ${badgeStyle}">${mod.badge}</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base">${mod.title}</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">${mod.description}</p>
+                        </div>
+
+                        <div class="space-y-2.5 pt-2 border-t border-slate-800/80">
+                            <div class="text-[11px] font-mono text-slate-300 font-semibold">核心考點：</div>
+                            <ul class="text-[11px] text-slate-400 space-y-1 font-sans list-disc pl-4">
+                                ${mod.key_topics.slice(0, 3).map(t => `<li>${t}</li>`).join('')}
+                            </ul>
+                            ${materialsBox}
+                            ${actionButton}
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function switchSemesterTab(tab) {
@@ -443,6 +497,13 @@
     </script>
 
 <script id="nav-dropdown-script">
+function toggleFinalMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('final-dropdown-menu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
 function toggleMidtermMenu(e) {
     if (e) e.stopPropagation();
     const menu = document.getElementById('midterm-dropdown-menu');
@@ -451,10 +512,15 @@ function toggleMidtermMenu(e) {
     }
 }
 document.addEventListener('click', (e) => {
-    const wrapper = document.getElementById('midterm-archive-wrapper');
-    const menu = document.getElementById('midterm-dropdown-menu');
-    if (menu && wrapper && !wrapper.contains(e.target)) {
-        menu.classList.add('hidden');
+    const finalWrapper = document.getElementById('final-zone-wrapper');
+    const finalMenu = document.getElementById('final-dropdown-menu');
+    if (finalMenu && finalWrapper && !finalWrapper.contains(e.target)) {
+        finalMenu.classList.add('hidden');
+    }
+    const midtermWrapper = document.getElementById('midterm-archive-wrapper');
+    const midtermMenu = document.getElementById('midterm-dropdown-menu');
+    if (midtermMenu && midtermWrapper && !midtermWrapper.contains(e.target)) {
+        midtermMenu.classList.add('hidden');
     }
 });
 </script>

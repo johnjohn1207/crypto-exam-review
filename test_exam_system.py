@@ -4,9 +4,9 @@ Comprehensive validation of the exam, homework, notes, proof cheat sheet, and te
 Verifies:
 1. Exam scope constraints (Midterm archive preserves Ch. 1-8 up to 1.5 Sec 1; Final exam hub ready).
 2. UI/UX integrity (Dynamic header height sync, no blocked sticky buttons).
-3. Universal navigation across all 9 pages with Term Segmentation (Final vs Midterm Archive).
-4. Inline JS syntax verification across all 9 pages.
-5. Final exam data verification (js/final_data.js).
+3. Universal navigation across all 10 pages with Term Segmentation (Final Exam Modules vs Midterm Archive).
+4. Inline JS syntax verification across all 10 pages.
+5. Final exam data verification (js/final_data.js) including Mod-1 completed status.
 """
 import os
 import re
@@ -50,11 +50,14 @@ print("Check 4 passed: js/data.js verified (out-of-scope modules excluded from m
 with open("js/final_data.js", "r", encoding="utf-8") as f:
     final_data_txt = f.read()
 assert "const FINAL_EXAM_MODULES = " in final_data_txt
-print("Check 5 passed: js/final_data.js verified (Final exam modules framework ready).")
+assert 'status: "completed"' in final_data_txt, "final-mod-1 status should be completed!"
+assert "final_ch9_cca_ae.html" in final_data_txt, "final-mod-1 page_url should point to final_ch9_cca_ae.html!"
+print("Check 5 passed: js/final_data.js verified (Final exam Module 1 completed and active).")
 
 # 2. Check HTML files exist, have KaTeX, and have site-nav
 PAGES = [
     "index.html",
+    "final_ch9_cca_ae.html",
     "midterm_index.html",
     "notes.html",
     "exam.html",
@@ -74,18 +77,18 @@ for p in PAGES:
     assert "--header-height" in html, f"--header-height CSS variable missing in {p}"
     assert "header-sync-script" in html, f"header-sync-script missing in {p}"
     assert "top-16" not in html, f"Legacy hardcoded top-16 found in {p} (causes button blocking)!"
-print("Check 6 passed: All 9 pages exist and have KaTeX, universal site-nav, and dynamic UI/UX header sync.")
+print("Check 6 passed: All 10 pages exist and have KaTeX, universal dual-dropdown site-nav, and dynamic UI/UX header sync.")
 
-# 3. Check cross navigation across all 9 pages
+# 3. Check cross navigation across all 10 pages
 for p in PAGES:
     with open(p, "r", encoding="utf-8") as f:
         html = f.read()
     for target_page in PAGES:
         assert f'href="{target_page}"' in html, f"{p} missing link to {target_page}"
 
-print("Check 7 passed: Complete cross-navigation verified across all 9 pages (Final Hub & Midterm Archive)!")
+print("Check 7 passed: Complete cross-navigation verified across all 10 pages (Final Hub, Ch. 9 Module & Midterm Archive)!")
 
-# 4. Check inline JavaScript syntax across all 9 pages
+# 4. Check inline JavaScript syntax across all 10 pages
 node_check_code = r"""
 const fs = require('fs');
 const pages = process.argv.slice(1);
@@ -108,6 +111,6 @@ process.exit(0);
 """
 res = subprocess.run(["node", "-e", node_check_code, *PAGES], capture_output=True, text=True)
 assert res.returncode == 0, f"Inline JS Syntax Check Failed:\n{res.stderr}\n{res.stdout}"
-print("Check 8 passed: All inline JavaScript scripts across all 9 pages validated syntax-error-free!")
+print("Check 8 passed: All inline JavaScript scripts across all 10 pages validated syntax-error-free!")
 
 print("All 8 validation checks passed successfully!")

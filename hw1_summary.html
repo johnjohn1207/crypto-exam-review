@@ -60,9 +60,37 @@
             </div>
             
             <nav id="site-nav" class="flex items-center gap-2 text-xs py-0.5">
-                <a href="index.html" class="px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="前往期末考核心複習與教材工作區">
-                    <span>⚡ 期末考專區</span>
-                </a>
+                <div class="relative group" id="final-zone-wrapper">
+                    <button type="button" onclick="toggleFinalMenu(event)" id="final-zone-btn" class="px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400  shrink-0"></span>
+                        <span>⚡ 期末考專區</span>
+                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <!-- Floating Dropdown Drawer -->
+                    <div id="final-dropdown-menu" class="hidden group-hover:block absolute left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
+                        <div class="px-3 py-1.5 text-[10px] font-mono text-emerald-400 bg-slate-950/60 flex items-center justify-between">
+                            <span>期末進行中教材專區</span>
+                            <span class="text-xs">Ch. 9 完備</span>
+                        </div>
+                        <div class="py-1">
+                            <a href="index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">⚡ 期末總覽主控台</div>
+                            <div class="text-[10px] text-slate-500 font-mono">期末主控台與 6 大模組藍圖</div>
+                        </div>
+                        
+                    </a>
+<a href="final_ch9_cca_ae.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">📖 Ch. 9 CCA 與認證加密</div>
+                            <div class="text-[10px] text-slate-500 font-mono">1-5 Sec 2 核心講義與題解</div>
+                        </div>
+                        
+                    </a>
+
+                        </div>
+                    </div>
+                </div>
                 <div class="relative group" id="midterm-archive-wrapper">
                     <button type="button" onclick="toggleMidtermMenu(event)" id="midterm-archive-btn" class="px-3 py-1.5 rounded-lg border border-amber-500/80 bg-amber-950/90 text-amber-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
                         <span>📦 期中考歷史歸檔 (8 大模組)</span>
@@ -816,6 +844,13 @@
     </script>
 
 <script id="nav-dropdown-script">
+function toggleFinalMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('final-dropdown-menu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
 function toggleMidtermMenu(e) {
     if (e) e.stopPropagation();
     const menu = document.getElementById('midterm-dropdown-menu');
@@ -824,10 +859,15 @@ function toggleMidtermMenu(e) {
     }
 }
 document.addEventListener('click', (e) => {
-    const wrapper = document.getElementById('midterm-archive-wrapper');
-    const menu = document.getElementById('midterm-dropdown-menu');
-    if (menu && wrapper && !wrapper.contains(e.target)) {
-        menu.classList.add('hidden');
+    const finalWrapper = document.getElementById('final-zone-wrapper');
+    const finalMenu = document.getElementById('final-dropdown-menu');
+    if (finalMenu && finalWrapper && !finalWrapper.contains(e.target)) {
+        finalMenu.classList.add('hidden');
+    }
+    const midtermWrapper = document.getElementById('midterm-archive-wrapper');
+    const midtermMenu = document.getElementById('midterm-dropdown-menu');
+    if (midtermMenu && midtermWrapper && !midtermWrapper.contains(e.target)) {
+        midtermMenu.classList.add('hidden');
     }
 });
 </script>

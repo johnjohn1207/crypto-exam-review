@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>期末核心模組一：選擇密文攻擊 (CCA)、Padding Oracle 與認證加密 (AE) | 現代與後量子密碼學導論</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#151f32', 950: '#070d19' },
+                        emerald: { 450: '#10b981', 950: '#022c22' }
+                    }
+                }
+            }
+        };
+    </script>
+    <!-- KaTeX CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        :root { --header-height: 72px; }
+        html { scroll-behavior: smooth; }
+        .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.5rem 0; }
+        pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+        .sticky-subnav { top: var(--header-height); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- 全域頂部導覽列 (Universal Nav) -->
+    <header id="site-header" class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-800 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-y-2">
+            <!-- 品牌與當前模組識別 -->
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2 text-white font-bold text-base hover:text-emerald-400 transition">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white text-xs font-mono font-bold shadow-sm shadow-emerald-500/30">MC</span>
+                    <span class="tracking-tight hidden sm:inline">密碼學導論・期末考專區</span>
+                </a>
+                <span class="text-slate-600">/</span>
+                <div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full text-xs font-mono text-emerald-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Ch. 9 模組一：CCA 與認證加密</span>
+                </div>
+            </div>
+
+            <!-- 全站快速導覽與歷史歸檔下拉選單 -->
+            <nav id="site-nav" class="flex items-center gap-2 text-xs py-0.5">
+                <div class="relative group" id="final-zone-wrapper">
+                    <button type="button" onclick="toggleFinalMenu(event)" id="final-zone-btn" class="px-3 py-1.5 rounded-lg border border-emerald-500/80 bg-emerald-950/90 text-emerald-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                        <span>⚡ 期末考專區</span>
+                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <!-- Floating Dropdown Drawer -->
+                    <div id="final-dropdown-menu" class="hidden group-hover:block absolute left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
+                        <div class="px-3 py-1.5 text-[10px] font-mono text-emerald-400 bg-slate-950/60 flex items-center justify-between">
+                            <span>期末進行中教材專區</span>
+                            <span class="text-xs">Ch. 9 完備</span>
+                        </div>
+                        <div class="py-1">
+                            <a href="index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">⚡ 期末總覽主控台</div>
+                            <div class="text-[10px] text-slate-500 font-mono">期末主控台與 6 大模組藍圖</div>
+                        </div>
+                        
+                    </a>
+<a href="final_ch9_cca_ae.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 bg-emerald-950/70 text-emerald-200 font-semibold border-l-2 border-emerald-400">
+                        <div>
+                            <div class="font-medium">📖 Ch. 9 CCA 與認證加密</div>
+                            <div class="text-[10px] text-slate-500 font-mono">1-5 Sec 2 核心講義與題解</div>
+                        </div>
+                        <span class="text-[10px] text-emerald-400 font-mono shrink-0">目前頁面</span>
+                    </a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="relative group" id="midterm-archive-wrapper">
+                    <button type="button" onclick="toggleMidtermMenu(event)" id="midterm-archive-btn" class="px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
+                        <span>📦 期中考歷史歸檔 (8 大模組)</span>
+                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <!-- Floating Dropdown Drawer -->
+                    <div id="midterm-dropdown-menu" class="hidden group-hover:block absolute right-0 sm:right-auto sm:left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
+                        <div class="px-3 py-1.5 text-[10px] font-mono text-slate-400 bg-slate-950/60 flex items-center justify-between">
+                            <span>期中考精華存檔庫（已結算）</span>
+                            <span class="text-amber-400">Ch. 1-8 完備</span>
+                        </div>
+                        <div class="py-1">
+                            <a href="midterm_index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中互動總覽</div>
+                            <div class="text-[10px] text-slate-500 font-mono">Ch. 1-8 互動實驗室與名詞庫</div>
+                        </div>
+                        
+                    </a>
+<a href="notes.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中講義筆記</div>
+                            <div class="text-[10px] text-slate-500 font-mono">Ch. 1-8 精華閱讀講義</div>
+                        </div>
+                        
+                    </a>
+<a href="exam.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中考點變化題</div>
+                            <div class="text-[10px] text-slate-500 font-mono">10 大考點衍生變化題</div>
+                        </div>
+                        
+                    </a>
+<a href="homework_practice.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">作業練習全解</div>
+                            <div class="text-[10px] text-slate-500 font-mono">作業一與練習一 38 題解析</div>
+                        </div>
+                        
+                    </a>
+<a href="hw1_summary.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">作業一攻略</div>
+                            <div class="text-[10px] text-slate-500 font-mono">作業一 7 大思維與證明藍圖</div>
+                        </div>
+                        
+                    </a>
+<a href="p1_summary.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">練習一攻略</div>
+                            <div class="text-[10px] text-slate-500 font-mono">練習一 6 大考點與 5 大極簡證明</div>
+                        </div>
+                        
+                    </a>
+<a href="mock_exam.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中模擬試卷</div>
+                            <div class="text-[10px] text-slate-500 font-mono">100 分全真模擬試卷與詳解</div>
+                        </div>
+                        
+                    </a>
+<a href="proof_sheet.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中必考證明表</div>
+                            <div class="text-[10px] text-slate-500 font-mono">27 題形式證明直觀速記表</div>
+                        </div>
+                        
+                    </a>
+
+                        </div>
+                    </div>
+                </div>
+                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700/80 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+        <!-- Hero Header -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950/70 via-slate-900 to-slate-900 border border-emerald-500/30 p-6 sm:p-10 shadow-2xl">
+            <div class="relative z-10 space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <span>期末核心必考模組・投影片 1-5 Section 2 至 Section 2.2 (P.15-85)</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    選擇密文攻擊 (CCA)、延展性破壞與認證加密 (AE)
+                </h1>
+                <p class="text-sm sm:text-base text-slate-300 max-w-4xl leading-relaxed">
+                    期中考範圍終止於 CPA 安全性（Section 1）。本模組正式邁入期末考最核心的第一大基石：
+                    當攻擊者獲得<strong>解密預言機（Decryption Oracle）</strong>時，所有傳統對稱加密（CTR, CBC, OTP）因具備<strong>延展性（Malleability）</strong>而全數崩盤。
+                    本單元剖析 <strong>Null-Oracle 攻擊、PKCS#7 Padding Oracle 攻擊、Encrypt-then-MAC 證明、AES-GCM 與 AEAD 綁定機制</strong>。
+                </p>
+
+                <!-- 模組指標資訊 -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="text-[11px] text-slate-400 font-mono">安全模型升級</div>
+                        <div class="text-base font-bold text-emerald-300">CPA $\to$ CCA $\to$ AE</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="text-[11px] text-slate-400 font-mono">核心攻擊機制</div>
+                        <div class="text-base font-bold text-amber-300">Padding Oracle (1-bit 洩漏)</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="text-[11px] text-slate-400 font-mono">黃金組合範式</div>
+                        <div class="text-base font-bold text-cyan-300">Encrypt-then-MAC</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="text-[11px] text-slate-400 font-mono">現代工業標準</div>
+                        <div class="text-base font-bold text-purple-300">AES-GCM (GHASH)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快速章節目錄導覽 Bar (Sticky Subnav) -->
+        <nav class="sticky-subnav z-30 bg-slate-900/90 backdrop-blur border border-slate-800 rounded-2xl p-2.5 shadow-lg flex items-center gap-2 overflow-x-auto text-xs font-mono">
+            <span class="text-slate-400 px-2 shrink-0">模組跳轉：</span>
+            <a href="#sec-cca-def" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 transition shrink-0">1. CCA 定義與 Library 庫</a>
+            <a href="#sec-malleability" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 transition shrink-0">2. 延展性與 Null-Oracle</a>
+            <a href="#sec-padding-oracle" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 transition shrink-0">3. PKCS#7 Padding Oracle</a>
+            <a href="#sec-proofs" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 transition shrink-0">4. 形式化證明 (Frankenstein)</a>
+            <a href="#sec-mac-combos" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 transition shrink-0">5. MAC 與三種組合範式</a>
+            <a href="#sec-aead-gcm" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 transition shrink-0">6. AE/AEAD 與 AES-GCM</a>
+            <a href="#sec-quiz" class="px-3 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/50 hover:bg-emerald-600 text-emerald-200 hover:text-white transition shrink-0">7. 期末高頻考題練習</a>
+        </nav>
+
+        <!-- ================= SECTION 1: CCA 安全性形式化定義 ================= -->
+        <section id="sec-cca-def" class="space-y-6 pt-4">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold">SECTION 1</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">選擇密文攻擊 (CCA) 與解密預言機（Decryption Oracle）</h2>
+            </div>
+
+            <!-- 直觀大腦模型 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                <div class="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
+                    <span class="font-mono text-base">🧠</span>
+                    <span>直觀大腦模型：從 CPA 到 CCA 的能力躍遷</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-2">
+                        <div class="font-mono font-bold text-sky-400">CPA 安全性（期中範圍）：加密預言機</div>
+                        <p>「即使允許你選擇任意明文要求我加密，你依然無法區分我的密文究竟加密了 $M_0$ 還是 $M_1$。」</p>
+                        <p class="text-slate-400 text-xs">攻擊者被動接收密文，不能將密文送給解密者觀測解密行為。</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30 space-y-2 bg-emerald-950/10">
+                        <div class="font-mono font-bold text-emerald-400">CCA 安全性（期末範圍）：加密＋解密預言機</div>
+                        <p>「即使允許你選擇任意明文加密，<strong>同時允許你提交任意密文要求我解密（唯獨不能直接提交挑戰密文 $C^*$）</strong>，你依然無法區分。」</p>
+                        <p class="text-slate-400 text-xs">實務情境：伺服器解析收到的封包，攻擊者故意篡改密文並監控伺服器是否崩潰、報錯或延遲。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Library 形式化定義對比 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+                <h3 class="font-bold text-white text-base">CCA 安全性的 Library 庫形式化定義（投影片 P.39）</h3>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    方案 $\Sigma$ 為 CCA 安全，若真實庫 $\mathcal{L}_{\Sigma}^{\text{cca-real}}$ 與隨機庫 $\mathcal{L}_{\Sigma}^{\text{cca-rand}}$ 對於所有多項式時間區分器 $\mathcal{A}$ 均為計算上不可區分（$\mathcal{L}_{\text{cca-real}} \approx \mathcal{L}_{\text{cca-rand}}$）。
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Real Library -->
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs space-y-2">
+                        <div class="text-emerald-400 font-bold border-b border-slate-800 pb-1.5 flex justify-between">
+                            <span>真實庫 $\mathcal{L}_{\Sigma}^{\text{cca-real}}$</span>
+                            <span class="text-slate-500">真實金鑰運算</span>
+                        </div>
+                        <div class="text-slate-400">$K \leftarrow \Sigma.\mathcal{K}$</div>
+                        <div class="space-y-1 text-slate-200">
+                            <span class="text-purple-400 font-bold">cca.enc(M):</span><br>
+                            &nbsp;&nbsp;$C := \Sigma.\text{Enc}(K, M)$<br>
+                            &nbsp;&nbsp;return $C$
+                        </div>
+                        <div class="space-y-1 text-slate-200 pt-2 border-t border-slate-800/80">
+                            <span class="text-purple-400 font-bold">cca.dec(C):</span><br>
+                            &nbsp;&nbsp;return $\Sigma.\text{Dec}(K, C)$
+                        </div>
+                    </div>
+
+                    <!-- Rand Library -->
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs space-y-2">
+                        <div class="text-amber-400 font-bold border-b border-slate-800 pb-1.5 flex justify-between">
+                            <span>隨機庫 $\mathcal{L}_{\Sigma}^{\text{cca-rand}}$</span>
+                            <span class="text-slate-500">字典映射 + 洩漏過濾</span>
+                        </div>
+                        <div class="text-slate-400">$K \leftarrow \Sigma.\mathcal{K}$, $\mathcal{D} := \text{empty map}$</div>
+                        <div class="space-y-1 text-slate-200">
+                            <span class="text-purple-400 font-bold">cca.enc(M):</span><br>
+                            &nbsp;&nbsp;$C \leftarrow \Sigma.\mathcal{C}(|M|)$ <span class="text-slate-500">// 隨機密文</span><br>
+                            &nbsp;&nbsp;$\mathcal{D}[C] := M$ <span class="text-slate-500">// 記錄對應關係</span><br>
+                            &nbsp;&nbsp;return $C$
+                        </div>
+                        <div class="space-y-1 text-slate-200 pt-2 border-t border-slate-800/80">
+                            <span class="text-purple-400 font-bold">cca.dec(C):</span><br>
+                            &nbsp;&nbsp;<span class="text-amber-400 font-semibold">if $\mathcal{D}[C]$ defined: return $\mathcal{D}[C]$</span><br>
+                            &nbsp;&nbsp;return $\Sigma.\text{Dec}(K, C)$ <span class="text-slate-500">// 遭篡改密文回落真實解密</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs text-slate-400 space-y-1">
+                    <span class="font-bold text-amber-300">關鍵審計細節：</span>
+                    隨機庫中，只有自己加密出來且記錄在字典 $\mathcal{D}$ 中的密文才能保證解出原明文；<strong>凡是攻擊者篡改過的新密文 $C'$ 都不在 $\mathcal{D}$ 中，會直接回落至真實解密 $\Sigma.\text{Dec}(K, C')$</strong>。如果該加密方案允許密文篡改影響明文，攻擊者就能直接看穿真實庫與隨機庫的差異！
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: 延展性與 Null-Oracle 攻擊 ================= -->
+        <section id="sec-malleability" class="space-y-6 pt-4">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold">SECTION 2</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">延展性（Malleability）與 Null-Oracle 攻擊全解析</h2>
+            </div>
+
+            <!-- 延展性定義與 CTR 模式弱點 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                <h3 class="font-bold text-white text-base">1. 延展性（Malleability）的精確定義（投影片 P.24）</h3>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    若給定未知明文 $M$ 的密文 $C$，攻擊者能在不知道密鑰 $K$ 的情況下，構造出新的密文 $C' \neq C$，使得其解密結果 $M' = \text{Dec}(K, C')$ 與原始明文 $M$ 存在<strong>可預測的數學關係</strong>（例如 $M' = M \oplus \Delta$），則該加密方案具有<strong>延展性（Malleable）</strong>。
+                </p>
+                <div class="p-3.5 rounded-xl bg-rose-950/20 border border-rose-500/30 text-rose-300 text-xs sm:text-sm font-mono">
+                    <strong>定理：</strong>任何具備延展性（Malleable）的加密方案，<strong>絕對不可能是 CCA 安全的！</strong><br>
+                    <span class="text-xs text-rose-400 font-sans">（CTR 模式、CBC 模式、One-Time Pad、CFB、OFB 通通具有延展性，因此單獨使用時全都破 CCA 安全性！）</span>
+                </div>
+            </div>
+
+            <!-- Null-Oracle 攻擊推導 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-white text-base">2. Null-Oracle 逐位元盲解推導（投影片 P.20-31）</h3>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30">1-bit 洩漏破全盤</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    假設伺服器解密 CTR 密文時，若解密出的明文中含有空字元（Null byte `0x00`），軟體就會崩潰或拋出錯誤，這就形成了一個只有 1 個 bit 輸出的預言機：
+                    $$\text{nulloracle}(C) = \begin{cases} \text{true}, & \text{若 } \text{CTR.Dec}(K, C) \text{ 包含 } 0x00 \\ \text{false}, & \text{否則} \end{cases}$$
+                </p>
+
+                <!-- 逐步推導 -->
+                <div class="space-y-3 pt-2">
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                        <div class="text-emerald-400 font-bold text-xs font-mono">【破解末位元組原理】數學抵消機制</div>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            令目標明文末字節為未知數 $b$，即 $M = M' \parallel b$。攻擊者猜測值為 $g \in \{0x01, 0x02, \dots, 0xFF\}$。<br>
+                            攻擊者將密文末字節 XOR 上 $g$，構造 $C' = C \oplus (\dots 00 \parallel g)$：
+                            $$\text{CTR.Dec}(K, C') = M \oplus (\dots 00 \parallel g) = M' \parallel (b \oplus g)$$
+                            當且僅當猜測值 $g = b$ 時，$b \oplus g = b \oplus b = 0x00$！<br>
+                            此時 $\text{nulloracle}(C')$ 立即返回 <strong class="text-emerald-400">true</strong>（系統崩潰），攻擊者當場精確斷定：<strong>末位元組必為 $g$！</strong>
+                        </p>
+                    </div>
+
+                    <!-- 虛擬碼演算法 -->
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs space-y-2">
+                        <div class="text-sky-400 font-bold border-b border-slate-800 pb-1.5">
+                            全明文還原演算法 $\mathcal{A}_{\text{null-oracle}}$（投影片 P.29）
+                        </div>
+                        <pre class="text-slate-300 leading-relaxed overflow-x-auto">
+n := |C_1 || ... || C_l|               // 明文字節長度
+M := ""
+for i = 1 to n:
+    for each g in {0x01, ..., 0xFF}:    // 最多 255 次測試
+        Delta := (00)^n
+        Delta[i] := g                  // 僅在第 i 個 byte 置入猜測值
+        if nulloracle(C ^ (0^lambda || Delta)):
+            M := M || g                // 命中 0x00！還原第 i 個 byte
+            break
+return M</pre>
+                    </div>
+
+                    <!-- 複雜度對比表格 -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left border border-slate-800 rounded-xl overflow-hidden">
+                            <thead class="bg-slate-950 text-slate-400 font-mono">
+                                <tr>
+                                    <th class="p-3">攻擊情境</th>
+                                    <th class="p-3">查詢複雜度</th>
+                                    <th class="p-3">16 位元組區塊運算量</th>
+                                    <th class="p-3">性質</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                                <tr>
+                                    <td class="p-3 font-semibold text-rose-400">真正暴力窮舉明文</td>
+                                    <td class="p-3 font-mono">$256^n$（指數級）</td>
+                                    <td class="p-3 font-mono">$256^{16} \approx 10^{38}$ 次（宇宙尺度，不可能）</td>
+                                    <td class="p-3 text-slate-400">無法攻破</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-emerald-400">Null-Oracle 延展性攻擊</td>
+                                    <td class="p-3 font-mono">$\le 255 \times n$（線性級）</td>
+                                    <td class="p-3 font-mono">$255 \times 16 \approx 4,080$ 次（不到 1 秒！）</td>
+                                    <td class="p-3 text-emerald-400">極度致命，完全破解</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: PKCS#7 Padding Oracle ================= -->
+        <section id="sec-padding-oracle" class="space-y-6 pt-4">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold">SECTION 3</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">真實世界漏洞：PKCS#7 Padding Oracle 攻擊（POODLE 原理）</h2>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+                <h3 class="font-bold text-white text-base">1. PKCS#7 填充規範與 CBC 模式解密機制（投影片 P.34）</h3>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    CBC 模式要求明文必須對齊 16 位元組（128 bits）。不足時採用 PKCS#7 規範填充：缺 1 個字節填 `0x01`，缺 2 個字節填 `0x02 0x02`，若剛好整除則補一整塊 16 個 `0x10`。
+                </p>
+
+                <!-- 圖解 CBC 解密與 Padding Oracle -->
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                    <div class="text-xs font-mono text-emerald-400 font-bold">CBC 解密公式核心：</div>
+                    <div class="text-sm font-mono text-slate-200">
+                        $$P_k = \text{Dec}_K(C_k) \oplus C_{k-1} = I_k \oplus C_{k-1}$$
+                        其中 $I_k = \text{Dec}_K(C_k)$ 為區塊密碼解密後的「中間值（Intermediate Value）」。
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        伺服器解密後會校驗末端 Padding。若 Padding 格式錯誤，舊版 SSL/TLS、SSH 會回報「Padding Invalid」或產生不同延遲。
+                        <strong>這直接給了攻擊者一個判定「$P_k$ 末端是否符合有效 Padding」的預言機！</strong>
+                    </p>
+                </div>
+
+                <!-- 攻擊三步驟精華 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                        <div class="font-mono font-bold text-amber-400">步驟 A：鎖定目標字節</div>
+                        <p class="text-slate-300">
+                            攻擊者截獲密文區塊 $(C_{k-1}, C_k)$。將 $C_{k-1}$ 的最後一個字節替換為隨機猜測值 $r$。
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                        <div class="font-mono font-bold text-emerald-400">步驟 B：反推中間值 $I_k$</div>
+                        <p class="text-slate-300">
+                            當伺服器回報 Padding Valid 時，代表解密末字節剛好是 `0x01`！
+                            因此 $I_k[16] \oplus r = 0x01 \implies \mathbf{I_k[16] = r \oplus 0x01}$！中間值被徹底揭露！
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                        <div class="font-mono font-bold text-sky-400">步驟 C：還原真實明文 $P_k$</div>
+                        <p class="text-slate-300">
+                            既然有了真實的 $I_k[16]$，直接與攔截到的原始密文 $C_{k-1}[16]$ 做 XOR：
+                            $$\mathbf{P_k[16] = I_k[16] \oplus C_{k-1}[16]}$$
+                            完全不需要密鑰 $K$！
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 其他 Format Oracle 與 Timing 攻擊 -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs font-mono">
+                    <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                        <div class="text-rose-400 font-bold">Timing Attack (Lucky 13)</div>
+                        <div class="text-slate-400 text-[11px] pt-1">解密時進行虛擬運算的時間微秒差異洩漏 Padding 長度。</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                        <div class="text-sky-400 font-bold">Apple iMessage (gzip)</div>
+                        <div class="text-slate-400 text-[11px] pt-1">解密後 gzip 解壓縮成功/失敗作為 Oracle 洩漏明文字元。</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                        <div class="text-purple-400 font-bold">XML / JSON Parser</div>
+                        <div class="text-slate-400 text-[11px] pt-1">解析語法錯誤（語意標籤不閉合）洩漏解密字串。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: 形式化證明與區分器 ================= -->
+        <section id="sec-proofs" class="space-y-6 pt-4">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold">SECTION 4</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">期末必考形式證明：區分器演算法與推導步驟</h2>
+            </div>
+
+            <!-- 證明 1: 1-bit Malleability 破解 CCA -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-white text-base">證明一：1-bit 延展性必定攻破 CCA 安全性（投影片 P.40-41）</h3>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-rose-500/10 text-rose-300 border border-rose-500/30">必背核心證明</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <strong>方案定義：</strong>$Enc(K, M): R \leftarrow \{0,1\}^\lambda, S := F(K, R) \oplus M$；密文為 $R \parallel S$。<br>
+                    <strong>待證命題：</strong>該方案具備 CPA 安全性，但<strong>非 CCA 安全（Not CCA-secure）</strong>。
+                </p>
+
+                <!-- 區分器寫法 -->
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs space-y-2">
+                    <div class="text-emerald-400 font-bold">區分器 $\mathcal{A}$ 演算法構造：</div>
+                    <pre class="text-slate-300 leading-relaxed overflow-x-auto">
+M &lt;- {0, 1}^lambda                         // 任意選取一個測試明文
+Delta := arbitrary nonzero string          // 任選一個非零字串 (例如 0x01...00)
+R || S := cca.enc(M)                       // 調用加密預言機
+M' := cca.dec(R || (S ^ Delta))            // 篡改密文後半部並提交解密預言機
+return M' == (M ^ Delta)                   // 檢查關係是否成立</pre>
+                </div>
+
+                <!-- 嚴格優勢推導 -->
+                <div class="space-y-2 text-xs sm:text-sm text-slate-300">
+                    <div class="font-bold text-white">優勢推導步驟（分步清晰）：</div>
+                    <ol class="list-decimal pl-5 space-y-2 text-slate-300">
+                        <li>
+                            <strong class="text-emerald-400">在真實庫 $\mathcal{L}_{\text{cca-real}}$ 中：</strong><br>
+                            解密演算法計算 $F(K, R) \oplus (S \oplus \Delta) = (F(K, R) \oplus S) \oplus \Delta = M \oplus \Delta$。<br>
+                            因此恆有 $M' = M \oplus \Delta$。回傳 1 的機率：
+                            $$\Pr[\mathcal{A} \Rightarrow 1 \mid \mathcal{L}_{\text{cca-real}}] = 1$$
+                        </li>
+                        <li>
+                            <strong class="text-amber-400">在隨機庫 $\mathcal{L}_{\text{cca-rand}}$ 中：</strong><br>
+                            篡改後的密文 $R \parallel (S \oplus \Delta)$ 由於 $\Delta \neq 0$，因此不在字典 $\mathcal{D}$ 中，解密請求回落至真實解密函數 $\Sigma.\text{Dec}(K, \cdot)$。<br>
+                            但隨機庫中的 $S$ 是均勻隨機生成的，與明文 $M$ 完全獨立！因此解密出的 $M'$ 也是獨立均勻隨機字串。<br>
+                            其剛好等於 $M \oplus \Delta$ 的機率僅為：
+                            $$\Pr[\mathcal{A} \Rightarrow 1 \mid \mathcal{L}_{\text{cca-rand}}] = \frac{1}{2^\lambda}$$
+                        </li>
+                        <li>
+                            <strong class="text-sky-400">計算優勢（Advantage）：</strong>
+                            $$\mathbf{\text{Adv}_{\Sigma}^{\text{cca}}(\mathcal{A}) = \left| 1 - \frac{1}{2^\lambda} \right| \approx 1}$$
+                            優勢為 Non-negligible（極大），故該方案徹底違反 CCA 安全性。$\blacksquare$
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 證明 2: Frankenstein 拼湊密文攻擊 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-white text-base">證明二：Frankenstein 拼湊密文偽造攻擊（投影片 P.42-44）</h3>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-500/10 text-purple-300 border border-purple-500/30">進階難題考點</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <strong>進階方案：</strong>$Enc(K, M): R \leftarrow \{0,1\}^\lambda, S := F(K, R) \oplus F(K, M)$，密文為 $R \parallel S$（$F$ 為 PRP，解密需調用 $F^{-1}$）。<br>
+                    <strong>特性：</strong>由於 $M$ 經過了非線性的 PRP 處理，單位的 bit-flipping 無法湊效。但攻擊者可以使用「科學怪人 Frankenstein 拼裝法」攻破！
+                </p>
+
+                <!-- 區分器寫法 -->
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs space-y-2">
+                    <div class="text-purple-400 font-bold">區分器 $\mathcal{A}_{\text{Frankenstein}}$ 構造：</div>
+                    <pre class="text-slate-300 leading-relaxed overflow-x-auto">
+M &lt;- {0, 1}^lambda
+R1 || S1 := cca.enc(M)                     // 對同一個 M 加密第一次
+R2 || S2 := cca.enc(M)                     // 對同一個 M 加密第二次
+M1* := cca.dec(R1 || S2)                   // 交叉交換前半部與後半部
+M2* := cca.dec(R2 || S1)                   // 交叉交換前半部與後半部
+return M1* == M2*                          // 檢查兩次解密是否必然相等！</pre>
+                </div>
+
+                <!-- 數學推導 -->
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs sm:text-sm">
+                    <div class="text-emerald-400 font-mono font-bold">數學恆等式證明：</div>
+                    <div class="text-slate-300 leading-relaxed font-mono">
+                        $S_1 = F(K, R_1) \oplus F(K, M)$<br>
+                        $S_2 = F(K, R_2) \oplus F(K, M)$<br>
+                        解密 $R_1 \parallel S_2$ 時，PRP 反求前輸入為：$F(K, R_1) \oplus S_2 = \mathbf{F(K, R_1) \oplus F(K, R_2) \oplus F(K, M)}$<br>
+                        解密 $R_2 \parallel S_1$ 時，PRP 反求前輸入為：$F(K, R_2) \oplus S_1 = \mathbf{F(K, R_2) \oplus F(K, R_1) \oplus F(K, M)}$
+                    </div>
+                    <p class="text-slate-300 text-xs sm:text-sm pt-1">
+                        因為 XOR 滿足交換律，兩者的輸入<strong>完全相同</strong>，故解密結果必然 $M_1^* = M_2^*$！<br>
+                        在真實庫中回傳 1 的機率為 $1$；在隨機庫中因均未記錄在字典，兩者隨機相等機率為 $2^{-\lambda}$。Advantage $\approx 1$！
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 5: MAC 與三種組合範式 ================= -->
+        <section id="sec-mac-combos" class="space-y-6 pt-4">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold">SECTION 5</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">訊息認證碼 (MAC) 與三種組合範式終極對比</h2>
+            </div>
+
+            <!-- MAC 基礎 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                <h3 class="font-bold text-white text-base">1. MAC 的本質與不可偽造性（EUF-CMA）</h3>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    密碼學雜湊（Hash）不需要密鑰，只能防範傳輸過程中的隨機位元錯誤；而 <strong>MAC（Message Authentication Code）必須持有共享密鑰 $K$</strong>，提供<strong>訊息真實性（Authenticity）與完整性（Integrity）</strong>。即使攻擊者看過大量自選訊息的 Tag，也無法偽造出任何全新訊息的合法 Tag。
+                </p>
+                <div class="text-xs font-mono text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <strong>PRF 直接作為 MAC：</strong>令 $T = F(K, M)$。若 $F$ 是安全 PRF，則該 MAC 是計算上不可偽造的（投影片 P.53）。
+                </div>
+            </div>
+
+            <!-- 三種組合範式全方位剖析 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-white text-base">2. 三大組合範式終極對比（Encrypt & MAC Combos）</h3>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">考題必出比較表</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Encrypt-then-MAC -->
+                    <div class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 space-y-3 flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-300 text-sm">Encrypt-then-MAC (EtM)</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 font-mono font-bold">黃金推薦</span>
+                            </div>
+                            <div class="text-xs font-mono text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                                $C := \text{Enc}(K_e, M)$<br>
+                                $T := \text{MAC}(K_m, C)$<br>
+                                傳輸：$C \parallel T$
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                <strong>解密邏輯：</strong>先驗證 MAC！若 $\text{MAC}(K_m, C) \neq T$ <strong>立即回傳 `err`，完全不執行解密！</strong>
+                            </p>
+                        </div>
+                        <div class="pt-2 border-t border-emerald-500/30 text-xs font-mono space-y-1">
+                            <div class="text-emerald-400 font-bold">CPA: 是 | CCA: 是</div>
+                            <div class="text-[11px] text-slate-400">工業代表：IPsec, TLS 1.3</div>
+                        </div>
+                    </div>
+
+                    <!-- Encrypt-and-MAC -->
+                    <div class="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 space-y-3 flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-rose-300 text-sm">Encrypt-and-MAC (E&M)</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300 font-mono font-bold">嚴重漏洞</span>
+                            </div>
+                            <div class="text-xs font-mono text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                                $C := \text{Enc}(K_e, M)$<br>
+                                $T := \text{MAC}(K_m, \mathbf{M})$<br>
+                                傳輸：$C \parallel T$
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                <strong>致命缺陷：</strong>MAC 算在「明文 $M$」上！因為 MAC 往往是確定性的，$M_1 = M_2 \implies T_1 = T_2$。
+                            </p>
+                        </div>
+                        <div class="pt-2 border-t border-rose-500/30 text-xs font-mono space-y-1">
+                            <div class="text-rose-400 font-bold">CPA: 否！ | CCA: 否！</div>
+                            <div class="text-[11px] text-slate-400">工業代表：舊版 SSH (歷史包袱)</div>
+                        </div>
+                    </div>
+
+                    <!-- MAC-then-Encrypt -->
+                    <div class="p-4 rounded-xl bg-amber-950/20 border border-amber-500/30 space-y-3 flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-amber-300 text-sm">MAC-then-Encrypt (MtE)</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 font-mono font-bold">極易踩坑</span>
+                            </div>
+                            <div class="text-xs font-mono text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                                $T := \text{MAC}(K_m, M)$<br>
+                                $C := \text{Enc}(K_e, M \parallel T)$<br>
+                                傳輸：$C$
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                <strong>結構弱點：</strong>解密者必須先解密才能查驗 Tag。一旦解密或 Padding 報錯，立即淪為 Padding Oracle！
+                            </p>
+                        </div>
+                        <div class="pt-2 border-t border-amber-500/30 text-xs font-mono space-y-1">
+                            <div class="text-amber-400 font-bold">CPA: 是 | CCA: 視情況 (易破)</div>
+                            <div class="text-[11px] text-slate-400">工業代表：舊版 SSL/TLS (POODLE 苦主)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 考試口訣膠囊 -->
+                <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-1 font-mono">
+                    <span class="text-emerald-400 font-bold">一秒速記法則：</span>
+                    <ul class="list-disc pl-5 space-y-1 text-slate-300">
+                        <li><strong>Encrypt-then-MAC (EtM)：</strong>永遠最安全。因為 MAC 保護密文，任何篡改在解密前就被擋掉，從源頭抹除任何 Format/Padding Oracle！</li>
+                        <li><strong>Encrypt-and-MAC (E&M)：</strong>連 CPA 都不保證！因為明文 Tag 洩漏重複訊息。</li>
+                        <li><strong>MAC-then-Encrypt (MtE)：</strong>必須先碰解密才能看 Tag，產生側信道與 Padding 漏洞。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 6: AE/AEAD 與 AES-GCM ================= -->
+        <section id="sec-aead-gcm" class="space-y-6 pt-4">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold">SECTION 6</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">認證加密 (AE / AEAD) 與 AES-GCM 現代工業標準</h2>
+            </div>
+
+            <!-- AE vs CCA 核心辨析 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                <h3 class="font-bold text-white text-base">1. 認證加密 (AE) 與 CCA 安全性的嚴格層級關係</h3>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    CCA 安全性只保證攻擊者構造的密文「解密不出有用的明文資訊」；但<strong>認證加密 (AE) 要求更嚴苛：所有非合法密鑰持有者生成的密文，解密結果必須一律為錯誤 `err`！</strong>
+                </p>
+                <div class="p-3.5 rounded-xl bg-slate-950 border border-emerald-500/30 text-xs sm:text-sm font-mono text-emerald-300">
+                    $$\mathbf{\text{AE Security} \implies \text{CCA Security} \implies \text{CPA Security}}$$
+                    <div class="text-xs text-slate-400 font-sans pt-1">
+                        反之不成立（$\text{CCA} \not\implies \text{AE}$）。AE 兼具<strong>機密性（Confidentiality）</strong>與<strong>真實完整性（Authenticity）</strong>，是現代密碼學的黃金標準。
+                    </div>
+                </div>
+            </div>
+
+            <!-- AES-GCM 與 GHASH 技術剖析 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-white text-base">2. AES-GCM：Galois/Counter Mode（投影片 P.68-73）</h3>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">TLS 1.3 核心</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                        <div class="font-mono font-bold text-cyan-400">AES-GCM 架構雙核心</div>
+                        <ul class="list-disc pl-4 space-y-1.5 text-slate-300">
+                            <li><strong>加密層：</strong>AES in CTR 模式（提供機密性，支援完全平行化）。</li>
+                            <li><strong>認證層：</strong>GHASH（在有限體 $GF(2^{128})$ 上的多項式乘法運算）。</li>
+                            <li><strong>Tag 計算：</strong>$T = \text{GHASH}_H(A, C) \oplus \text{AES}(K, N \parallel 0)$。</li>
+                            <li><strong>金鑰衍生：</strong>Hash 子金鑰 $H = \text{AES}(K, 0^{128})$。</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                        <div class="font-mono font-bold text-purple-400">GHASH vs. HMAC 效能與特性比較</div>
+                        <ul class="list-disc pl-4 space-y-1.5 text-slate-300">
+                            <li><strong>極致速度：</strong>硬體加速指令（Intel `PCLMULQDQ`）加持下比 HMAC 快 <strong>15 倍</strong>！</li>
+                            <li><strong>單次走訪 (Single-pass)：</strong>加密與 Tag 計算可同步流水線處理。</li>
+                            <li><strong>局限性：</strong>GHASH 是<strong>帶金鑰函數（Keyed）</strong>，若無密鑰完全不具備抗碰撞性；且具備線性結構，嚴禁用於公開雜湊（不可取代 SHA-256）！</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 text-xs sm:text-sm text-slate-300 space-y-2">
+                    <div class="font-mono font-bold text-rose-300">⚠️ AES-GCM 致命工程禁忌：絕對不可重複使用 Nonce！</div>
+                    <p class="leading-relaxed">
+                        如果在相同的密鑰 $K$ 下重複使用了 Nonce $N$：
+                        1. CTR 模式的金鑰流相同，直接造成明文 XOR 洩漏；
+                        2. GHASH 的多項式方程可被攻擊者直接求解未知數 $H$，<strong>導致認證金鑰完全洩漏，攻擊者往後可任意偽造所有密文的合法 Tag！</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- AEAD 與重放攻擊 -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+                <h3 class="font-bold text-white text-base">3. 重放攻擊（Replay Attack）與關聯資料（Associated Data / AEAD）</h3>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <strong>情境（投影片 P.77-79）：</strong>Alice 發送了合法密文 $C = \text{Enc}(K, \text{"family-recipes.txt"})$。在「請顯示檔案」的情境下是安全的；但攻擊者截獲 $C$ 後，在 Bob 詢問「請刪除檔案」時重放該密文 $C$，Bob 解密通過（非 `err`），直接誤刪重要檔案！
+                </p>
+
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs sm:text-sm">
+                    <div class="text-emerald-400 font-mono font-bold">解法：AEAD (Authenticated Encryption with Associated Data)</div>
+                    <p class="text-slate-300 leading-relaxed">
+                        將上下文訊息（Context，如 `"ACTION: DISPLAY"`、協定版本、時間戳記、封包序號）作為<strong>關聯資料 $A$（Associated Data）</strong>傳入：
+                        $$\text{Enc}(K, A, M) \to C, \quad \text{Dec}(K, A, C) \to M \text{ 或 } \mathbf{err}$$
+                    </p>
+                    <div class="text-slate-400 text-xs">
+                        當攻擊者在刪除情境重放密文時，Bob 以 $A' = \text{"ACTION: DELETE"}$ 進行解密，由於 Tag 與 $A$ 強力綁定，解密<strong>立即報錯 `err`</strong>，完美杜絕重放與語境錯置！
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 7: 期末高頻考題練習 ================= -->
+        <section id="sec-quiz" class="space-y-6 pt-4">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold">SECTION 7</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">期末精選全真模擬題庫（附逐步詳解）</h2>
+            </div>
+
+            <div class="space-y-4">
+                <!-- 題目 1 -->
+                <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs font-bold text-emerald-400">題目 1・觀念題</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">配分：15 分</span>
+                    </div>
+                    <div class="text-sm font-semibold text-white">
+                        試問為什麼 Encrypt-and-MAC 範式連最基礎的 CPA 安全性都無法保證？請簡要推導其邏輯。
+                    </div>
+                    <button onclick="toggleAnswer('ans-1')" class="text-xs font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+                        <span>▶ 查看官方推導解答</span>
+                    </button>
+                    <div id="ans-1" class="hidden p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-300 space-y-2">
+                        <p class="font-bold text-emerald-400">標準解答：</p>
+                        <p>1. 在 Encrypt-and-MAC 範式中，密文形式為 $C \parallel T$，其中 $T = \text{MAC}(K_m, M)$ 是直接對「明文 $M$」計算而得。</p>
+                        <p>2. 標準的 MAC 演算法（如 HMAC、CBC-MAC、PRF）通常為確定性函數（Deterministic）。</p>
+                        <p>3. 攻擊者選擇兩個相同明文 $M_0 = M_1$ 查詢加密預言機，雖然密文 $C_0, C_1$ 因隨機性而不同，但生成的認證標籤必定相等：$T_0 = T_1$。</p>
+                        <p>4. 若攻擊者送出兩個相異明文，則 $T_0 \neq T_1$。因此攻擊者可直接透過比對 Tag 的相等性判斷明文是否重複，破壞了「密文不可區分性」，故連 CPA 安全性都不滿足。</p>
+                    </div>
+                </div>
+
+                <!-- 題目 2 -->
+                <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs font-bold text-amber-400">題目 2・證明題</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">配分：20 分</span>
+                    </div>
+                    <div class="text-sm font-semibold text-white">
+                        設 $\Sigma$ 為 CTR 模式對稱加密，現有一解密預言機 $O(C)$：若 $\text{Dec}(K, C)$ 的首個 byte 為 `0xFF` 則回傳 1，否則回傳 0。請寫出區分器 $\mathcal{A}$ 的虛擬碼，並計算其破解 CCA 安全性的 Advantage。
+                    </div>
+                    <button onclick="toggleAnswer('ans-2')" class="text-xs font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+                        <span>▶ 查看官方推導解答</span>
+                    </button>
+                    <div id="ans-2" class="hidden p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-300 space-y-2">
+                        <p class="font-bold text-emerald-400">標準解答：</p>
+                        <pre class="bg-slate-900 p-3 rounded font-mono text-xs text-slate-200">
+Adversary A:
+    M := 0x00 || 0x00...00 (長度 lambda)
+    C := cca.enc(M)
+    C' := C ^ (0xFF || 0x00...00)   // 僅翻轉首個 byte
+    M' := cca.dec(C')
+    return M'[0] == 0xFF</pre>
+                        <p><strong>優勢計算：</strong></p>
+                        <p>在 Real 庫中：$M'[0] = 0x00 \oplus 0xFF = 0xFF$，恆成立，$\Pr[\text{Real}] = 1$。</p>
+                        <p>在 Rand 庫中：$C'$ 未被快取，解密出均勻隨機明文，首 byte 剛好為 `0xFF` 的機率為 $1/256$。</p>
+                        <p>$$\text{Adv} = |1 - 1/256| = 255/256 \approx 1 \quad \text{(Non-negligible)}$$</p>
+                    </div>
+                </div>
+
+                <!-- 題目 3 -->
+                <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs font-bold text-cyan-400">題目 3・計算題</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">配分：15 分</span>
+                    </div>
+                    <div class="text-sm font-semibold text-white">
+                        在 PKCS#7 Padding Oracle 攻擊中，若要解密一個由 3 個區塊組成的 CBC 密文（區塊大小 16 位元組），最壞情況下攻擊者需要發起幾次解密預言機查詢？若改為真正明文窮舉需幾次？
+                    </div>
+                    <button onclick="toggleAnswer('ans-3')" class="text-xs font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+                        <span>▶ 查看官方推導解答</span>
+                    </button>
+                    <div id="ans-3" class="hidden p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-300 space-y-2">
+                        <p class="font-bold text-emerald-400">標準解答：</p>
+                        <p>1. 密文有 3 個區塊，除去初始向量 IV（第 0 塊），共有 2 個待解密區塊（共 $2 \times 16 = 32$ 位元組）。</p>
+                        <p>2. Padding Oracle 每個 byte 最多測試 256 種可能（$0x00$ 至 $0xFF$）。</p>
+                        <p>3. 最壞情況查詢次數為：$32 \times 256 = \mathbf{8,192 \text{ 次}}$（實務中平均只需 $32 \times 128 = 4,096$ 次）。</p>
+                        <p>4. 若為真正暴力窮舉明文，複雜度為 $256^{32} = 2^{256} \approx 1.15 \times 10^{77}$ 次（計算上不可行）。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-16 py-8 text-center text-xs text-slate-400 space-y-1">
+        <p>現代與後量子密碼學導論・期末考核心第一模組（投影片 1-5 Section 2 完備）</p>
+        <p class="font-mono text-slate-400">嚴格遵循台灣繁體中文排版規範與形式證明標準</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script id="nav-dropdown-script">
+function toggleFinalMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('final-dropdown-menu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+function toggleMidtermMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('midterm-dropdown-menu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+document.addEventListener('click', (e) => {
+    const finalWrapper = document.getElementById('final-zone-wrapper');
+    const finalMenu = document.getElementById('final-dropdown-menu');
+    if (finalMenu && finalWrapper && !finalWrapper.contains(e.target)) {
+        finalMenu.classList.add('hidden');
+    }
+    const midtermWrapper = document.getElementById('midterm-archive-wrapper');
+    const midtermMenu = document.getElementById('midterm-dropdown-menu');
+    if (midtermMenu && midtermWrapper && !midtermWrapper.contains(e.target)) {
+        midtermMenu.classList.add('hidden');
+    }
+});
+</script>
+    <script id="header-sync-script">
+    function syncHeaderHeight() {
+        const header = document.getElementById('site-header');
+        if (header) {
+            const h = header.offsetHeight;
+            document.documentElement.style.setProperty('--header-height', `${h}px`);
+        }
+    }
+    window.addEventListener('resize', syncHeaderHeight);
+    window.addEventListener('DOMContentLoaded', syncHeaderHeight);
+    </script>
+</body>
+</html>
