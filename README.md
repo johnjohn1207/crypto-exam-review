@@ -2,85 +2,57 @@
 
 > Introduction to Modern and Post-quantum Cryptography Review Portal
 
-本專案為針對現代與後量子密碼學課程所設計的五合一整合複習平台，收錄課程教材（Katz & Lindell、Mike Rosulek《The Joy of Cryptography》及投影片教材），嚴格限定於期中考試範圍，並整合「作業一」與「練習一」建立全面題庫與嚴謹形式證明庫。
+本專案為針對現代與後量子密碼學課程所設計的全方位整合複習平台。平台已全面升級為**「學期雙軌分流架構（Term-Segmented Dual-Engine Architecture）」**，明確區隔「**期末考核心工作區（進行中）**」與「**期中考歷史歸檔庫（已結算・折疊收合）**」，兼顧歷史資料完整保存與期末新教材的高效推進。
 
 ---
 
-## 考試範圍界限說明（重要規範）
+## 學期階段分流架構（Term Segmentation）
 
-本平台所有內容嚴格限縮於授課考試範圍：
-- **考試範圍內（In-Scope）**：
-  - 投影片範圍：1.1 至 1.5 Section 1（對應教材內容）。
-  - 教材章節：《The Joy of Cryptography》Ch. 0、1、2、4、5、6、7、8。
-  - 涵蓋主題：完美保密性（Shannon 完美安全性、One-Time Pad）、計算安全性（優勢 Advantage、可忽略函數 Negligible Function、生日界限 Birthday Bound）、偽隨機產生器（PRG）、偽隨機函數（PRF）、區塊密碼與置換（PRP、Feistel 網絡）、選擇明文攻擊安全（IND-CPA、CBC 模式、CTR 模式）。
-- **非考試範圍（Out-of-Scope，已全面剔除）**：
-  - 投影片 1.5 Section 2 之後內容（選擇密文攻擊 CCA / IND-CCA2、格式預言機 Format Oracle、CTR 可鍛造性）。
-  - 認證加密（AE / AEAD）、訊息鑑別碼（MAC 組合、Encrypt-then-MAC 等）、填充預言機攻擊（Padding Oracle 破譯）。
-  - 補充資料與尚未教授之題目已從本站全數移除，避免誤導備考方向。
+### 1. ⚡ 期末考核心工作區（Final Exam Workspace - 進行中・全站焦點）
+- **主要入口**：首頁 `index.html`（預設選中）
+- **課程進度**：接續投影片 1-5 Section 2 之後至期末考終點。
+- **6 大核心模組規劃架構**：
+  1. **Ch. 9**：選擇密文攻擊 (IND-CCA1 / IND-CCA2)、Padding Oracle 攻擊與認證加密 (AE / Encrypt-then-MAC / GCM)
+  2. **Ch. 10**：密碼雜湊函數 (Hash)、Merkle-Damgård 結構抗碰撞性證明、長度擴展攻擊與 HMAC 雙重雜湊
+  3. **Ch. 11**：數論基礎、模反元素、歐拉函數、中國剩餘定理 (CRT)、離散對數問題 (DLP / CDH / DDH)
+  4. **Ch. 12**：公鑰加密體系 (PKE)、Diffie-Hellman 金鑰交換、ElGamal 語意安全、RSA-OAEP 填充標準
+  5. **Ch. 13**：數位簽章 (Signatures)、EUF-CMA 安全模型、Hash-and-Sign 範式、Schnorr、ECDSA
+  6. **Ch. 14**：後量子密碼學前瞻 (PQC)、Shor 量子威脅、晶格幾何 (Lattice)、容錯學習 (LWE)、NIST 標準 (ML-KEM, ML-DSA)
+- **教材注入機制**：隨時提供期末投影片、作業二或練習題目，系統將自動解析推導並結構化注入生成題解與形式證明。
 
----
-
-## 五大整合核心入口
-
-所有頁面均配置全域頂部導覽列，支援即時互通切換：
-
-1. **核心互動學習平台 (`index.html`)**：
-   - 考綱 5 大主題章節重點整理與名詞檢索（Ch. 1 至 Ch. 8）。
-   - 3 大互動展示實驗室（Two-Time Pad 攻擊實驗、Feistel 網絡可逆結構視覺化、IND-CPA 遊戲預言機安全模擬）。
-   - 20 題標準自我評測系統。
-
-2. **精華筆記手冊 (`notes.html`)**：
-   - 專注閱讀模式，收錄 8 大核心章節精華內容。
-   - 包含深度 Callout 知識點標註（概念定義、重要定理、考試防錯）。
-   - 支援深色（Dark）、紙張暖色（Sepia）與明亮白（Light）主題切換。
-
-3. **考點精華與變化題分析平台 (`exam.html`)**：
-   - 8 大考綱核心公式與定理深度剖析。
-   - 5 大高頻進階變化題型演練（合數階模乘、雙區塊重複、BEAST 攻擊原型等）。
-   - 支援雙軌對照模式與刷題自測檢驗。
-
-4. **作業一與練習一 獨立題目詳解與證明全觀念專頁 (`homework_practice.html`)**：
-   - **38 題精確收錄**：作業一（9 題）+ 練習一（29 題），已自動剔除 6 題超出範圍之題目（hw1-5b、p1-12、p1-13、p1-25、p1-26、p1-34）。
-   - **24 題形式證明題**：完整推導區分者演算法（Distinguisher）、優勢計算（Advantage）與歸約論證（Reduction）。
-   - **四層式架構解析**：包含題目原意、核心觀念與定義定理、白話直觀思維、形式化嚴謹證明與考試防錯陷阱。
-
-5. **考綱必考證明一覽表 (`proof_sheet.html`)**：
-   - **27 題形式化證明彙編**：嚴選涵蓋反證法、鴿籠原理、區分者歸約、差分不變量、混淆論證之核心定理與練習題證明。
-   - **雙重視角切換**：提供「矩陣一覽表（Matrix View）」橫向對照證明結構，以及「詳細推導卡片（Cards View）」展開逐步數學推導。
-   - **強大檢索功能**：支援章節篩選、證明策略手法篩選、即時關鍵字過濾、一鍵複製證明與 KaTeX 數學渲染。
+### 2. 📦 期中考歷史歸檔專區（Midterm Archive - 唯讀封存・可折疊隱藏）
+- **收納方式**：全站所有頁面頂部導覽列均配置「`📦 期中考歷史歸檔 (8 大模組 ▾)`」折疊下拉選單，平常自動收合不佔據視線，點擊即可展開存取。
+- **涵蓋 8 大完備模組**：
+  1. **期中互動總覽 (`midterm_index.html`)**：Ch. 1-8 六大互動實驗室（OTP、PRG、DES/AES S-box、Feistel、CTR 等）與名詞庫。
+  2. **期中講義筆記 (`notes.html`)**：Ch. 1-8 精華閱讀講義手冊，支援深色/紙張/明亮主題切換。
+  3. **期中考點變化題 (`exam.html`)**：10 大核心考點、20 道考卷常考衍生題與題型變體剖析。
+  4. **作業與練習全解 (`homework_practice.html`)**：作業一（9 題）+ 練習一（29 題）雙軌直觀思維與嚴謹題解。
+  5. **作業一攻略 (`hw1_summary.html`)**：作業一 7 大密碼學核心思維、數學本質與 4 大萬用證明藍圖。
+  6. **練習一攻略 (`p1_summary.html`)**：練習一 6 大核心考點精華與 5 大秒殺極簡證明範本。
+  7. **期中全真模擬試卷 (`mock_exam.html`)**：滿分 100 分期中考全真模擬試卷，單選、簡答與計算證明完整解析。
+  8. **期中必考證明表 (`proof_sheet.html`)**：27 題形式證明直觀大腦模型、速記公式膠囊與分步推導。
 
 ---
 
 ## 本地快速啟動
 
 若要在本機離線瀏覽任一頁面，可直接執行對應批次檔：
-- `start_website.bat`：啟動互動複習平台主頁 (`index.html`)。
-- `start_notes.bat`：啟動精華講義閱讀頁面 (`notes.html`)。
-- `start_exam.bat`：啟動考點與題型變化分析平台 (`exam.html`)。
+- `start_website.bat`：啟動期末考專區主入口 (`index.html`)。
+- `start_notes.bat`：啟動期中精華講義閱讀頁面 (`notes.html`)。
+- `start_exam.bat`：啟動期中考點與題型變化分析平台 (`exam.html`)。
 - `start_hw_practice.bat`：啟動作業與練習全解專頁 (`homework_practice.html`)。
-- `start_proof_sheet.bat`：啟動考綱必考證明一覽表 (`proof_sheet.html`)。
+- `start_proof_sheet.bat`：啟動期中必考形式證明一覽表 (`proof_sheet.html`)。
 
 ---
 
 ## 資料結構維護與自動化建置腳本
 
-本專案具備完整資料管道，各模組可獨立建置與驗證：
+本專案具備完整資料管道，各模組可獨立建置、同步與驗證：
 
 ```powershell
-# 建置考點變化題資料
-python build_exam_data.py
-
-# 建置作業一與練習一題目資料
-python build_hw_practice_page.py
-python generate_hw_practice_page.py
-
-# 建置考綱證明一覽表資料與獨立頁面
-python build_proof_sheet_data.py
-python generate_proof_sheet_html.py
-
-# 同步五頁全域頂部導覽列
+# 1. 同步全站 9 大頁面之學期階段導覽列（期末專區 + 折疊期中歸檔）
 python update_all_navs.py
 
-# 執行全系統驗證測試（自動核對範圍、排版與導覽）
+# 2. 執行全站完整性與代碼語法測試（驗證範圍、導覽交叉連結、V8 JS 語法零錯誤）
 python test_exam_system.py
 ```

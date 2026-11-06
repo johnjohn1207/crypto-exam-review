@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-Comprehensive validation of the exam, homework, notes, and proof cheat sheet system.
+Comprehensive validation of the exam, homework, notes, proof cheat sheet, and term-segmented system.
 Verifies:
-1. Exam scope constraints (Strictly up to Slides 1.5 Section 1).
+1. Exam scope constraints (Midterm archive preserves Ch. 1-8 up to 1.5 Sec 1; Final exam hub ready).
 2. UI/UX integrity (Dynamic header height sync, no blocked sticky buttons).
-3. Universal navigation across all 5 pages.
+3. Universal navigation across all 9 pages with Term Segmentation (Final vs Midterm Archive).
+4. Inline JS syntax verification across all 9 pages.
+5. Final exam data verification (js/final_data.js).
 """
 import os
 import re
+import subprocess
 
-print("Starting full system validation (Exam Scope & UI/UX Integrity)...")
+print("Starting full system validation (Term Segmentation & UI/UX Integrity)...")
 
 # 1. Check data files exist
-for df in ["js/exam_data.js", "js/hw_practice_data.js", "js/proof_sheet_data.js", "js/data.js"]:
+DATA_FILES = ["js/exam_data.js", "js/hw_practice_data.js", "js/proof_sheet_data.js", "js/data.js", "js/final_data.js"]
+for df in DATA_FILES:
     assert os.path.exists(df), f"Missing data file: {df}"
 
 with open("js/exam_data.js", "r", encoding="utf-8") as f:
@@ -27,10 +31,10 @@ with open("js/hw_practice_data.js", "r", encoding="utf-8") as f:
     hw_data_txt = f.read()
 assert "const HW_PRACTICE_DATA = " in hw_data_txt
 
-# Verify exclusion of out-of-scope questions
+# Verify exclusion of out-of-scope questions in midterm data
 for bad_id in ["hw1-5b", "p1-12", "p1-13", "p1-25", "p1-26", "p1-34"]:
     assert f'"{bad_id}"' not in hw_data_txt, f"Out-of-scope ID {bad_id} found in hw_practice_data.js!"
-print("Check 2 passed: js/hw_practice_data.js verified (out-of-scope questions excluded).")
+print("Check 2 passed: js/hw_practice_data.js verified (out-of-scope questions excluded from midterm archive).")
 
 with open("js/proof_sheet_data.js", "r", encoding="utf-8") as f:
     proof_data_txt = f.read()
@@ -41,10 +45,26 @@ with open("js/data.js", "r", encoding="utf-8") as f:
     data_txt = f.read()
 for bad_mod in ["mod-5", "mod-6", "mod-7"]:
     assert f'"{bad_mod}"' not in data_txt, f"Out-of-scope module {bad_mod} found in js/data.js!"
-print("Check 4 passed: js/data.js verified (out-of-scope modules excluded).")
+print("Check 4 passed: js/data.js verified (out-of-scope modules excluded from midterm).")
+
+with open("js/final_data.js", "r", encoding="utf-8") as f:
+    final_data_txt = f.read()
+assert "const FINAL_EXAM_MODULES = " in final_data_txt
+print("Check 5 passed: js/final_data.js verified (Final exam modules framework ready).")
 
 # 2. Check HTML files exist, have KaTeX, and have site-nav
-PAGES = ["index.html", "notes.html", "exam.html", "homework_practice.html", "hw1_summary.html", "p1_summary.html", "mock_exam.html", "proof_sheet.html"]
+PAGES = [
+    "index.html",
+    "midterm_index.html",
+    "notes.html",
+    "exam.html",
+    "homework_practice.html",
+    "hw1_summary.html",
+    "p1_summary.html",
+    "mock_exam.html",
+    "proof_sheet.html"
+]
+
 for p in PAGES:
     assert os.path.exists(p), f"Missing page: {p}"
     with open(p, "r", encoding="utf-8") as f:
@@ -54,19 +74,18 @@ for p in PAGES:
     assert "--header-height" in html, f"--header-height CSS variable missing in {p}"
     assert "header-sync-script" in html, f"header-sync-script missing in {p}"
     assert "top-16" not in html, f"Legacy hardcoded top-16 found in {p} (causes button blocking)!"
-print("Check 5 passed: All 8 pages exist and have KaTeX, universal site-nav, and dynamic UI/UX header sync.")
+print("Check 6 passed: All 9 pages exist and have KaTeX, universal site-nav, and dynamic UI/UX header sync.")
 
-# 3. Check cross navigation across all 8 pages
+# 3. Check cross navigation across all 9 pages
 for p in PAGES:
     with open(p, "r", encoding="utf-8") as f:
         html = f.read()
     for target_page in PAGES:
         assert f'href="{target_page}"' in html, f"{p} missing link to {target_page}"
 
-print("Check 6 passed: Complete cross-navigation verified across all 8 pages!")
+print("Check 7 passed: Complete cross-navigation verified across all 9 pages (Final Hub & Midterm Archive)!")
 
-# 4. Check inline JavaScript syntax across all 8 pages
-import subprocess
+# 4. Check inline JavaScript syntax across all 9 pages
 node_check_code = r"""
 const fs = require('fs');
 const pages = process.argv.slice(1);
@@ -89,5 +108,6 @@ process.exit(0);
 """
 res = subprocess.run(["node", "-e", node_check_code, *PAGES], capture_output=True, text=True)
 assert res.returncode == 0, f"Inline JS Syntax Check Failed:\n{res.stderr}\n{res.stdout}"
-print("Check 7 passed: All inline JavaScript scripts across all 8 pages validated syntax-error-free!")
-print("All validation checks passed successfully!")
+print("Check 8 passed: All inline JavaScript scripts across all 9 pages validated syntax-error-free!")
+
+print("All 8 validation checks passed successfully!")

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現代與後量子密碼學導論 | 複習暨互動學習平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfeff',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            900: '#164e63',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                        sans: ['"Inter"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- KaTeX CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Custom style tweaks -->
+    <style>
+        .katex { font-size: 1.05em; }
+        .katex-display { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+
+    <style id="custom-ui-ux-enhancements">
+        :root {
+            --header-height: 64px;
+        }
+        .katex { font-size: 1.05em; }
+        .katex-display { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .sticky-control-panel {
+            position: sticky;
+            top: var(--header-height, 64px);
+            z-index: 40;
+        }
+    </style>
+
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-white">
+
+        <!-- Top Global Header -->
+    <header id="site-header" class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between min-h-[3.75rem] py-2 gap-2.5 md:gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-md font-mono text-sm shrink-0">
+                    Ψ
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-2">
+                        現代與後量子密碼學導論
+                        <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 hidden sm:inline-block">
+                            考綱範圍：投影片 1-5 Sec 1
+                        </span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400 font-mono hidden md:block">Introduction to Modern and Post-quantum Cryptography Review Portal</p>
+                </div>
+            </div>
+
+            <!-- Global Portals Navigation -->
+            <nav id="site-nav" class="flex items-center gap-2 text-xs py-0.5">
+                <a href="index.html" class="px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap" title="前往期末考核心複習與教材工作區">
+                    <span>⚡ 期末考專區</span>
+                </a>
+                <div class="relative group" id="midterm-archive-wrapper">
+                    <button type="button" onclick="toggleMidtermMenu(event)" id="midterm-archive-btn" class="px-3 py-1.5 rounded-lg border border-amber-500/80 bg-amber-950/90 text-amber-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
+                        <span>📦 期中考歷史歸檔 (8 大模組)</span>
+                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <!-- Floating Dropdown Drawer -->
+                    <div id="midterm-dropdown-menu" class="hidden group-hover:block absolute right-0 sm:right-auto sm:left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
+                        <div class="px-3 py-1.5 text-[10px] font-mono text-slate-400 bg-slate-950/60 flex items-center justify-between">
+                            <span>期中考精華存檔庫（已結算）</span>
+                            <span class="text-amber-400">Ch. 1-8 完備</span>
+                        </div>
+                        <div class="py-1">
+                            <a href="midterm_index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 bg-amber-950/70 text-amber-200 font-semibold border-l-2 border-amber-400">
+                        <div>
+                            <div class="font-medium">期中互動總覽</div>
+                            <div class="text-[10px] text-slate-500 font-mono">Ch. 1-8 互動實驗室與名詞庫</div>
+                        </div>
+                        <span class="text-[10px] text-amber-400 font-mono shrink-0">目前頁面</span>
+                    </a>
+<a href="notes.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中講義筆記</div>
+                            <div class="text-[10px] text-slate-500 font-mono">Ch. 1-8 精華閱讀講義</div>
+                        </div>
+                        
+                    </a>
+<a href="exam.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中考點變化題</div>
+                            <div class="text-[10px] text-slate-500 font-mono">10 大考點衍生變化題</div>
+                        </div>
+                        
+                    </a>
+<a href="homework_practice.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">作業練習全解</div>
+                            <div class="text-[10px] text-slate-500 font-mono">作業一與練習一 38 題解析</div>
+                        </div>
+                        
+                    </a>
+<a href="hw1_summary.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">作業一攻略</div>
+                            <div class="text-[10px] text-slate-500 font-mono">作業一 7 大思維與證明藍圖</div>
+                        </div>
+                        
+                    </a>
+<a href="p1_summary.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">練習一攻略</div>
+                            <div class="text-[10px] text-slate-500 font-mono">練習一 6 大考點與 5 大極簡證明</div>
+                        </div>
+                        
+                    </a>
+<a href="mock_exam.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中模擬試卷</div>
+                            <div class="text-[10px] text-slate-500 font-mono">100 分全真模擬試卷與詳解</div>
+                        </div>
+                        
+                    </a>
+<a href="proof_sheet.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div>
+                            <div class="font-medium">期中必考證明表</div>
+                            <div class="text-[10px] text-slate-500 font-mono">27 題形式證明直觀速記表</div>
+                        </div>
+                        
+                    </a>
+
+                        </div>
+                    </div>
+                </div>
+                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700/80 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 期中考歷史歸檔橫幅提示 -->
+    <div class="bg-amber-950/40 border-b border-amber-800/60 px-4 py-2 text-xs text-amber-200">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold">期中歷史歸檔</span>
+                <span>此處為<strong>期中考範圍（Ch. 1-8 互動實驗室與名詞庫）</strong>之歷史存檔資料。</span>
+            </div>
+            <a href="index.html" class="underline hover:text-white font-mono flex items-center gap-1 font-semibold text-emerald-300">
+                <span>⚡ 前往期末考專區 ↗</span>
+            </a>
+        </div>
+    </div>
+
+
+    <!-- Secondary Interactive Tools Sub-Navigation Bar -->
+    <div id="sub-nav-bar" class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky z-30 px-4 py-2 shadow-sm transition-all" style="top: var(--header-height, 64px);">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-1.5 p-1 bg-slate-950/90 rounded-xl border border-slate-800 text-xs font-medium">
+                <button onclick="switchTab('summaries')" data-tab="summaries"
+                    class="nav-tab-btn px-3 py-1.5 rounded-lg border border-transparent transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>章節重點</span>
+                </button>
+                <button onclick="switchTab('playgrounds')" data-tab="playgrounds"
+                    class="nav-tab-btn px-3 py-1.5 rounded-lg border border-transparent transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>互動實驗室</span>
+                </button>
+                <button onclick="switchTab('quizzes')" data-tab="quizzes"
+                    class="nav-tab-btn px-3 py-1.5 rounded-lg border border-transparent transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>題目練習</span>
+                </button>
+                <button onclick="switchTab('glossary')" data-tab="glossary"
+                    class="nav-tab-btn px-3 py-1.5 rounded-lg border border-transparent transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>名詞檢索</span>
+                </button>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs font-mono">
+                <span class="px-2.5 py-1 rounded-lg bg-cyan-950/70 text-cyan-300 border border-cyan-800/60 font-semibold">
+                    期中複習專用・純考綱範圍（Ch. 1-8）
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- VIEW 1: CHAPTER SUMMARIES -->
+        <section id="view-summaries" class="tab-view">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                <!-- Left Sidebar: Modules List -->
+                <aside class="lg:col-span-1 space-y-3 sticky" style="top: calc(var(--header-height, 64px) + 54px);">
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">知識模組導覽</span>
+                        <span class="text-[11px] text-slate-500 font-mono">6 個章節</span>
+                    </div>
+                    <div id="summaries-module-list" class="space-y-2">
+                        <!-- Populated by app.js -->
+                    </div>
+                </aside>
+
+                <!-- Right Content Area: Detailed Summary -->
+                <article id="module-content-area" class="lg:col-span-3">
+                    <!-- Populated by app.js -->
+                </article>
+            </div>
+        </section>
+
+        <!-- VIEW 2: INTERACTIVE PLAYGROUNDS -->
+        <section id="view-playgrounds" class="tab-view hidden">
+            <div class="space-y-6">
+                <!-- Navigation Subtabs -->
+                <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-4" id="playground-tabs-bar">
+                    <!-- Populated by app.js -->
+                </div>
+
+                <!-- Dynamic Playground Panels Container -->
+                <div id="playground-content-container"></div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: INTERACTIVE QUIZZES -->
+        <section id="view-quizzes" class="tab-view hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                <!-- Left Filter & Stats -->
+                <aside class="lg:col-span-1 sticky" style="top: calc(var(--header-height, 64px) + 54px);" id="quiz-filter-container">
+                    <!-- Populated by app.js -->
+                </aside>
+
+                <!-- Right Questions Feed -->
+                <div class="lg:col-span-3 space-y-6" id="quiz-list-container">
+                    <!-- Populated by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: GLOSSARY -->
+        <section id="view-glossary" class="tab-view hidden">
+            <div id="glossary-content-area">
+                <!-- Populated by app.js -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            現代與後量子密碼學導論（Introduction to Modern and Post-quantum Cryptography）複習工具平台 
+            | 依據課程投影片與教科書嚴格對齊編寫
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/playgrounds.js"></script>
+    <script src="js/app.js"></script>
+
+    <script id="header-sync-script">
+    function syncHeaderHeight() {
+        const header = document.getElementById('site-header') || document.querySelector('header');
+        if (header) {
+            const h = Math.ceil(header.getBoundingClientRect().height);
+            document.documentElement.style.setProperty('--header-height', `${h}px`);
+        }
+    }
+    window.addEventListener('resize', syncHeaderHeight);
+    window.addEventListener('orientationchange', syncHeaderHeight);
+    document.addEventListener('DOMContentLoaded', syncHeaderHeight);
+    setTimeout(syncHeaderHeight, 50);
+    setTimeout(syncHeaderHeight, 200);
+    setTimeout(syncHeaderHeight, 600);
+    </script>
+
+
+<script id="nav-dropdown-script">
+function toggleMidtermMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('midterm-dropdown-menu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+document.addEventListener('click', (e) => {
+    const wrapper = document.getElementById('midterm-archive-wrapper');
+    const menu = document.getElementById('midterm-dropdown-menu');
+    if (menu && wrapper && !wrapper.contains(e.target)) {
+        menu.classList.add('hidden');
+    }
+});
+</script>
+
+</body>
+</html>
