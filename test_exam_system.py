@@ -4,18 +4,25 @@ Comprehensive validation of the exam, homework, notes, proof cheat sheet, and te
 Verifies:
 1. Exam scope constraints (Midterm archive preserves Ch. 1-8 up to 1.5 Sec 1; Final exam hub ready).
 2. UI/UX integrity (Dynamic header height sync, no blocked sticky buttons).
-3. Universal navigation across all 11 pages with Term Segmentation (Final Exam Modules vs Midterm Archive).
-4. Inline JS syntax verification across all 11 pages.
-5. Final exam data verification (js/final_data.js) including Mod-1 (CCA/AE) & Mod-3 (DH/Hard Problems) completed status.
+3. Universal navigation across all 12 pages with Term Segmentation (Final Exam Modules vs Midterm Archive).
+4. Inline JS syntax verification across all 12 pages.
+5. Final exam data verification (js/final_data.js) & MCQ Question Bank (js/final_mcq_data.js, 70 questions).
 """
 import os
 import re
 import subprocess
 
-print("Starting full system validation (Term Segmentation & UI/UX Integrity across 11 pages)...")
+print("Starting full system validation (Term Segmentation & UI/UX Integrity across 12 pages)...")
 
 # 1. Check data files exist
-DATA_FILES = ["js/exam_data.js", "js/hw_practice_data.js", "js/proof_sheet_data.js", "js/data.js", "js/final_data.js"]
+DATA_FILES = [
+    "js/exam_data.js", 
+    "js/hw_practice_data.js", 
+    "js/proof_sheet_data.js", 
+    "js/data.js", 
+    "js/final_data.js",
+    "js/final_mcq_data.js"
+]
 for df in DATA_FILES:
     assert os.path.exists(df), f"Missing data file: {df}"
 
@@ -52,13 +59,20 @@ with open("js/final_data.js", "r", encoding="utf-8") as f:
 assert "const FINAL_EXAM_MODULES = " in final_data_txt
 assert 'final-mod-1' in final_data_txt and 'final_ch9_cca_ae.html' in final_data_txt
 assert 'final-mod-3' in final_data_txt and 'final_ch11_dh_hard_problems.html' in final_data_txt
-print("Check 5 passed: js/final_data.js verified (Modules 1 & 3 completed and active).")
+
+with open("js/final_mcq_data.js", "r", encoding="utf-8") as f:
+    mcq_data_txt = f.read()
+assert "const FINAL_MCQ_DATA = " in mcq_data_txt
+q_count = len(re.findall(r'"id":\s*"q\d+"', mcq_data_txt))
+assert q_count == 70, f"Expected 70 MCQ questions, found {q_count}!"
+print(f"Check 5 passed: js/final_data.js & js/final_mcq_data.js verified ({q_count} high-yield questions).")
 
 # 2. Check HTML files exist, have KaTeX, and have site-nav
 PAGES = [
     "index.html",
     "final_ch9_cca_ae.html",
     "final_ch11_dh_hard_problems.html",
+    "final_quiz.html",
     "midterm_index.html",
     "notes.html",
     "exam.html",
@@ -80,16 +94,16 @@ for p in PAGES:
     assert "top-16" not in html, f"Legacy hardcoded top-16 found in {p} (causes button blocking)!"
 print(f"Check 6 passed: All {len(PAGES)} pages exist and have KaTeX, universal dual-dropdown site-nav, and dynamic UI/UX header sync.")
 
-# 3. Check cross navigation across all 11 pages
+# 3. Check cross navigation across all 12 pages
 for p in PAGES:
     with open(p, "r", encoding="utf-8") as f:
         html = f.read()
     for target_page in PAGES:
         assert f'href="{target_page}"' in html, f"{p} missing link to {target_page}"
 
-print(f"Check 7 passed: Complete cross-navigation verified across all {len(PAGES)} pages (Final Hub, Ch. 9, Ch. 11 & Midterm Archive)!")
+print(f"Check 7 passed: Complete cross-navigation verified across all {len(PAGES)} pages!")
 
-# 4. Check inline JavaScript syntax across all 11 pages
+# 4. Check inline JavaScript syntax across all 12 pages
 node_check_code = r"""
 const fs = require('fs');
 const pages = process.argv.slice(1);
@@ -114,4 +128,4 @@ res = subprocess.run(["node", "-e", node_check_code, *PAGES], capture_output=Tru
 assert res.returncode == 0, f"Inline JS Syntax Check Failed:\n{res.stderr}\n{res.stdout}"
 print(f"Check 8 passed: All inline JavaScript scripts across all {len(PAGES)} pages validated syntax-error-free!")
 
-print("All 8 validation checks passed successfully across all 11 pages!")
+print(f"All 8 validation checks passed successfully across all {len(PAGES)} pages!")

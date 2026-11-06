@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Sync navigation across all 11 pages using the Term-Segmented (Final Exam vs Midterm Archive) architecture.
+Sync navigation across all 12 pages using the Term-Segmented (Final Exam vs Midterm Archive) architecture.
 Pages:
-- Final Exam Hub: index.html
-- Final Exam Module 1: final_ch9_cca_ae.html
-- Final Exam Module 2: final_ch11_dh_hard_problems.html
-- Midterm Archive (8 pages): midterm_index.html, notes.html, exam.html, homework_practice.html, hw1_summary.html, p1_summary.html, mock_exam.html, proof_sheet.html
+- Final Exam Hub (4 pages):
+    - index.html (期末總覽主控台)
+    - final_ch9_cca_ae.html (Ch. 9 CCA 與認證加密)
+    - final_ch11_dh_hard_problems.html (1.7 困難問題與 DH)
+    - final_quiz.html (期末全選擇題測驗中心 - 70 題)
+- Midterm Archive (8 pages):
+    - midterm_index.html, notes.html, exam.html, homework_practice.html,
+      hw1_summary.html, p1_summary.html, mock_exam.html, proof_sheet.html
 """
 import re
 
@@ -15,6 +19,7 @@ ALL_PAGES = [
     {"file": "index.html", "id": "final_hub", "name": "期末考專區總覽"},
     {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "name": "Ch. 9 CCA 與認證加密"},
     {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "name": "1.7 困難問題與 DH"},
+    {"file": "final_quiz.html", "id": "final_quiz", "name": "期末全選擇題測驗中心"},
     {"file": "midterm_index.html", "id": "midterm_index", "name": "期中互動總覽"},
     {"file": "notes.html", "id": "notes", "name": "期中講義筆記"},
     {"file": "exam.html", "id": "exam", "name": "期中考點變化題"},
@@ -28,7 +33,8 @@ ALL_PAGES = [
 FINAL_PAGES = [
     {"file": "index.html", "id": "final_hub", "label": "⚡ 期末總覽主控台", "desc": "期末主控台與 6 大模組藍圖"},
     {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "label": "📖 Ch. 9 CCA 與認證加密", "desc": "1-5 Sec 2 核心講義與題解"},
-    {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "label": "🔑 1.7 困難問題與 DH", "desc": "DLP / CDH / DDH 與金鑰交換"}
+    {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "label": "🔑 1.7 困難問題與 DH", "desc": "DLP / CDH / DDH 與金鑰交換"},
+    {"file": "final_quiz.html", "id": "final_quiz", "label": "🎯 期末全選擇題題庫", "desc": "70 題刷題與全真限時模擬考"}
 ]
 
 MIDTERM_PAGES = [
@@ -43,7 +49,7 @@ MIDTERM_PAGES = [
 ]
 
 def make_nav(current_id):
-    is_in_final = current_id in ["final_hub", "final_ch9", "final_ch11"]
+    is_in_final = current_id in ["final_hub", "final_ch9", "final_ch11", "final_quiz"]
     is_in_midterm = not is_in_final
 
     # 1. Final Exam Dropdown Button
@@ -71,7 +77,7 @@ def make_nav(current_id):
                     <div id="final-dropdown-menu" class="hidden group-hover:block absolute left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
                         <div class="px-3 py-1.5 text-[10px] font-mono text-emerald-400 bg-slate-950/60 flex items-center justify-between">
                             <span>期末進行中教材專區</span>
-                            <span class="text-xs">已注入 2 模組</span>
+                            <span class="text-xs">70 題庫已就緒</span>
                         </div>
                         <div class="py-1">
                             {final_menu_items}
