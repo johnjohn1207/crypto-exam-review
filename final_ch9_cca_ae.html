@@ -754,84 +754,668 @@ return M1* == M2*                          // 檢查兩次解密是否必然相�
         </section>
 
         <!-- ================= SECTION 7: 期末高頻考題練習 ================= -->
-        <section id="sec-quiz" class="space-y-6 pt-4">
+                <!-- ================= SECTION 7: 1-5 全真選擇題互動實戰專區 ================= -->
+        <section id="sec-quiz" class="space-y-6 pt-6">
             <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
                 <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold">SECTION 7</span>
-                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">期末精選全真模擬題庫（附逐步詳解）</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">投影片 1-5 全真選擇題互動特訓專區（共 13 精選題・附防呆解析）</h2>
             </div>
 
-            <div class="space-y-4">
+            <!-- 專題模擬測驗跳轉看板 -->
+            <div class="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-900 border border-emerald-500/40 shadow-xl flex flex-wrap items-center justify-between gap-4">
+                <div class="space-y-1 max-w-2xl">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">期末題庫全收錄</span>
+                        <span class="text-xs font-mono text-slate-400">涵蓋 Section 2、2.1、2.2 全部考點</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">想在計時模擬考環境下完整刷完 1-5 的 38 道全真選擇題？</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        點擊右側按鈕，系統將自動開啟<strong>期末全真選擇題測驗中心</strong>並自動載入 1-5 專屬範圍。支援隨機抽題、即時計分、倒數計時與錯題覆盤！
+                    </p>
+                </div>
+                <a href="final_quiz.html?scope=1.5" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2 shrink-0">
+                    <span>🚀 進入 1-5 專屬 38 題完整測驗</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+
+            <!-- 精選互動選擇題卡片群 -->
+            <div class="space-y-6">
+
                 <!-- 題目 1 -->
-                <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="font-mono text-xs font-bold text-emerald-400">題目 1・觀念題</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">配分：15 分</span>
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q1">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 1 題・解密預言機權限限制</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part A：Section 2 選擇密文攻擊 (CCA) 與延展性</span>
+                        </div>
+                        <span id="badge-ch9-q1" class="text-xs font-mono text-slate-400">尚未作答</span>
                     </div>
-                    <div class="text-sm font-semibold text-white">
-                        試問為什麼 Encrypt-and-MAC 範式連最基礎的 CPA 安全性都無法保證？請簡要推導其邏輯。
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        在選擇密文攻擊（IND-CCA）的安全性博弈中，攻擊者被賦予解密預言機（Decryption Oracle）的存取權限。下列哪一項對攻擊者在遊戲中存取解密預言機的限制敘述最精確？
                     </div>
-                    <button onclick="toggleAnswer('ans-1')" class="text-xs font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                        <span>▶ 查看官方推導解答</span>
-                    </button>
-                    <div id="ans-1" class="hidden p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-300 space-y-2">
-                        <p class="font-bold text-emerald-400">標準解答：</p>
-                        <p>1. 在 Encrypt-and-MAC 範式中，密文形式為 $C \parallel T$，其中 $T = \text{MAC}(K_m, M)$ 是直接對「明文 $M$」計算而得。</p>
-                        <p>2. 標準的 MAC 演算法（如 HMAC、CBC-MAC、PRF）通常為確定性函數（Deterministic）。</p>
-                        <p>3. 攻擊者選擇兩個相同明文 $M_0 = M_1$ 查詢加密預言機，雖然密文 $C_0, C_1$ 因隨機性而不同，但生成的認證標籤必定相等：$T_0 = T_1$。</p>
-                        <p>4. 若攻擊者送出兩個相異明文，則 $T_0 \neq T_1$。因此攻擊者可直接透過比對 Tag 的相等性判斷明文是否重複，破壞了「密文不可區分性」，故連 CPA 安全性都不滿足。</p>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q1">
+                        <button type="button" onclick="handleCh9Answer('ch9-q1', 0, 1)" id="opt-ch9-q1-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">攻擊者在收到挑戰密文 $C^*$ 之前可以隨意查詢，但收到 $C^*$ 之後解密預言機立即永久關閉</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q1', 1, 1)" id="opt-ch9-q1-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">攻擊者在收到挑戰密文 $C^*$ 之後，可以查詢任何密文 $C$，唯一的絕對限制是 $C \neq C^*$</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q1', 2, 1)" id="opt-ch9-q1-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">攻擊者只能查詢長度短於挑戰密文 $C^*$ 的密文</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q1', 3, 1)" id="opt-ch9-q1-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">攻擊者可以查詢 $C^*$，但預言機只會回傳該密文前一半的明文</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q1" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.18-19 與 P.39，CCA 安全性（適應性 CCA2）允許攻擊者在收到挑戰密文 $C^*$ 前後自由存取解密預言機，唯一的限制是不能直接查詢 $C^*$ 本身（$C \neq C^*$），否則解密出明文即平凡獲勝。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">若允許查詢挑戰密文 $C^*$，在數學定義上沒有任何加密系統能達成安全性。若解密預言機在挑戰後關閉，則退化為 CCA1（非適應性攻擊）。</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- 題目 2 -->
-                <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="font-mono text-xs font-bold text-amber-400">題目 2・證明題</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">配分：20 分</span>
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q2">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 2 題・CTR 模式延展性（Malleability）破壞</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part A：Section 2 選擇密文攻擊 (CCA) 與延展性</span>
+                        </div>
+                        <span id="badge-ch9-q2" class="text-xs font-mono text-slate-400">尚未作答</span>
                     </div>
-                    <div class="text-sm font-semibold text-white">
-                        設 $\Sigma$ 為 CTR 模式對稱加密，現有一解密預言機 $O(C)$：若 $\text{Dec}(K, C)$ 的首個 byte 為 `0xFF` 則回傳 1，否則回傳 0。請寫出區分器 $\mathcal{A}$ 的虛擬碼，並計算其破解 CCA 安全性的 Advantage。
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        密碼學系統採用標準 CTR 模式（$C = R \parallel S$，其中 $S = M \oplus F_K(R)$）。若攻擊者攔截到合法密文 $C$，下列關於 CTR 模式特性的敘述何者正確？
                     </div>
-                    <button onclick="toggleAnswer('ans-2')" class="text-xs font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                        <span>▶ 查看官方推導解答</span>
-                    </button>
-                    <div id="ans-2" class="hidden p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-300 space-y-2">
-                        <p class="font-bold text-emerald-400">標準解答：</p>
-                        <pre class="bg-slate-900 p-3 rounded font-mono text-xs text-slate-200">
-Adversary A:
-    M := 0x00 || 0x00...00 (長度 lambda)
-    C := cca.enc(M)
-    C' := C ^ (0xFF || 0x00...00)   // 僅翻轉首個 byte
-    M' := cca.dec(C')
-    return M'[0] == 0xFF</pre>
-                        <p><strong>優勢計算：</strong></p>
-                        <p>在 Real 庫中：$M'[0] = 0x00 \oplus 0xFF = 0xFF$，恆成立，$\Pr[\text{Real}] = 1$。</p>
-                        <p>在 Rand 庫中：$C'$ 未被快取，解密出均勻隨機明文，首 byte 剛好為 `0xFF` 的機率為 $1/256$。</p>
-                        <p>$$\text{Adv} = |1 - 1/256| = 255/256 \approx 1 \quad \text{(Non-negligible)}$$</p>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q2">
+                        <button type="button" onclick="handleCh9Answer('ch9-q2', 0, 2)" id="opt-ch9-q2-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">CTR 模式同時具備 CPA 與 CCA 安全性，因為攻擊者無法逆推 PRF 密鑰</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q2', 1, 2)" id="opt-ch9-q2-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">攻擊者若將 $S$ 的某一個位元翻轉，接收端解密時該區塊會發生雪崩效應變成亂碼</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q2', 2, 2)" id="opt-ch9-q2-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">攻擊者即使完全不知道明文內容，也能精確掌控解密後明文特定位元的翻轉（Bit-flipping）</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q2', 3, 2)" id="opt-ch9-q2-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">CTR 模式不具備延展性（Non-malleable），因此可以直接防禦解密預言機攻擊</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q2" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 C</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.24-26，CTR 模式解密運算為 $M' = S' \oplus F_K(R) = (S \oplus \Delta) \oplus F_K(R) = M \oplus \Delta$。攻擊者可在不知道明文的情況下精確翻轉特定明文位元，具備完全延展性（Malleability），無法防禦 CCA。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">CBC 模式翻轉前一塊 IV 會在當前塊產生雪崩，但 CTR 模式無雪崩效應，每個位元皆為一對一完全線性對應。</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- 題目 3 -->
-                <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="font-mono text-xs font-bold text-cyan-400">題目 3・計算題</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">配分：15 分</span>
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 3 題・Format Oracle：Null-Byte 漏洞破解複雜度</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part A：Section 2 選擇密文攻擊 (CCA) 與延展性</span>
+                        </div>
+                        <span id="badge-ch9-q3" class="text-xs font-mono text-slate-400">尚未作答</span>
                     </div>
-                    <div class="text-sm font-semibold text-white">
-                        在 PKCS#7 Padding Oracle 攻擊中，若要解密一個由 3 個區塊組成的 CBC 密文（區塊大小 16 位元組），最壞情況下攻擊者需要發起幾次解密預言機查詢？若改為真正明文窮舉需幾次？
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        系統解密 CTR 模式密文，若解密後的明文包含空字元（Null byte, `0x00`），系統會噴出內部錯誤（Crash / Error），形成 `nulloracle(C)`。假設密文內含長度為 $L$ 個位元組的機密資訊，攻擊者利用此預言機逐位元組破解，最多需要發送幾次解密查詢？
                     </div>
-                    <button onclick="toggleAnswer('ans-3')" class="text-xs font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                        <span>▶ 查看官方推導解答</span>
-                    </button>
-                    <div id="ans-3" class="hidden p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-300 space-y-2">
-                        <p class="font-bold text-emerald-400">標準解答：</p>
-                        <p>1. 密文有 3 個區塊，除去初始向量 IV（第 0 塊），共有 2 個待解密區塊（共 $2 \times 16 = 32$ 位元組）。</p>
-                        <p>2. Padding Oracle 每個 byte 最多測試 256 種可能（$0x00$ 至 $0xFF$）。</p>
-                        <p>3. 最壞情況查詢次數為：$32 \times 256 = \mathbf{8,192 \text{ 次}}$（實務中平均只需 $32 \times 128 = 4,096$ 次）。</p>
-                        <p>4. 若為真正暴力窮舉明文，複雜度為 $256^{32} = 2^{256} \approx 1.15 \times 10^{77}$ 次（計算上不可行）。</p>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q3">
+                        <button type="button" onclick="handleCh9Answer('ch9-q3', 0, 1)" id="opt-ch9-q3-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">$256^L$ 次</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q3', 1, 1)" id="opt-ch9-q3-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">$256 \times L$ 次</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q3', 2, 1)" id="opt-ch9-q3-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">$2^{128}$ 次</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q3', 3, 1)" id="opt-ch9-q3-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">$L^2$ 次</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q3" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.28-31，因為 CTR 模式每個位元組彼此獨立，攻擊者每次針對第 $i$ 個位元組猜測 $g \in [0, 255]$。當 $M[i] \oplus g = 0$ 觸發 Null-Oracle 報錯時即確定 $M[i] = g$。複雜度由指數級 $256^L$ 降至線性級別最多 $256 \times L$ 次查詢。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">不要誤選指數級 $256^L$。Format Oracle 的致命性正是將「整體爆破」拆解為「獨立逐字節破解」。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 4 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 4 題・1-bit 延展性對 CCA 安全性的破壞</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part A：Section 2 選擇密文攻擊 (CCA) 與延展性</span>
+                        </div>
+                        <span id="badge-ch9-q4" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        設 $\Sigma$ 為一 CPA 安全之對稱加密系統。假設攻擊者在 CCA 挑戰階段獲得挑戰密文 $C^* = (R, S)$（對應明文 $M_b$）。若該方案具有「可任意翻轉密文最後 1 個位元，且解密結果剛好是原明文翻轉最後 1 個位元」的性質，攻擊者勝出 CCA 遊戲的優勢（Advantage）為何？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q4">
+                        <button type="button" onclick="handleCh9Answer('ch9-q4', 0, 2)" id="opt-ch9-q4-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">0（完全猜不中）</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q4', 1, 2)" id="opt-ch9-q4-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">接近 negligible（可忽略）</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q4', 2, 2)" id="opt-ch9-q4-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">1（100% 確定獲勝）</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q4', 3, 2)" id="opt-ch9-q4-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">1/2</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q4" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 C</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.40-41，攻擊者將 $C^*$ 最後 1 個 bit 翻轉得到 $C'$。因 $C' \neq C^*$，解密預言機接受查詢並回傳 $M' = M_b \oplus 0\dots01$。攻擊者將其翻轉回來即 100% 恢復 $M_b$，優勢（Advantage）為 1。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">許多人誤以為翻轉 1 bit 只能拿到 1 bit 資訊；但在密碼學區分博弈中，只要能還原明文比對 $M_0, M_1$，勝率優勢直接拉滿為 1。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 5 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 5 題・Frankenstein 密文拼裝攻擊</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part A：Section 2 選擇密文攻擊 (CCA) 與延展性</span>
+                        </div>
+                        <span id="badge-ch9-q5" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        講義中提到的「Frankenstein 技巧（Frankenstein trick）」展示了多區塊加密若缺乏完整性驗證時的威脅。下列關於 Frankenstein 攻擊的敘述何者正確？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q5">
+                        <button type="button" onclick="handleCh9Answer('ch9-q5', 0, 1)" id="opt-ch9-q5-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">攻擊者藉由解密私鑰產生完全未知的加密區塊</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q5', 1, 1)" id="opt-ch9-q5-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">攻擊者攔截多筆合法傳輸的密文，將不同密文的區塊縫合（Stitch）成一段從未被發送過但接收端仍能合法解密的新密文</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q5', 2, 1)" id="opt-ch9-q5-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">利用量子電腦重構 AES S-Box</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q5', 3, 1)" id="opt-ch9-q5-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">藉由長度擴展攻擊直接獲取伺服器 Root 權限</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q5" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.42-44，Frankenstein 密文拼裝攻擊指攻擊者截獲 $R_1 \parallel S_1$ 與 $R_2 \parallel S_2$，縫合為新密文。接收端驗證通過並解密出攻擊者構造的組合語義。投影片核心總結：「讀取明文很糟糕，但偽造合法密文（Minting valid ciphertexts）危害更大」。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">Frankenstein 攻擊不需暴力破解密鑰，純粹是利用多區塊缺乏相互綁定與整體驗證的漏洞。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 6 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q6">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 6 題・雜湊函數 vs 訊息鑑別碼（MAC）的本質差異</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part B：Subsection 2.1 訊息鑑別碼 (MAC) 與三大組合範式</span>
+                        </div>
+                        <span id="badge-ch9-q6" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        許多開發者常誤以為「只要用 SHA-256 對訊息取 Hash 並隨附在後，就能防止訊息被竄改」。下列哪一項解釋最能指出該想法的盲點？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q6">
+                        <button type="button" onclick="handleCh9Answer('ch9-q6', 0, 1)" id="opt-ch9-q6-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">SHA-256 運算太慢，容易遭受阻斷服務攻擊</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q6', 1, 1)" id="opt-ch9-q6-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">Hash 函數為公開、無密鑰（Unkeyed）演算法，中間人修改訊息後可自行重新計算合法的 SHA-256 值替代</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q6', 2, 1)" id="opt-ch9-q6-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">SHA-256 已經被破解，存在實務碰撞</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q6', 3, 1)" id="opt-ch9-q6-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">Hash 值只能用於數位簽章，不能與對稱加密共存</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q6" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.46-51，雜湊函數（Hash）是無金鑰的公開演算法。攻擊者竄改明文 $M \to M'$，直接同步更新 $H(M')$，接收端驗證必定通過。MAC 核心在於雙方共享秘密密鑰 $K_m$ 生成標籤 $T = \text{MAC}(K_m, M)$，攻擊者無密鑰即無法偽造標籤（EUF-CMA）。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">無密鑰的 Hash 只能檢查傳輸過程的「隨機硬體雜訊錯誤」，完全無法防禦惡意攻擊者的「人為蓄意篡改」。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 7 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q7">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 7 題・三大加密與 MAC 組合模式安全性對決</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part B：Subsection 2.1 訊息鑑別碼 (MAC) 與三大組合範式</span>
+                        </div>
+                        <span id="badge-ch9-q7" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        在對稱密碼學中，將 CPA 安全的加密演算法（Key 為 $K_e$）與強不可偽造的 MAC（Key 為 $K_m$）結合，下列三種構建模式的安全性評估何者完全正確？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q7">
+                        <button type="button" onclick="handleCh9Answer('ch9-q7', 0, 2)" id="opt-ch9-q7-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">Encrypt-and-MAC（SSH 模式）具備 CCA 安全性</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q7', 1, 2)" id="opt-ch9-q7-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">MAC-then-encrypt（TLS 舊版模式）被證明是無條件達成 CCA 安全的最佳典範</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q7', 2, 2)" id="opt-ch9-q7-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">Encrypt-then-MAC（EtM）是唯一能普適保證達成 IND-CCA 與 Authenticated Encryption（AE）的標準組合</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q7', 3, 2)" id="opt-ch9-q7-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">三者安全性完全等價，差異僅在於傳輸效能與封包大小</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q7" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 C</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.57-61：(1) Encrypt-then-MAC (EtM) 先驗證密文 MAC，錯誤即丟棄，完美達成 CCA 與 AE。(2) Encrypt-and-MAC 因 MAC 直接算在明文上，傳送相同明文產生相同標籤，連 CPA 安全性都不保證。(3) MAC-then-encrypt 驗證前需先解密，解密錯誤易形成 Padding Oracle 攻擊（如 POODLE / Lucky 13）。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">Encrypt-and-MAC 連 CPA 都不滿足；MAC-then-encrypt 在工程實作上極度危險；Encrypt-then-MAC 才是業界與理論一致公認的黃金標準。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 8 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q8">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 8 題・密鑰隔離原則（Key Separation）</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part B：Subsection 2.1 訊息鑑別碼 (MAC) 與三大組合範式</span>
+                        </div>
+                        <span id="badge-ch9-q8" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        在實作 Encrypt-then-MAC 時，資安手冊嚴格要求「加密密鑰 $K_e$ 與 MAC 密鑰 $K_m$ 必須互相獨立」。若開發者便宜行事，使用同一把密鑰 $K$（即 $K_e = K_m = K$），最可能引發何種災難？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q8">
+                        <button type="button" onclick="handleCh9Answer('ch9-q8', 0, 1)" id="opt-ch9-q8-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">密鑰產生速度變慢兩倍</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q8', 1, 1)" id="opt-ch9-q8-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">破壞不同密碼原語之間的安全性假設，可能導致 MAC 內部運算與加密演算法產生非預期的代數交互作用而洩漏密鑰</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q8', 2, 1)" id="opt-ch9-q8-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">導致密文長度變成原本的三倍</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q8', 3, 1)" id="opt-ch9-q8-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">使對稱式加密退化為非對稱式加密</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q8" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">密碼學核心鐵律為「一匙不二用（Key Separation）」。當兩個不同算法共用同一把密鑰時，其內部的線性運算或 S-Box 輪密鑰可能互相耦合，使安全性證明（Security Reduction）完全失效，甚至直接被構造出關聯金鑰攻擊（Related-key Attack）。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">即使兩個演算法單獨都很安全，共用同一把金鑰會破壞所有獨立安全性證明。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 9 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q9">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 9 題・CCA 安全 vs 認證加密（AE）的核心界線</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part C：Subsection 2.2 認證加密 (AE / AEAD) 與工程實務</span>
+                        </div>
+                        <span id="badge-ch9-q9" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        雖然 IND-CCA 提供了對抗主動解密攻擊的安全性，但現代通訊協定均以「認證加密（Authenticated Encryption, AE）」為黃金標準。兩者在處理「攻擊者偽造之密文」時的根本差異為何？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q9">
+                        <button type="button" onclick="handleCh9Answer('ch9-q9', 0, 1)" id="opt-ch9-q9-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">CCA 保證攻擊者絕對偽造不出任何合法密文；AE 則允許攻擊者偽造密文但不能解密</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q9', 1, 1)" id="opt-ch9-q9-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">CCA 僅保證機密性，攻擊者若生成新密文解密出某垃圾字串，在 CCA 下不算被攻破；而 AE 嚴格要求密文完整性（CTXT Integrity），任何非合法方生成的密文解密必須一律報錯拒絕（$\bot$）</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q9', 2, 1)" id="opt-ch9-q9-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">AE 只需要一把金鑰，而 CCA 必須使用三把金鑰</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q9', 3, 1)" id="opt-ch9-q9-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">CCA 安全性高於 AE 安全性</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q9" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.63-66，Key difference 在於「如何處理攻擊者構造的密文」。CCA 僅保證攻擊者猜不出挑戰明文，但若攻擊者隨意拼湊密文丟給接收端解密出垃圾字串，並不違背 CCA；AE 則嚴格要求密文完整性（Ciphertext Integrity），非合法密文解密必須 100% 回傳 $\bot$（拒絕接受）。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">AE $\implies$ CCA，但 CCA $\not\implies$ AE。AE 是更高維度的黃金標準（機密性 + 密文完整性）。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 10 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q10">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 10 題・AES-GCM 與 GHASH 的設計哲學</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part C：Subsection 2.2 認證加密 (AE / AEAD) 與工程實務</span>
+                        </div>
+                        <span id="badge-ch9-q10" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        AES-GCM 是現代網路（TLS 1.3）中最廣泛採用的 AEAD 演算法。關於其核心鑑別組件 GHASH 的特性，下列敘述何者正確？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q10">
+                        <button type="button" onclick="handleCh9Answer('ch9-q10', 0, 1)" id="opt-ch9-q10-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">GHASH 是基於 SHA-3 演算法的密碼雜湊函數</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q10', 1, 1)" id="opt-ch9-q10-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">GHASH 是基於有限體（Galois Field $GF(2^{128})$）多項式乘法設計的 Universal Hash，其最大優勢為硬體指令加速極快</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q10', 2, 1)" id="opt-ch9-q10-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">GHASH 可以在沒有任何密鑰的情況下獨立作為安全簽章使用</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q10', 3, 1)" id="opt-ch9-q10-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">GHASH 本身具備防抗碰撞性（Collision Resistance），可取代一般資料庫 Hash</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q10" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.68-73，GHASH 是基於 $GF(2^{128})$ 有限體算術的 Universal Hash。現代處理器具備專屬硬體加速指令（x86 的 PCLMULQDQ、ARM 的 PMULL），運算速度極快；但 GHASH 必須依賴密鑰 $H = E_K(0^{128})$，且本身並非通用抗碰撞雜湊。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">GHASH 是 Keyed Hash，絕對不能當成一般的 SHA-256 使用，且不能單獨作為公開簽章。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 11 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q11">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 11 題・AES-GCM 的毀滅性盲點：Nonce Reuse</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part C：Subsection 2.2 認證加密 (AE / AEAD) 與工程實務</span>
+                        </div>
+                        <span id="badge-ch9-q11" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        在 AES-GCM 運作中，若針對同一個金鑰 $K$ 重複使用了相同的 Nonce（IV），會造成什麼程度的災難？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q11">
+                        <button type="button" onclick="handleCh9Answer('ch9-q11', 0, 2)" id="opt-ch9-q11-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">系統僅損失該兩筆訊息的機密性，但驗證標籤（Tag）仍牢不可破</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q11', 1, 2)" id="opt-ch9-q11-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">僅造成連線延遲增加，重新交握後即修復</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q11', 2, 2)" id="opt-ch9-q11-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">同時粉碎機密性與真實性：不僅明文 XOR 值直接曝光，攻擊者還可透過解有限體多項式方程組推導出 GHASH Key $H$，進而偽造任意訊息的驗證標籤</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q11', 3, 2)" id="opt-ch9-q11-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">系統會直接拋出硬體中斷錯誤並拒絕開機</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q11" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 C</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.73，AES-GCM Nonce 重用是災難性滅頂之災：(1) CTR 模式 Keystream 重用使 $C_1 \oplus C_2 = M_1 \oplus M_2$ 洩漏明文；(2) GHASH 標籤相減消去遮罩，形成以 $H$ 為未知數的低階多項式方程，攻擊者求根解出 $H$ 後即可全域偽造任意標籤！</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">不要誤以為 Nonce 重用「只破壞機密性」；在 GCM 中，真實性（Authenticity）會隨之徹底瓦解！</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 12 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q12">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 12 題・重送攻擊（Replay Attack）與關聯資料（Associated Data）</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part C：Subsection 2.2 認證加密 (AE / AEAD) 與工程實務</span>
+                        </div>
+                        <span id="badge-ch9-q12" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        Alice 使用通過認證加密（AE）的連線向銀行發送密文 `Enc("轉帳 100 元給 Charlie")`。Attacker 攔截該加密封包並將一模一樣的密文向銀行重送 10 次，銀行皆成功解密並執行扣款。下列哪一項評析最為正確？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q12">
+                        <button type="button" onclick="handleCh9Answer('ch9-q12', 0, 1)" id="opt-ch9-q12-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">這代表 AE 演算法內部數學有破綻，未達到 CPA 安全性</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q12', 1, 1)" id="opt-ch9-q12-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">AEAD 只能保證封包未被竄改，無法自動感知封包的上下文（Context）與時效；必須利用 Associated Data（AD）綁定序號（Sequence Number）、時間戳記或 Session ID 才能防禦重送攻擊</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q12', 2, 1)" id="opt-ch9-q12-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">只要將加密金鑰長度由 128 位元升級至 256 位元即可防止重播</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q12', 3, 1)" id="opt-ch9-q12-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">這是中間人攻擊，使用 Hash 函數即可根除</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q12" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.77-83 案例：「Authenticated encryption didn't save us — context matters!」。重播的密文本身確實有效且合法，AE 無法得知語義時效。標準防護作法是將單調遞增序號或 Session ID 放入 AEAD 的 Associated Data（只驗證不加密）中一同認證。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">AEAD 算法本身不維護狀態，重送防禦必須由協定層將上下文（Context）放入 Associated Data 來達成。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 題目 13 -->
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md space-y-4" id="card-ch9-q13">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 13 題・金鑰承諾（Key Commitment）漏洞</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">Part C：Subsection 2.2 認證加密 (AE / AEAD) 與工程實務</span>
+                        </div>
+                        <span id="badge-ch9-q13" class="text-xs font-mono text-slate-400">尚未作答</span>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        講義提到了現代 AEAD 的一個潛在威脅「Key Commitment 缺失」。下列哪一情境具體體現了缺乏 Key Commitment 所引發的攻擊？
+                    </div>
+
+                    <div class="space-y-2 pt-1" id="opts-ch9-q13">
+                        <button type="button" onclick="handleCh9Answer('ch9-q13', 0, 1)" id="opt-ch9-q13-0" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">A</span>
+                            <div class="leading-relaxed flex-1">攻擊者重播昨天發出的密文</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q13', 1, 1)" id="opt-ch9-q13-1" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">B</span>
+                            <div class="leading-relaxed flex-1">攻擊者精心構造單一合法密文 $C$，該密文在金鑰 $K_1$ 下能成功解密出「Hello Alice」，而在另一把金鑰 $K_2$ 下亦能通過驗證並解密出「Transfer $1M to Eve」</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q13', 2, 1)" id="opt-ch9-q13-2" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">C</span>
+                            <div class="leading-relaxed flex-1">攻擊者猜測出伺服器的 RSA 私鑰</div>
+                        </button>
+                        <button type="button" onclick="handleCh9Answer('ch9-q13', 3, 1)" id="opt-ch9-q13-3" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-200 text-xs sm:text-sm transition flex items-start gap-3">
+                            <span class="w-5 h-5 rounded-full border border-slate-700 text-slate-400 flex items-center justify-center text-xs font-mono shrink-0 mt-0.5">D</span>
+                            <div class="leading-relaxed flex-1">密文在傳輸過程中因雜訊導致位元損毀</div>
+                        </button>
+                    </div>
+
+                    <div id="exp-ch9-q13" class="hidden pt-3 border-t border-slate-800/80 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 B</span>
+                                <span class="text-[10px] text-slate-500 font-mono">投影片 1-5 原文依據</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">依據投影片 1.5 P.74，Key commitment 要求密文只能在唯一的正確金鑰下成功解密。AES-GCM 缺乏金鑰承諾，惡意方可構造一筆密文，使其在兩個相異金鑰下皆驗證通過且解密出截然不同的明文，破壞密鑰唯一綁定性。</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                            <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場常見陷阱：</span>
+                            <span class="leading-relaxed">傳統 AE 定義假設只有一把通訊金鑰，多方環境（如通報檢舉機制）下缺乏 Key Commitment 會造成歧異解密漏洞。</span>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- 底部再次導引 -->
+            <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-3">
+                <div class="text-sm text-slate-300 font-medium">已完成本頁 13 題精選題目？還有 25 道進階公式與代數題目等著你！</div>
+                <a href="final_quiz.html?scope=1.5" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition">
+                    <span>前往 1-5 專屬 38 題全真測驗中心 ↗</span>
+                </a>
+            </div>
         </section>
+
 
     </main>
 
@@ -881,5 +1465,52 @@ document.addEventListener('click', (e) => {
     window.addEventListener('resize', syncHeaderHeight);
     window.addEventListener('DOMContentLoaded', syncHeaderHeight);
     </script>
+    <script id="ch9-quiz-interactive-script">
+        function handleCh9Answer(qId, selectedIdx, correctIdx) {
+            const expDiv = document.getElementById(`exp-${qId}`);
+            const badge = document.getElementById(`badge-${qId}`);
+            const isCorrect = (selectedIdx === correctIdx);
+
+            // Disable all buttons in this question and style them
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`opt-${qId}-${i}`);
+                if (!btn) continue;
+                btn.disabled = true;
+                if (i === correctIdx) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-emerald-500 bg-emerald-950/60 text-emerald-200 font-bold ring-1 ring-emerald-500/50 text-xs sm:text-sm flex items-start gap-3";
+                } else if (i === selectedIdx && !isCorrect) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-rose-500 bg-rose-950/60 text-rose-200 font-semibold ring-1 ring-rose-500/50 text-xs sm:text-sm flex items-start gap-3";
+                } else {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-900 bg-slate-950/40 text-slate-500 opacity-50 text-xs sm:text-sm flex items-start gap-3";
+                }
+            }
+
+            if (badge) {
+                if (isCorrect) {
+                    badge.className = "text-xs font-bold font-mono text-emerald-400";
+                    badge.innerText = "✓ 答對";
+                } else {
+                    badge.className = "text-xs font-bold font-mono text-rose-400";
+                    badge.innerText = "✗ 答錯";
+                }
+            }
+
+            if (expDiv) {
+                expDiv.classList.remove('hidden');
+            }
+
+            // Render math formulas
+            if (window.renderMathInElement && expDiv) {
+                renderMathInElement(expDiv, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+    </script>
+
 </body>
 </html>

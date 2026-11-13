@@ -238,6 +238,25 @@
                 </div>
             </div>
 
+                        <!-- 單元範圍篩選 (Scope Switcher) -->
+            <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800/80">
+                <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5 shrink-0">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    <span class="font-bold">單元範圍：</span>
+                </span>
+                <div class="flex flex-wrap items-center gap-1.5 text-xs font-mono">
+                    <button type="button" onclick="filterByScope('ALL')" id="scope-btn-all" class="scope-btn px-3 py-1.5 rounded-xl font-bold text-xs bg-emerald-600 text-white shadow-sm transition">
+                        全部題庫 (70 題)
+                    </button>
+                    <button type="button" onclick="filterByScope('1.5')" id="scope-btn-1.5" class="scope-btn px-3 py-1.5 rounded-xl font-semibold text-xs bg-slate-800 text-slate-300 hover:text-white transition">
+                        投影片 1.5：CCA 與認證加密 AE (38 題)
+                    </button>
+                    <button type="button" onclick="filterByScope('1.7')" id="scope-btn-1.7" class="scope-btn px-3 py-1.5 rounded-xl font-semibold text-xs bg-slate-800 text-slate-300 hover:text-white transition">
+                        投影片 1.7：困難問題與 DH / RSA (32 題)
+                    </button>
+                </div>
+            </div>
+
             <!-- 主題分類篩選 Pills -->
             <div class="flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono pb-1 pt-1" id="topic-filters-container">
                 <button onclick="filterByTopic('ALL')" class="topic-btn px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shrink-0 transition" data-topic="ALL">全部 (70)</button>
@@ -328,7 +347,8 @@
     <!-- Scripts -->
     <script src="js/final_mcq_data.js"></script>
     <script id="quiz-engine-script">
-        let currentMode = 'practice'; // 'practice' or 'exam'
+                let currentMode = 'practice'; // 'practice' or 'exam'
+        let currentScope = 'ALL';     // 'ALL', '1.5', '1.7'
         let currentTopic = 'ALL';
         let showWrongOnly = false;
         let userAnswers = {}; // { qId: selectedOptionIndex }
@@ -339,9 +359,61 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadSavedAnswers();
+            // Parse URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const scopeParam = urlParams.get('scope');
+            const topicParam = urlParams.get('topic');
+            if (scopeParam && ['ALL', '1.5', '1.7'].includes(scopeParam)) {
+                filterByScope(scopeParam, false);
+            }
+            if (topicParam) {
+                currentTopic = topicParam;
+            }
             renderQuestions();
             updateStats();
         });
+
+        function getQuestionScope(q) {
+            const num = parseInt(q.id.replace('q', ''), 10);
+            return num <= 38 ? '1.5' : '1.7';
+        }
+
+        function filterByScope(scope, rerender = true) {
+            currentScope = scope;
+            currentTopic = 'ALL'; // reset topic when switching scope
+            document.querySelectorAll('.scope-btn').forEach(btn => {
+                btn.className = "scope-btn px-3 py-1.5 rounded-xl font-semibold text-xs bg-slate-800 text-slate-300 hover:text-white transition";
+            });
+            const activeBtn = document.getElementById(`scope-btn-${scope.toLowerCase()}`);
+            if (activeBtn) {
+                activeBtn.className = "scope-btn px-3 py-1.5 rounded-xl font-bold text-xs bg-emerald-600 text-white shadow-sm transition";
+            }
+            // Update topic buttons active state
+            document.querySelectorAll('.topic-btn').forEach(btn => {
+                if (btn.getAttribute('data-topic') === 'ALL') {
+                    btn.className = "topic-btn px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shrink-0 transition";
+                } else {
+                    btn.className = "topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition";
+                }
+            });
+
+            // Update URL without reload
+            try {
+                const url = new URL(window.location);
+                if (scope === 'ALL') {
+                    url.searchParams.delete('scope');
+                } else {
+                    url.searchParams.set('scope', scope);
+                }
+                url.searchParams.delete('topic');
+                window.history.replaceState({}, '', url);
+            } catch (e) {}
+
+            if (rerender) {
+                renderQuestions();
+                updateStats();
+            }
+        }
 
         function loadSavedAnswers() {
             try {
@@ -361,6 +433,9 @@
         function getActiveQuestionList() {
             let list = (currentMode === 'exam') ? examQuestions : FINAL_MCQ_DATA;
             if (currentMode === 'practice') {
+                if (currentScope !== 'ALL') {
+                    list = list.filter(q => getQuestionScope(q) === currentScope);
+                }
                 if (currentTopic !== 'ALL') {
                     list = list.filter(q => q.topic.includes(currentTopic) || currentTopic.includes(q.topic));
                 }
@@ -390,6 +465,7 @@
                 const isAnswered = userChoice !== undefined;
                 const isCorrect = isAnswered && userChoice === q.answer;
                 const isPractice = currentMode === 'practice';
+                const scope = getQuestionScope(q);
 
                 return `
                     <div class="p-6 rounded-2xl bg-slate-900/90 border ${isAnswered ? (isCorrect ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-rose-500/40 bg-rose-950/10') : 'border-slate-800'} shadow-md space-y-4 transition" id="card-${q.id}">
@@ -397,6 +473,7 @@
                         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
                             <div class="flex items-center gap-2">
                                 <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 ${index + 1} 題 / ${q.id.toUpperCase()}</span>
+                                <span class="px-2 py-0.5 rounded text-[11px] font-mono ${scope === '1.5' ? 'bg-cyan-950 text-cyan-300 border border-cyan-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">投影片 ${scope}</span>
                                 <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">${q.topic}</span>
                             </div>
                             <div class="flex items-center gap-2">
@@ -424,7 +501,6 @@
                                             optStyle = "bg-slate-950/50 border-slate-900 text-slate-500 opacity-60";
                                         }
                                     } else {
-                                        // Exam mode
                                         if (optIdx === userChoice) {
                                             optStyle = "bg-emerald-950/80 border-emerald-500 text-emerald-200 font-bold";
                                         }
@@ -446,20 +522,23 @@
                                 <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs sm:text-sm">
                                     <div class="flex items-center justify-between">
                                         <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 ${['A','B','C','D'][q.answer]}</span>
-                                        <span class="text-[10px] text-slate-500 font-mono">投影片原話推導</span>
+                                        <span class="text-[10px] text-slate-500 font-mono">投影片 ${scope} 核心推導</span>
                                     </div>
                                     <p class="text-slate-300 leading-relaxed">${q.explanation}</p>
-                                    <div class="p-2.5 rounded-lg bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs">
-                                        <span class="font-bold font-mono">⚠️ 考場防呆陷阱：</span>${q.trap}
-                                    </div>
                                 </div>
+                                ${q.trap ? `
+                                    <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
+                                        <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場陷阱防呆：</span>
+                                        <span class="leading-relaxed">${q.trap}</span>
+                                    </div>
+                                ` : ''}
                             </div>
                         ` : ''}
                     </div>
                 `;
             }).join('');
 
-            // Render Math with KaTeX
+            // KaTeX auto-render
             if (window.renderMathInElement) {
                 renderMathInElement(container, {
                     delimiters: [
@@ -479,13 +558,19 @@
         }
 
         function updateStats() {
-            const total = FINAL_MCQ_DATA.length;
-            const answeredKeys = Object.keys(userAnswers);
-            const answeredCount = answeredKeys.length;
+            let relevant = FINAL_MCQ_DATA;
+            if (currentScope !== 'ALL') {
+                relevant = FINAL_MCQ_DATA.filter(q => getQuestionScope(q) === currentScope);
+            }
+            const total = relevant.length;
+            let answeredCount = 0;
             let correctCount = 0;
 
-            FINAL_MCQ_DATA.forEach(q => {
-                if (userAnswers[q.id] === q.answer) correctCount++;
+            relevant.forEach(q => {
+                if (userAnswers[q.id] !== undefined) {
+                    answeredCount++;
+                    if (userAnswers[q.id] === q.answer) correctCount++;
+                }
             });
 
             const wrongCount = answeredCount - correctCount;
