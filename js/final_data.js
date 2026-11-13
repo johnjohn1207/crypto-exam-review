@@ -1,103 +1,80 @@
-// Final Exam Curriculum Framework Data (Post-Midterm Modules)
-// Covering Ch. 9 (CCA, AE) and Ch. 11 (Hard Problems, Diffie-Hellman) and subsequent Final Exam topics
+// Final Exam Curriculum Framework Data
+// Strictly mapped to official course slide decks, sections, and page numbers
 
 const FINAL_EXAM_MODULES = [
   {
-    id: "final-mod-1",
-    chapter: "Ch. 9",
+    id: "slide-1-5",
+    slide_file: "1.5 Chosen-Plaintext and Chosen-Ciphertext Attacks.pdf",
+    slide_title: "投影片 1.5（Sec 2 至 Sec 2.2 ｜ P.15 - P.85）",
+    chapter: "投影片 1.5",
     title: "選擇密文攻擊 (CCA) 與認證加密 (AE)",
     status: "completed",
-    badge: "已注入上線・點擊進入",
+    badge: "已完成・精準對齊 P.15-85",
     page_url: "final_ch9_cca_ae.html",
-    description: "完整收錄投影片 1-5 Section 2 至 Section 2.2（P.15-85）。深入剖析解密預言機（Decryption Oracle）、延展性破壞、Null-Oracle 盲解、PKCS#7 Padding Oracle 攻擊、Encrypt-then-MAC 形式化證明、AES-GCM (GHASH) 與 AEAD 綁定機制。",
+    description: "嚴格對應原版投影片 1.5 從 Section 2 開始至 Section 2.2（第 15 頁至第 85 頁）。逐頁剖析解密預言機（P.18-19）、Null-Oracle 逐字節盲解（P.20-33）、真實格式預言機（P.34-37）、1-bit 延展性與拼裝密文（P.38-44）、MAC 與三大組合範式（P.45-61）、AES-GCM 與 AEAD 關聯資料（P.62-85）。",
     key_topics: [
-      "CCA 安全性 Library 庫定義與解密預言機",
-      "延展性 (Malleability) 與 Null-Oracle 逐字節盲解推導",
-      "PKCS#7 Padding Oracle 攻擊 (POODLE 原理) 與 Timing 側信道",
-      "Encrypt-then-MAC vs Encrypt-and-MAC vs MAC-then-Encrypt 三大組合嚴格證明",
-      "AES-GCM (GHASH 有限體乘法) 與 AEAD 關聯資料防範重放攻擊"
+      "【Sec 2 ｜ P.15-19】CCA 安全性定義與解密預言機（Decryption Oracle）",
+      "【Sec 2 ｜ P.20-33】CTR 延展性與 Null-Oracle 逐字節盲解（複雜度 256×L）",
+      "【Sec 2 ｜ P.34-37】真實世界格式預言機（PKCS#7 Padding Oracle、Timing、iMessage）",
+      "【Sec 2 ｜ P.38-44】1-bit 延展性攻破 CCA（Advantage=1）與 Frankenstein 拼裝密文",
+      "【Subsec 2.1 ｜ P.45-61】MAC、PRF as MAC、Encrypt-then-MAC 證明與三大組合對決",
+      "【Subsec 2.2 ｜ P.62-85】認證加密 AE、AES-GCM (GHASH)、Nonce 重用災難、Replay 與 AD"
     ],
-    expected_materials: ["投影片 1-5 Section 2 (已完成注入)", "形式證明與區分器 (已完備)", "全真模擬測驗題庫 (已上線)"]
+    expected_materials: ["投影片 1.5 原版 P.15-85 逐頁筆記", "13 題章節精選選擇題（附防呆解析）", "38 題完整線上模擬測驗"]
   },
   {
-    id: "final-mod-2",
-    chapter: "Ch. 10",
-    title: "密碼雜湊函數與訊息鑑別碼 (Hash & MAC)",
-    status: "ready_for_materials",
-    badge: "資料完整性基石",
-    description: "探討無金鑰雜湊函數之單向性（Preimage Resistance）與抗碰撞性（Collision Resistance），深入 Merkle-Damgård 結構與長度擴展攻擊，以及 HMAC 安全性證明。",
-    key_topics: [
-      "抗第一原像 (Preimage)、抗第二原像 (Second Preimage) 與抗碰撞 (Collision)",
-      "Merkle-Damgård 結構抗碰撞性保持證明定理",
-      "長度擴展攻擊 (Length Extension Attack) 與為什麼純 H(K || M) 不安全",
-      "HMAC 雙重雜湊架構 (Nested MAC) 與安全性歸約",
-      "CBC-MAC 與 CMAC 在可變長度訊息下的安全性修正"
-    ],
-    expected_materials: ["雜湊講義", "HMAC 構造證明", "長度擴展攻擊範例"]
-  },
-  {
-    id: "final-mod-3",
-    chapter: "Ch. 11",
-    title: "困難問題、群論與 Diffie-Hellman 金鑰交換 (1.7)",
+    id: "slide-1-7",
+    slide_file: "1.7 Hard Problems and Diffie-Hellman.pdf",
+    slide_title: "投影片 1.7（Sec 1 至 Sec 3 ｜ P.1 - P.49）",
+    chapter: "投影片 1.7",
+    title: "困難問題、群論與 Diffie-Hellman 金鑰交換",
     status: "completed",
-    badge: "已注入上線・點擊進入",
+    badge: "已完成・精準對齊 P.1-49",
     page_url: "final_ch11_dh_hard_problems.html",
-    description: "完整收錄投影片 1.7（P.1-49）。解析計算複雜度與非對稱密碼數學基石，涵蓋乘法循環群 ℤ*p、生成元、離散對數問題 (DLP)、Diffie-Hellman 協定運作與課堂手算實戰，深入 DDH ≤ CDH ≤ DLP 難題層級歸約、HKDF 白化、中間人攻擊 (MITM) 與 AKE 認證機制，以及 RSA 歷史先鋒與退役原因。",
+    description: "嚴格對應原版投影片 1.7（第 1 頁至第 49 頁全覆蓋）。逐頁剖析計算非對稱性（P.2-8）、乘法循環群 ℤ*p 與生成元（P.9-15）、DLP 與課堂手算實戰 p=23, g=5（P.16-21）、DDH ≤ CDH ≤ DLP 難題層級歸約（P.22-25）、KDF 白化與前向保密（P.26-33）、MITM 中間人攻擊與四大 AKE 身分認證（P.34-42）、RSA 歷史與退場原因（P.43-48）。",
     key_topics: [
-      "模 p 乘法群 ℤ*p 四大公理、生成元與離散對數問題 (DLP)",
-      "Diffie-Hellman 協定流程與課堂手算實戰 (p=23, g=5 逐步化簡)",
-      "三大困難問題層級體系：DDH ≤ CDH ≤ DLP 歸約證明與勒讓德符號漏洞",
-      "實務工程鐵律：KDF 白化 (HKDF) 防範 Raccoon 時序側信道",
-      "中間人攻擊 (MITM) 步驟與認證金鑰交換 (AKE) 四大防禦體系"
+      "【Sec 1 ｜ P.2-8】計算非對稱性、單向陷阱函數與兩大古典問題（因數分解 vs 離散對數）",
+      "【Sec 2 ｜ P.9-18】乘法循環群 ℤ*p 四大公理、生成元判定與離散對數問題 (DLP)",
+      "【Sec 2 ｜ P.19-21】Diffie-Hellman 協定流程與手算實戰（p=23, g=5, a=6, b=15 推導 S=2）",
+      "【Sec 2 ｜ P.22-25】DLP ≥ CDH ≥ DDH 難題層級歸約與二次剩餘檢驗破壞 DDH",
+      "【Subsec 2.1 ｜ P.26-33】實務 DH、嚴禁直出 g^ab 當 AES 金鑰、KDF 白化與前向保密 (ECDHE)",
+      "【Subsec 2.2 ｜ P.34-42】未認證 DH 之 MITM 攻擊、四大 AKE 協定對比（TLS/Signal/WhatsApp/SSH）",
+      "【Sec 3 ｜ P.43-48】RSA 數學原理 ed≡1(mod φ(n))、對偶功能（加密+簽章）與現代淘汰退場原因"
     ],
-    expected_materials: ["投影片 1.7 困難問題與 DH (已完備)", "課堂手算實戰與歸約 (已上線)", "MITM 與 AKE 防禦全解 (已收錄)"]
+    expected_materials: ["投影片 1.7 原版 P.1-49 逐頁筆記", "14 題章節精選選擇題（附防呆解析）", "32 題完整線上模擬測驗"]
   },
   {
-    id: "final-mod-4",
-    chapter: "Ch. 12",
-    title: "公鑰加密體系 (Public-Key Encryption)",
-    status: "ready_for_materials",
-    badge: "非對稱加密典範",
-    description: "非對稱金鑰體系的核心方案：Diffie-Hellman 金鑰交換、ElGamal 語意安全公鑰加密、RSA 加密體系與 OAEP 填充標準。",
+    id: "quiz-center",
+    slide_file: "期末考全選擇題題庫",
+    slide_title: "期末全真選擇題測驗中心（70 題無死角全覆蓋）",
+    chapter: "全真題庫",
+    title: "期末全真選擇題特訓與隨機抽題模擬考",
+    status: "completed",
+    badge: "70 題庫・即刷即評",
+    page_url: "final_quiz.html",
+    description: "地毯式覆蓋投影片 1.5（Sec 2-2.2 ｜ P.15-85 共 38 題）與投影片 1.7（Sec 1-3 ｜ P.1-49 共 32 題）。支援單元一鍵篩選、即時防呆解析與考場常見陷阱提醒，並具備隨機抽題限時模擬考與評級成績單功能。",
     key_topics: [
-      "Diffie-Hellman 金鑰交換協定與被動竊聽安全性 (基於 DDH)",
-      "ElGamal 公鑰加密系統之 IND-CPA 安全性 (DDH 歸約證明)",
-      "教科書 RSA (Textbook RSA) 的延展性破綻與小指數攻擊",
-      "RSA-OAEP (Optimal Asymmetric Encryption Padding) 之 CCA2 安全性",
-      "混合加密 (Hybrid Encryption / KEM-DEM 架構)"
+      "支援投影片 1.5 (38 題) 與投影片 1.7 (32 題) 獨立範圍篩選",
+      "考點覆蓋率 100%：手算同餘、群論判斷、攻擊次數計算、歸約鏈邏輯",
+      "每題均附「官方原版推導」與「⚠️ 考場常見陷阱防呆」",
+      "限時全真模擬考（可自訂 25 題、50 題或完整 70 題，自動計分與評級）"
     ],
-    expected_materials: ["PKE 講義", "ElGamal CPA 歸約證明", "RSA 攻擊手冊"]
+    expected_materials: ["70 題高頻考點題庫", "即時刷題與錯題模式", "限時成績單結算系統"]
   },
   {
-    id: "final-mod-5",
-    chapter: "Ch. 13",
-    title: "數位簽章與身份認證 (Digital Signatures)",
+    id: "future-slot",
+    slide_file: "待上傳期末後續投影片",
+    slide_title: "後續授課教材預留槽位（如 1.8 數位簽章、後量子密碼學 PQC）",
+    chapter: "後續進度",
+    title: "期末後續進度教材即時注入槽位",
     status: "ready_for_materials",
-    badge: "不可否認性保證",
-    description: "數位簽章標準定義與不可偽造性（EUF-CMA）。涵蓋 RSA 簽章 (RSA-FDH)、Schnorr 簽章、DSA / ECDSA 以及盲簽章技術。",
+    badge: "隨時待命中",
+    description: "當授課教師釋出下一份投影片（例如數位簽章 Signatures、雜湊函數 Hash 深入、或後量子密碼學 PQC / Lattice / ML-KEM 等），上傳檔案後系統將立即精準對應投影片之 Section 與頁數，自動生成結構化閱讀筆記與選擇題！",
     key_topics: [
-      "EUF-CMA (Existential Unforgeability under Chosen-Message Attacks) 博弈模型",
-      "Hash-and-Sign 範式與隨機預言機模型 (Random Oracle Model, ROM)",
-      "RSA 全域雜湊簽章 (RSA-FDH) 安全性證明",
-      "Schnorr 識別協定與 Fiat-Shamir 變換導出 Schnorr 簽章",
-      "橢圓曲線數位簽章 (ECDSA) 與隨機 Nonce 洩漏致命後果"
+      "數位簽章 (Signatures)：EUF-CMA 安全模型、Schnorr 與 ECDSA",
+      "後量子密碼學 (PQC)：Shor 演算法威脅、晶格密碼 (Lattice) 與 ML-KEM",
+      "上傳新投影片即自動對齊 Section 與頁數建立導覽"
     ],
-    expected_materials: ["數位簽章投影片", "EUF-CMA 證明", "ECDSA 隨機數攻擊"]
-  },
-  {
-    id: "final-mod-6",
-    chapter: "Ch. 14",
-    title: "後量子密碼學前瞻 (Post-Quantum Cryptography)",
-    status: "ready_for_materials",
-    badge: "抗量子終極防線",
-    description: "應對量子電腦 Shor 演算法對 RSA / ECC 毀滅性威脅之後量子密碼學。以晶格密碼（Lattice-based）為核心，深入容錯學習（LWE / Ring-LWE）及 NIST 標準演算法（ML-KEM, ML-DSA）。",
-    key_topics: [
-      "量子計算威脅：Shor 演算法對 RSA / 離散對數之多項式時間破解原理",
-      "Grover 演算法對對稱密鑰與雜湊之開根號加速影響",
-      "晶格 (Lattice) 幾何結構與最短向量問題 (SVP) / 最近向量問題 (CVP)",
-      "容錯學習問題 (Learning With Errors, LWE) 與 Ring-LWE 數學公式",
-      "NIST 後量子密碼標準：ML-KEM (Kyber) 金鑰封裝與 ML-DSA (Dilithium) 數位簽章"
-    ],
-    expected_materials: ["後量子密碼講義", "LWE 數學原理", "NIST PQC 標準規範"]
+    expected_materials: ["待上傳後續投影片", "作業二題目", "期末總複習投影片"]
   }
 ];

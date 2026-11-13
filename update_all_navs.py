@@ -17,8 +17,8 @@ GITHUB_REPO_URL = "https://github.com/johnjohn1207/crypto-exam-review"
 
 ALL_PAGES = [
     {"file": "index.html", "id": "final_hub", "name": "期末考專區總覽"},
-    {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "name": "Ch. 9 CCA 與認證加密"},
-    {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "name": "1.7 困難問題與 DH"},
+    {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "name": "投影片 1.5（Sec 2-2.2 ｜ P.15-85）"},
+    {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "name": "投影片 1.7（Sec 1-3 ｜ P.1-49）"},
     {"file": "final_quiz.html", "id": "final_quiz", "name": "期末全選擇題測驗中心"},
     {"file": "midterm_index.html", "id": "midterm_index", "name": "期中互動總覽"},
     {"file": "notes.html", "id": "notes", "name": "期中講義筆記"},
@@ -31,9 +31,9 @@ ALL_PAGES = [
 ]
 
 FINAL_PAGES = [
-    {"file": "index.html", "id": "final_hub", "label": "⚡ 期末總覽主控台", "desc": "期末主控台與 6 大模組藍圖"},
-    {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "label": "📖 Ch. 9 CCA 與認證加密", "desc": "1-5 Sec 2 核心講義與題解"},
-    {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "label": "🔑 1.7 困難問題與 DH", "desc": "DLP / CDH / DDH 與金鑰交換"},
+    {"file": "index.html", "id": "final_hub", "label": "⚡ 期末總覽主控台", "desc": "期末考進度與投影片總導覽"},
+    {"file": "final_ch9_cca_ae.html", "id": "final_ch9", "label": "🛡️ 投影片 1.5（Sec 2-2.2 ｜ P.15-85）", "desc": "CCA、Padding Oracle 與認證加密 AE"},
+    {"file": "final_ch11_dh_hard_problems.html", "id": "final_ch11", "label": "🔑 投影片 1.7（Sec 1-3 ｜ P.1-49）", "desc": "困難問題、Diffie-Hellman 手算與 RSA"},
     {"file": "final_quiz.html", "id": "final_quiz", "label": "🎯 期末全選擇題題庫", "desc": "70 題刷題與全真限時模擬考"}
 ]
 
