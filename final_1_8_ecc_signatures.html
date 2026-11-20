@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投影片 1.8 重點整理：橢圓曲線與數位簽章｜密碼學期末複習</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/light_theme.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.4rem 0; }
+    </style>
+</head>
+<body class="bg-neutral-50 text-neutral-700 min-h-screen font-sans antialiased leading-relaxed selection:bg-blue-100 selection:text-blue-900">
+
+    <!-- 閱讀進度條 -->
+    <div id="reading-progress-bar"></div>
+
+    <!-- 極簡白色頂部導覽列 -->
+    <header id="site-header" class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-neutral-200">
+        <div class="max-w-5xl mx-auto px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-bold text-neutral-900 text-sm sm:text-base tracking-tight hover:text-blue-600 transition">
+                密碼學期末複習
+            </a>
+            <nav id="site-nav" class="flex flex-wrap items-center gap-1 text-xs sm:text-[13px]">
+                <a href="index.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">首頁</a>
+                <a href="final_ch9_cca_ae.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">1.5 CCA 與 AE</a>
+                <a href="final_ch11_dh_hard_problems.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">1.7 DH 與 RSA</a>
+                <a href="final_1_8_ecc_signatures.html" class="px-3 py-1.5 rounded-lg bg-neutral-900 text-white font-medium transition">1.8 橢圓曲線與簽章</a>
+                <a href="final_quiz.html" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition ml-1">選擇題練習</a>
+                <a href="midterm_index.html" class="px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 transition ml-1">期中歸檔</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-5 py-10 space-y-10">
+
+        <!-- 標題與快速跳轉 -->
+        <div class="space-y-4 border-b border-neutral-200 pb-7">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <span class="text-xs font-semibold text-blue-600">投影片 1.8（共 61 頁）｜初學者白話版重點整理</span>
+                <a href="final_quiz.html?scope=1.8" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition">
+                    直接做 1.8 選擇題（35 題）→
+                </a>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight">
+                1.8 橢圓曲線與數位簽章
+            </h1>
+            <p class="text-sm text-neutral-500 leading-relaxed">
+                這一章其實只做三件事：第一，把 1.7 學過的 Diffie-Hellman 搬到「橢圓曲線」上，讓金鑰縮小 10 倍以上；第二，介紹用公鑰驗證身分的「數位簽章（ECDSA 與 Ed25519）」；第三，盤點真實世界裡大家怎麼把數學寫壞（PS3 破解、NSA 後門爭議、點驗證漏洞）以及未來的後量子防禦。
+            </p>
+
+            <!-- 章節目錄 -->
+            <div class="flex flex-wrap gap-2 pt-2 text-xs">
+                <a href="#sec1" class="px-3 py-1.5 rounded-lg bg-white border border-neutral-200 hover:border-neutral-400 text-neutral-700 transition">1. 橢圓曲線理論（P.1-21）</a>
+                <a href="#sec2" class="px-3 py-1.5 rounded-lg bg-white border border-neutral-200 hover:border-neutral-400 text-neutral-700 transition">2. 數位簽章 ECDSA / EdDSA（P.22-32）</a>
+                <a href="#sec3" class="px-3 py-1.5 rounded-lg bg-white border border-neutral-200 hover:border-neutral-400 text-neutral-700 transition">3. 實務曲線、漏洞與後量子（P.33-60）</a>
+                <a href="#cheatsheet" class="px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-medium transition">考前 1 分鐘速記</a>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 1 ==================== -->
+        <section id="sec1" class="space-y-6 scroll-mt-24">
+            <div>
+                <div class="text-xs font-semibold text-blue-600 tracking-wide">SECTION 1 ｜ P.1 - P.21</div>
+                <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 mt-0.5">橢圓曲線理論（Elliptic Curves: Theory）</h2>
+            </div>
+
+            <!-- 初學者直覺框 -->
+            <div class="p-5 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-2">
+                <div class="text-xs font-bold text-blue-800">初學者白話直覺：為什麼已經有 DH 和 RSA，還要發明橢圓曲線？</div>
+                <p class="text-sm text-neutral-700 leading-relaxed">
+                    在 1.7 裡，傳統 Diffie-Hellman 是用「整數取餘數（$\mathbb{Z}_p^*$）」做乘法。但整數有個毛病：整數可以拆成小質數的乘積，數學家利用這點發明了加速破解法（Index Calculus），逼得傳統 DH 和 RSA 必須把金鑰拉長到 3,072 位元才安全。<br>
+                    1985 年，Koblitz 與 Miller 想到一個絕招：<strong>改用「橢圓曲線上的點」來當群元素！</strong> 因為曲線上的點無法拆成「小質數點」，加速破解法全部失效，所以只要 <strong>256 位元</strong>就能達到跟 3,072 位元 RSA 一樣的安全性，速度快 10 到 40 倍。
+                </p>
+            </div>
+
+            <!-- 1.1 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-3.5">
+                <h3 class="text-base font-bold text-neutral-900">1.1 金鑰長度優勢與為何 Index Calculus 失效（P.3 - P.7）</h3>
+                <ul class="list-disc pl-5 space-y-2 text-sm text-neutral-700">
+                    <li><strong>黃金換算規則</strong>：橢圓曲線金鑰長度永遠只需要「安全等級的 2 倍」。例如 128-bit 安全需要 <strong>256-bit ECC</strong>（等同 3,072-bit RSA / 有限體 DH）；256-bit 安全只需 <strong>512-bit ECC</strong>（RSA 則要暴增 5 倍到 15,360-bit）。</li>
+                    <li><strong>為什麼傳統攻擊失效</strong>：
+                        <ul class="list-disc pl-5 mt-1.5 space-y-1 text-neutral-600">
+                            <li>通用攻擊（Baby-step Giant-step、Pollard's rho）複雜度為 $\mathcal{O}(\sqrt{n})$，對所有群都有效（所以 256-bit 曲線安全性是 $\sqrt{2^{256}} = 2^{128}$）。</li>
+                            <li><strong>指標微積分（Index Calculus）</strong>是次指數級加速攻擊，專門靠「整數可分解成小質數」攻擊 $\mathbb{Z}_p^*$。但在橢圓曲線上，元素是「點」不是整數，沒有小質數點的概念，因此沒有 Index Calculus。</li>
+                        </ul>
+                    </li>
+                    <li><strong>現代應用</strong>：TLS 1.3、HTTPS、SSH、Signal、WhatsApp、WireGuard、Bitcoin、Ethereum 全面採用。</li>
+                </ul>
+            </article>
+
+            <!-- 1.2 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-4">
+                <h3 class="text-base font-bold text-neutral-900">1.2 什麼是橢圓曲線？點要怎麼「相加」？（P.8 - P.13）</h3>
+                <p class="text-sm text-neutral-700">
+                    <strong>Weierstrass 標準方程式</strong>（注意：橢圓曲線不是幾何上的橢圓，名稱只是歷史上源於算橢圓弧長）：
+                </p>
+                <div class="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200 text-center text-neutral-900">
+                    $$y^2 = x^3 + ax + b \quad \text{且必須滿足} \quad 4a^3 + 27b^2 \neq 0$$
+                </div>
+                <p class="text-xs text-neutral-500">
+                    附加條件 $4a^3 + 27b^2 \neq 0$ 用來排除尖點（cusps）與自相交（self-intersections），讓曲線光滑，切線才畫得出來。
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1.5">
+                        <div class="font-bold text-neutral-900 text-xs">幾何規則 1：兩點相加 $P + Q$（P.11）</div>
+                        <ol class="list-decimal pl-4 text-xs text-neutral-700 space-y-1">
+                            <li>畫一條直線穿過 $P$ 和 $Q$。</li>
+                            <li>找到直線與曲線的「第三個交點」。</li>
+                            <li><strong>沿著 $x$ 軸鏡射</strong>（把 $y$ 變號），就是 $P + Q$。</li>
+                        </ol>
+                        <div class="text-[11px] text-neutral-500 pt-1">為何要鏡射？讓「同一直線上的三點相加為 0」成立，進而滿足群公理。</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1.5">
+                        <div class="font-bold text-neutral-900 text-xs">幾何規則 2：倍點 $2P = P + P$（P.12）</div>
+                        <ol class="list-decimal pl-4 text-xs text-neutral-700 space-y-1">
+                            <li>只有一點畫不出割線，改畫曲線在 $P$ 點的<strong>切線</strong>。</li>
+                            <li>找到切線與曲線的另一個交點。</li>
+                            <li>同樣<strong>沿著 $x$ 軸鏡射</strong>，就是 $2P$。</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-2.5">
+                    <div class="text-xs font-bold text-neutral-900">在有限體 $\mathbb{F}_p$（模 $p$ 整數）上的代數公式（P.13）</div>
+                    <p class="text-xs text-neutral-500">實際電腦裡全是模 $p$ 整數點，沒有連續幾何圖，但代數公式照樣適用（除法改為乘以模反元素）：</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-neutral-800 pt-1">
+                        <div class="p-3 rounded-lg bg-white border border-neutral-200">
+                            <div class="font-semibold text-neutral-900 mb-1">點加法 $R = P + Q$（$x_P \neq x_Q$）：</div>
+                            $$\lambda = \frac{y_Q - y_P}{x_Q - x_P} \pmod p$$
+                            $$x_R = \lambda^2 - x_P - x_Q, \quad y_R = \lambda(x_P - x_R) - y_P$$
+                        </div>
+                        <div class="p-3 rounded-lg bg-white border border-neutral-200">
+                            <div class="font-semibold text-neutral-900 mb-1">倍點 $R = 2P$（$y_P \neq 0$）：</div>
+                            $$\lambda = \frac{3x_P^2 + a}{2y_P} \pmod p$$
+                            $$x_R = \lambda^2 - 2x_P, \quad y_R = \lambda(x_P - x_R) - y_P$$
+                        </div>
+                    </div>
+                    <div class="text-xs text-rose-800 bg-rose-50 border border-rose-200 rounded-lg p-3">
+                        <strong>必考伏筆：</strong>上面公式用到了係數 $a$，但<strong>完全沒有出現 $b$</strong>。這就是後面「無效曲線攻擊（Invalid Curve Attack）」能成功的根本原因。
+                    </div>
+                </div>
+            </article>
+
+            <!-- 1.3 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-3.5">
+                <h3 class="text-base font-bold text-neutral-900">1.3 純量乘法、群公理與 ECDLP（P.14 - P.18）</h3>
+                <ul class="list-disc pl-5 space-y-2 text-sm text-neutral-700">
+                    <li><strong>純量乘法 $k \cdot G$ 與 Double-and-Add（P.14）</strong>：$k \cdot G$ 就是把 $G$ 自己加 $k$ 次。256-bit 的 $k$ 硬加要 $2^{256}$ 次完全不可行；改用二進位「倍增與加法（Double-and-Add）」，例如 $k = 13 = (1101)_2$：$G \to 2G \to 3G \to 6G \to 12G \to 13G$，最多只需 255 次倍點與 255 次加法（微秒級完成）。</li>
+                    <li><strong>群結構四大公理（P.15-16）</strong>：封閉性、結合律 $(P+Q)+R = P+(Q+R)$、<strong>單位元素為無窮遠點 $\mathcal{O}$</strong>（滿足 $P + \mathcal{O} = P$）、<strong>反元素為 $-P = (x_P, -y_P)$</strong>（兩點連線垂直，定義 $P + (-P) = \mathcal{O}$）。</li>
+                    <li><strong>ECDLP 橢圓曲線離散對數問題（P.17-18）</strong>：給定曲線、基點 $G$ 與目標點 $H = k \cdot G$，要求反推出整數 $k$。正向算 $k \cdot G$ 只需數百步，逆向用 Pollard's rho 需 $\approx \sqrt{n} = 2^{128}$ 步（但量子電腦的 Shor 演算法可破解）。</li>
+                </ul>
+            </article>
+
+            <!-- 1.4 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-4">
+                <h3 class="text-base font-bold text-neutral-900">1.4 課堂手算原題與 ECDH 金鑰交換（P.19 - P.21）</h3>
+                <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2 text-sm">
+                    <div class="font-bold text-amber-900 text-xs">課堂必會手算範例（P.19）：$E: y^2 = x^3 + 2x + 2$ over $\mathbb{F}_{17}$，基點 $G = (5, 1)$</div>
+                    <p class="text-xs text-neutral-700">
+                        求 $2G$（已知 $a = 2, p = 17$，且 $2 \times 9 = 18 \equiv 1 \pmod{17}$，所以 $2^{-1} \equiv 9$）：
+                    </p>
+                    <ol class="list-decimal pl-5 text-xs text-neutral-800 space-y-1">
+                        <li>算斜率：$\lambda = \frac{3(5^2) + 2}{2(1)} = \frac{77}{2} \equiv \frac{9}{2} \equiv 9 \times 9 = 81 \equiv 13 \pmod{17}$</li>
+                        <li>算 $x$ 座標：$x = 13^2 - 2(5) = 169 - 10 = 159 \equiv 6 \pmod{17}$</li>
+                        <li>算 $y$ 座標：$y = 13(5 - 6) - 1 = -14 \equiv 3 \pmod{17}$</li>
+                        <li>結果：$2G = (6, 3)$（驗算：$3^2 = 9$，$6^3 + 2(6) + 2 = 230 \equiv 9 \pmod{17}$，正確）。</li>
+                    </ol>
+                    <div class="text-xs text-neutral-600 pt-1">
+                        <strong>Hasse 定理</strong>：曲線總點數 $\#E$ 必落在 $p + 1 \pm 2\sqrt{p}$ 之間（本題 $18 \pm 8.2$，實際共 19 點含 $\mathcal{O}$）。<br>
+                        <strong>領域參數（Domain Parameters）</strong>：$(p, a, b, G, n, h)$ = 質數、係數 $a, b$、基點 $G$、基點階數 $n$、輔因子 $h = \#E / n$。
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-neutral-200 text-neutral-500 bg-neutral-50">
+                                <th class="py-2.5 px-3 font-semibold">比較項目</th>
+                                <th class="py-2.5 px-3 font-semibold">傳統有限體 DH（1.7）</th>
+                                <th class="py-2.5 px-3 font-semibold text-blue-700">橢圓曲線 ECDH（1.8）</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-200 text-neutral-700">
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">使用的群</td><td class="py-2.5 px-3">乘法群 $\mathbb{Z}_p^*$</td><td class="py-2.5 px-3">橢圓曲線上的點群</td></tr>
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">核心運算</td><td class="py-2.5 px-3">模冪次 $g^a \bmod p$</td><td class="py-2.5 px-3">純量乘法 $a \cdot G$</td></tr>
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">雙方公開傳輸</td><td class="py-2.5 px-3">$A = g^a, \; B = g^b$</td><td class="py-2.5 px-3">$A = a \cdot G, \; B = b \cdot G$</td></tr>
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">共享秘密</td><td class="py-2.5 px-3">$g^{ab} \bmod p$</td><td class="py-2.5 px-3">$K = a \cdot B = b \cdot A = ab \cdot G$</td></tr>
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">轉成對稱金鑰</td><td class="py-2.5 px-3" colspan="2"><strong>兩者都不可直接使用！</strong>點 $K$ 不是均勻隨機金鑰，必須過雜湊／<strong>HKDF</strong> 衍生出對稱金鑰。</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <!-- ==================== SECTION 2 ==================== -->
+        <section id="sec2" class="space-y-6 scroll-mt-24">
+            <div>
+                <div class="text-xs font-semibold text-blue-600 tracking-wide">SECTION 2 ｜ P.22 - P.32</div>
+                <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 mt-0.5">數位簽章（Digital Signatures：ECDSA 與 EdDSA）</h2>
+            </div>
+
+            <div class="p-5 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-2">
+                <div class="text-xs font-bold text-blue-800">初學者白話直覺：數位簽章跟 1.5 的 MAC 有什麼差別？</div>
+                <p class="text-sm text-neutral-700 leading-relaxed">
+                    MAC 像是「兩個人共用同一顆私章」，雙方都能蓋出一模一樣的印章，事後吵架時無法向法官證明是對方蓋的。<br>
+                    <strong>數位簽章</strong>則是「只有我有私鑰能蓋章，但全世界都能拿我的公鑰來驗章」。因此它比 MAC 多出一個超重要屬性：<strong>不可否認性（Non-repudiation）</strong>，且簽章與文件內容綁死，無法移花接木。
+                </p>
+            </div>
+
+            <!-- 2.1 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-3 text-sm text-neutral-700">
+                <h3 class="text-base font-bold text-neutral-900">2.1 數位簽章三大保證與安全目標（P.23 - P.25）</h3>
+                <ul class="list-disc pl-5 space-y-1.5">
+                    <li><strong>三大保證</strong>：真實性（Authenticity）、完整性（Integrity）、<strong>不可否認性（Non-repudiation，MAC 做不到）</strong>。</li>
+                    <li><strong>三個 API 操作</strong>：<code>KeyGen()</code> 產出公私鑰、<code>Sign(sk, M)</code> 產出簽章、<code>Verify(pk, M, sig)</code> 公開驗章。</li>
+                    <li><strong>安全目標 EUF-CMA</strong>（選擇訊息攻擊下存在性不可偽造）：就算攻擊者可以隨意挑訊息叫你簽名，也無法針對「任何一個沒被簽過的新訊息」偽造出合法簽章。</li>
+                </ul>
+            </article>
+
+            <!-- 2.2 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-4">
+                <h3 class="text-base font-bold text-neutral-900">2.2 ECDSA：傳統霸主與它的致命弱點（P.26 - P.28）</h3>
+                <p class="text-xs text-neutral-500">1992 年提出、1999/2000 年標準化；用於 Bitcoin、Ethereum、TLS 憑證、SSH。私鑰 $d$、公鑰 $P = d \cdot G$、簽章為 $(r, s)$（256-bit 曲線下共 64 bytes）。</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1.5">
+                        <div class="font-bold text-neutral-900">簽章 Sign(M, d)</div>
+                        <ol class="list-decimal pl-4 space-y-1 text-neutral-700">
+                            <li>雜湊訊息：$h = \text{hash}(M)$</li>
+                            <li>挑一個<strong>全新隨機數</strong> $k \in [1, n-1]$</li>
+                            <li>算點：$k \cdot G = (x, y)$，令 $r = x \bmod n$</li>
+                            <li>算 $s = \dfrac{h + rd}{k} \bmod n$（需要模反元素 $k^{-1}$）</li>
+                            <li>輸出 $(r, s)$（若 $r=0$ 或 $s=0$ 則重來）</li>
+                        </ol>
+                    </div>
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1.5">
+                        <div class="font-bold text-neutral-900">驗章 Verify(M, (r, s), P)</div>
+                        <ol class="list-decimal pl-4 space-y-1 text-neutral-700">
+                            <li>檢查範圍：$r, s \in [1, n-1]$</li>
+                            <li>算 $h = \text{hash}(M)$，模反元素 $w = s^{-1} \bmod n$</li>
+                            <li>算 $u = h \cdot w \bmod n$，$v = r \cdot w \bmod n$</li>
+                            <li>算點 $Q = u \cdot G + v \cdot P$</li>
+                            <li>檢查 $Q_x \bmod n \stackrel{?}{=} r$</li>
+                        </ol>
+                        <div class="text-[11px] text-neutral-500 pt-1">原理：$Q = (u + vd)G = w(h+rd)G = \frac{h+rd}{s}G = kG$。</div>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 space-y-1">
+                    <div class="font-bold text-rose-800">ECDSA 最致命弱點（期末必考）：隨機數 $k$ 絕對不能洩漏或重複</div>
+                    <p>只要 $k$ 洩漏，任何人立刻算出私鑰：$d = \dfrac{sk - h}{r} \bmod n$。若對兩份不同訊息（$h_1 \neq h_2$）重複用同一個 $k$（代表兩張簽章的 $r$ 相同），兩式相減直接解出 $k = \dfrac{h_1 - h_2}{s_1 - s_2} \bmod n$，再代入上式瞬間偷走私鑰。</p>
+                </div>
+            </article>
+
+            <!-- 2.3 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-4">
+                <h3 class="text-base font-bold text-neutral-900">2.3 EdDSA（Ed25519）：現代改良首選（P.29 - P.32）</h3>
+                <p class="text-xs text-neutral-500">建立在 1989 年 Schnorr 簽章上（專利 2008 年到期後，Bernstein 等人於 2011 年推出）。OpenSSH、Signal 預設採用。</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1.5">
+                        <div class="font-bold text-neutral-900">簽章 Sign(M, k)（不需 RNG）</div>
+                        <ol class="list-decimal pl-4 space-y-1 text-neutral-700">
+                            <li>展開私鑰：$a \parallel \text{prefix} = \text{SHA-512}(k)$，公鑰 $A = a \cdot B$</li>
+                            <li><strong>決定性算出 nonce</strong>：$r = \text{hash}(\text{prefix} \parallel M) \bmod \ell$</li>
+                            <li>算點 $R = r \cdot B$</li>
+                            <li>算 $S = r + \text{hash}(R \parallel A \parallel M) \cdot a \bmod \ell$（<strong>無模反元素</strong>）</li>
+                            <li>輸出 $(R, S)$（固定 64 bytes）</li>
+                        </ol>
+                    </div>
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1.5">
+                        <div class="font-bold text-neutral-900">驗章 Verify(M, (R, S), A)</div>
+                        <ol class="list-decimal pl-4 space-y-1 text-neutral-700">
+                            <li>解碼 $R, A$，檢查 $S < \ell$</li>
+                            <li>檢查單一方程式：$$S \cdot B \stackrel{?}{=} R + \text{hash}(R \parallel A \parallel M) \cdot A$$</li>
+                        </ol>
+                        <div class="text-[11px] text-neutral-500 pt-1">優勢：無模反元素、支援批次驗章。<br>伏筆：RFC 8032 又寫了乘以輔因子 8 的版本 $8SB = 8R + 8\text{hash}(\cdot)A$，埋下驗證不一致的伏筆。</div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-neutral-200 text-neutral-500 bg-neutral-50">
+                                <th class="py-2.5 px-3 font-semibold">面向</th>
+                                <th class="py-2.5 px-3 font-semibold">ECDSA</th>
+                                <th class="py-2.5 px-3 font-semibold text-blue-700">Ed25519（新專案首選）</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-200 text-neutral-700">
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">簽章時亂數 $k$</td><td class="py-2.5 px-3">每次需獨立均勻隨機 $k$（壞 RNG 直接漏私鑰，需靠 RFC 6979 補救）</td><td class="py-2.5 px-3">天生決定性推導，不需 RNG，同訊息同簽章</td></tr>
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">運算複雜度</td><td class="py-2.5 px-3">需要昂貴的模反元素、特例多、難做常數時間</td><td class="py-2.5 px-3">無模反元素、完整加法公式、更快且支援批次驗章</td></tr>
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">延展性 / 弱點</td><td class="py-2.5 px-3">具延展性：$(r, n-s)$ 也能通過驗證</td><td class="py-2.5 px-3">RFC 8032 驗證規則有歧義；決定性簽章怕硬體錯誤注入（Fault Attack）</td></tr>
+                            <tr><td class="py-2.5 px-3 font-medium text-neutral-900">適用場景</td><td class="py-2.5 px-3">傳統 TLS/X.509、Bitcoin/Ethereum（強制 secp256k1）</td><td class="py-2.5 px-3">所有新系統、OpenSSH、Signal</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <!-- ==================== SECTION 3 ==================== -->
+        <section id="sec3" class="space-y-6 scroll-mt-24">
+            <div>
+                <div class="text-xs font-semibold text-blue-600 tracking-wide">SECTION 3 ｜ P.33 - P.60</div>
+                <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 mt-0.5">橢圓曲線實務：挑曲線、歷史醜聞、四大漏洞與後量子</h2>
+            </div>
+
+            <div class="p-5 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-2">
+                <div class="text-xs font-bold text-blue-800">初學者白話直覺：數學明明沒被破解，為什麼實務上一直出事？</div>
+                <p class="text-sm text-neutral-700 leading-relaxed">
+                    這整節的核心只有一句話：<strong>「橢圓曲線的數學本身完全沒壞，所有災難都是『選錯常數』或『工程師寫漏檢查』造成的。」</strong>
+                </p>
+            </div>
+
+            <!-- 3.1 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-4">
+                <h3 class="text-base font-bold text-neutral-900">3.1 安全曲線四大條件、NSA 醜聞與 Curve25519（P.34 - P.45）</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-neutral-700">
+                    <div class="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                        <strong class="text-neutral-900">1. 群階（Group Order）</strong>：點數必須含極大質因數（防 1.7 的 Pohlig-Hellman 攻擊），理想是質數階或極小輔因子。
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                        <strong class="text-neutral-900">2. 完整加法公式（Complete Formulas）</strong>：Edwards 曲線一套公式通吃所有點，避免 Weierstrass 的 $P=Q, P=-Q, \mathcal{O}$ 分支藏 bug 與時序漏洞。
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                        <strong class="text-neutral-900">3. 扭曲安全（Twist Security）</strong>：無效的 $x$ 座標會落到扭曲曲線（Twist）上；若扭曲曲線也夠強（如 X25519），就免做點驗證。
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                        <strong class="text-neutral-900">4. 剛性（Rigidity）</strong>：常數來源透明可重現（"Nothing up my sleeve"），拒絕來路不明的神秘常數。
+                    </div>
+                </div>
+
+                <ul class="list-disc pl-5 space-y-2.5 text-sm text-neutral-700">
+                    <li><strong>NIST 曲線（如 P-256）與 2026 年最新解密（P.36-40）</strong>：
+                        <ul class="list-disc pl-5 mt-1 space-y-1.5 text-xs text-neutral-600">
+                            <li><strong>Dual_EC_DRBG 後門醜聞（P.38-39）</strong>：NSA 付給 RSA 一千萬美元推廣慢 1,000 倍的亂數產生器。後門藏在兩個神秘點 $P, Q$ 的關係 $Q = d \cdot P$；知情者從 32-byte 輸出補猜截斷的 16 bits（$2^{16}$ 次）即可反推 $s_i \cdot P = d^{-1}(s_i \cdot Q)$ 預測所有未來亂數，外人因 ECDLP 無法查證（可否認性）。<strong>重點：被動手腳的是「產生器」，不是 P-256 曲線本身。</strong></li>
+                            <li><strong>2026 年 Anthropic/Claude 解謎 NIST 種子（P.40）</strong>：研究人員用 Lattice Reduction 還原出 P-256 種子其實不是 SHA-1 雜湊，而是 1997/08/16 時間戳跑 C 語言 <code>lrand48</code> 產出的第 1842 號候選。幾乎排除後門，但<strong>「可解釋（Explained）不等於剛性（Rigid）」</strong>，為何跳過第 876 號仍未知。</li>
+                        </ul>
+                    </li>
+                    <li><strong>Curve25519 家族命名一次搞懂（P.41-43）</strong>：Bernstein 於 2006 年設計，模數 $2^{255}-19$，係數 486662 為滿足安全條件的最小整數（完全剛性），2023 年獲 NIST SP 800-186 正式核准。
+                        <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-neutral-600">
+                            <li><strong>Curve25519</strong>（Montgomery 形式 $y^2 = x^3 + 486662x^2 + x$）→ 跑 <strong>X25519</strong>（只算 $x$ 座標的高速金鑰交換 ECDH）。</li>
+                            <li><strong>edwards25519</strong>（Edwards 形式 $-x^2+y^2 = 1+dx^2y^2$，同一條曲線換變數）→ 跑 <strong>Ed25519</strong>（完整公式的數位簽章 EdDSA）。</li>
+                        </ul>
+                    </li>
+                    <li><strong>實務選曲線懶人包（P.44-45）</strong>：新專案用 <strong>Curve25519</strong>；政府合規或 Web PKI 用 <strong>NIST P-256</strong>；區塊鏈用 <strong>secp256k1</strong>（$y^2=x^3+7$）；<strong>避開</strong> ANSSI（常數不明）、Brainpool（太慢且無完整公式）、二元曲線與低於 256-bit 曲線。</li>
+                </ul>
+            </article>
+
+            <!-- 3.2 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-4">
+                <h3 class="text-base font-bold text-neutral-900">3.2 實作上的四大災難與防禦（P.46 - P.58）</h3>
+
+                <div class="space-y-3 text-xs sm:text-sm">
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1">
+                        <div class="font-bold text-rose-700">災難 1：ECDSA 爛隨機數與 PS3 破解（P.47-48）</div>
+                        <p class="text-neutral-700">2010 年 Sony PS3 對每份韌體都用同一個固定 $k$ 簽章（不同檔案卻有相同 $r$），被 fail0verflow 直接反推根私鑰。即便 $k$ 沒完全重複，只要有幾個 bit 偏差，晶格攻擊（Minerva 2019、LadderLeak 2020）也能偷私鑰。<strong>解方：RFC 6979（決定性 $k$）或改用 Ed25519。</strong></p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-2">
+                        <div class="font-bold text-rose-700">災難 2：無效曲線攻擊 vs. 小子群攻擊（P.49-53）</div>
+                        <p class="text-neutral-600 text-xs">兩者都是「沒驗證對方傳來的點」惹的禍，考場一句話秒分：</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-3.5 rounded-lg bg-white border border-neutral-200">
+                                <div class="font-bold text-neutral-900">Invalid Curve Attack（錯的方程式）</div>
+                                <p class="text-neutral-600 mt-1">利用點加法公式<strong>沒用到 $b$</strong>，送出別條平滑階曲線 $y^2 = x^3 + ax + b'$ 上的小階數點 $P$，讓受害者洩漏 $b \bmod m_i$，再用 <strong>CRT（中國剩餘定理）</strong>拼出完整私鑰（2015 年攻破 Java/Bouncy Castle TLS）。<br><strong>解方：</strong>檢查 $y^2 \equiv x^3 + ax + b \pmod p$，或用 X25519。</p>
+                            </div>
+                            <div class="p-3.5 rounded-lg bg-white border border-neutral-200">
+                                <div class="font-bold text-neutral-900">Small Subgroup Attack（錯的階數）</div>
+                                <p class="text-neutral-600 mt-1">點在正確曲線上，但因 Curve25519 輔因子 $h=8$，攻擊者送出階數為 8 的點 $P$，讓 $s \cdot P$ 只有 8 種可能（洩漏 $s \bmod 8$）。<br><strong>解方：</strong>檢查 $\ell \cdot P = \mathcal{O}$；X25519 透過把私鑰 <strong>clamping（鉗制為 8 的倍數）</strong>並拒絕全零輸出防禦。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1">
+                        <div class="font-bold text-rose-700">災難 3：標準模糊導致 Ed25519 驗證不一致與 Ristretto（P.54-56）</div>
+                        <p class="text-neutral-700">RFC 8032 允許不乘 8 或乘 8 兩種驗章公式，導致不同函式庫對邊界簽章判定相反，在區塊鏈中會直接造成<strong>分叉（Chain Fork）</strong>（Zcash 用 <strong>ZIP-215</strong> 統一規則修復）。另外 Monero (2017) 因漏掉子群檢查導致雙花最多 8 次。<strong>Ristretto</strong> 技術透過把相差小階數點的點編碼成相同位元組，直接把 Curve25519 包裝成乾淨的質數階群，根治輔因子問題。</p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1">
+                        <div class="font-bold text-rose-700">災難 4：時序側通道與 Montgomery Ladder（P.57-58）</div>
+                        <p class="text-neutral-700">教科書寫 <code>if bit == 1: R = R + G</code> 會讓執行時間與功耗洩漏私鑰（如 Minerva、TPM-Fail）。防禦方式是 <strong>Montgomery Ladder</strong>：不管 bit 是 0 或 1，每一步都固定算一次加法加一次倍點，並用無分支的常數時間算術交換選取結果。實務原則：<strong>絕不自己手刻 ECC</strong>，選用通過 <strong>Project Wycheproof</strong> 邊界測試的成熟函式庫（Rust <code>curve25519-dalek</code>、Go <code>crypto/ecdh</code>、C <code>libsodium</code>）。</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 3.3 -->
+            <article class="p-6 rounded-2xl bg-white border border-neutral-200 space-y-3 text-sm text-neutral-700">
+                <h3 class="text-base font-bold text-neutral-900">3.3 未來趨勢：後量子混合加密（P.59）</h3>
+                <ul class="list-disc pl-5 space-y-1.5">
+                    <li><strong>量子威脅</strong>：大型量子電腦跑 <strong>Shor 演算法</strong>可徹底破解所有橢圓曲線的 ECDLP，選哪條曲線都一樣會倒。</li>
+                    <li><strong>NIST 首批後量子標準（2024 年 8 月，FIPS 203-205）</strong>：<strong>ML-KEM</strong>（金鑰交換）、<strong>ML-DSA</strong> 與 <strong>SLH-DSA</strong>（數位簽章）。</li>
+                    <li><strong>主流瀏覽器現況</strong>：已預設部署混合金鑰交換 <strong>X25519 + ML-KEM</strong>（只要古典與後量子其中一半沒被破解，會話金鑰就安全）。</li>
+                    <li><strong>為何先遷移金鑰交換，而非數位簽章？</strong> 因為<strong>「先截獲、後解密（Harvest Now, Decrypt Later）」</strong>，攻擊者今天就能偷錄加密流量等未來解密；而簽章只要在當下驗證時無法偽造即可。</li>
+                </ul>
+            </article>
+        </section>
+
+        <!-- ==================== 考前 1 分鐘速記 ==================== -->
+        <section id="cheatsheet" class="p-6 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-3 scroll-mt-24">
+            <h2 class="text-base font-bold text-emerald-900">考前 1 分鐘速記（投影片 1.8 P.60 精華）</h2>
+            <ol class="list-decimal pl-5 space-y-1.5 text-sm text-neutral-800">
+                <li><strong>為何用 ECC</strong>：點無法做質因數分解，沒有 Index Calculus，只剩 $\mathcal{O}(\sqrt{n})$ 通用攻擊 → <strong>256-bit ECC ≈ 3,072-bit RSA</strong>（金鑰長＝安全等級 × 2）。</li>
+                <li><strong>核心公式</strong>：點加法／倍點公式<strong>沒有 $b$</strong>；正向 $k \cdot G$ 用 Double-and-Add 只需數百步，逆向 ECDLP 要 $2^{128}$ 步。</li>
+                <li><strong>ECDSA 致命傷</strong>：重用 $k$（相同 $r$）立刻解出 $k = \frac{h_1-h_2}{s_1-s_2}$ 與私鑰 $d = \frac{sk-h}{r}$（PS3 事件）；解方用 RFC 6979 或直接用 <strong>Ed25519</strong>。</li>
+                <li><strong>命名不混淆</strong>：<strong>X25519</strong> = 金鑰交換（Montgomery）；<strong>Ed25519</strong> = 數位簽章（Edwards，無模反、不需 RNG、可批次驗章）。</li>
+                <li><strong>兩大點驗證漏洞</strong>：<strong>Invalid Curve</strong> = 錯的方程式（沒查 $b$）；<strong>Small Subgroup</strong> = 錯的階數（cofactor 8，靠 X25519 clamping 或 <strong>Ristretto</strong> 解決）。</li>
+                <li><strong>後量子時代</strong>：瀏覽器已用 <strong>X25519 + ML-KEM</strong> 防「先截獲、後解密（Harvest Now, Decrypt Later）」。</li>
+            </ol>
+        </section>
+
+        <!-- 底部導向刷題 -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-neutral-200">
+            <a href="final_ch11_dh_hard_problems.html" class="text-xs text-neutral-500 hover:text-neutral-900 transition">
+                ← 上一章：1.7 困難問題與 DH / RSA
+            </a>
+            <a href="final_quiz.html?scope=1.8" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
+                開始練習 1.8 選擇題（35 題）→
+            </a>
+        </div>
+
+    </main>
+
+    <!-- 回頂部按鈕 -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="hidden fixed bottom-6 right-6 px-3.5 py-2 rounded-full bg-white border border-neutral-200 shadow-sm text-xs font-medium text-neutral-600 hover:text-neutral-900 hover:border-neutral-300 transition z-40">
+        ↑ 回頂部
+    </button>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const docH = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = docH > 0 ? Math.min(100, (window.scrollY / docH) * 100) : 0;
+            const bar = document.getElementById('reading-progress-bar');
+            if (bar) bar.style.width = pct + '%';
+            const btn = document.getElementById('back-to-top');
+            if (btn) btn.classList.toggle('hidden', window.scrollY < 400);
+        });
+    </script>
+</body>
+</html>

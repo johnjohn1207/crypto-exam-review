@@ -1,535 +1,433 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="dark">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>期末全真選擇題測驗中心 (70 題全覆蓋) | 現代與後量子密碼學導論</title>
-    <!-- Tailwind CSS CDN -->
+    <title>期末選擇題練習（105 題）｜密碼學期末複習</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        slate: { 850: '#151f32', 950: '#070d19' },
-                        emerald: { 450: '#10b981', 950: '#022c22' }
-                    }
-                }
-            }
-        };
-    </script>
-    <!-- KaTeX CDN -->
+    <link rel="stylesheet" href="css/light_theme.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
     <style>
-        :root { --header-height: 72px; }
-        html { scroll-behavior: smooth; }
-        .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.5rem 0; }
-        pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
-        .sticky-subnav { top: var(--header-height); }
+        .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.4rem 0; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-neutral-50 text-neutral-800 min-h-screen font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
 
-    <!-- 全域頂部導覽列 (Universal Nav) -->
-    <header id="site-header" class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-800 transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-y-2">
-            <!-- 品牌與當前模組識別 -->
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="flex items-center gap-2 text-white font-bold text-base hover:text-emerald-400 transition">
-                    <span class="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white text-xs font-mono font-bold shadow-sm shadow-emerald-500/30">MC</span>
-                    <span class="tracking-tight hidden sm:inline">密碼學導論・期末考專區</span>
-                </a>
-                <span class="text-slate-600">/</span>
-                <div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full text-xs font-mono text-emerald-300">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>期末全選擇題題庫（70 題全覆蓋）</span>
-                </div>
-            </div>
-
-            <!-- 全站雙下拉導覽選單 -->
-            <nav id="site-nav" class="flex items-center gap-2 text-xs py-0.5">
-                <div class="relative group" id="final-zone-wrapper">
-                    <button type="button" onclick="toggleFinalMenu(event)" id="final-zone-btn" class="px-3 py-1.5 rounded-lg border border-emerald-500/80 bg-emerald-950/90 text-emerald-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                        <span>⚡ 期末考專區</span>
-                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <!-- Floating Dropdown Drawer -->
-                    <div id="final-dropdown-menu" class="hidden group-hover:block absolute left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
-                        <div class="px-3 py-1.5 text-[10px] font-mono text-emerald-400 bg-slate-950/60 flex items-center justify-between">
-                            <span>期末進行中教材專區</span>
-                            <span class="text-xs">70 題庫已就緒</span>
-                        </div>
-                        <div class="py-1">
-                            <a href="index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">⚡ 期末總覽主控台</div>
-                            <div class="text-[10px] text-slate-500 font-mono">期末考進度與投影片總導覽</div>
-                        </div>
-                        
-                    </a>
-<a href="final_ch9_cca_ae.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">🛡️ 投影片 1.5（Sec 2-2.2 ｜ P.15-85）</div>
-                            <div class="text-[10px] text-slate-500 font-mono">CCA、Padding Oracle 與認證加密 AE</div>
-                        </div>
-                        
-                    </a>
-<a href="final_ch11_dh_hard_problems.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">🔑 投影片 1.7（Sec 1-3 ｜ P.1-49）</div>
-                            <div class="text-[10px] text-slate-500 font-mono">困難問題、Diffie-Hellman 手算與 RSA</div>
-                        </div>
-                        
-                    </a>
-<a href="final_quiz.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 bg-emerald-950/70 text-emerald-200 font-semibold border-l-2 border-emerald-400">
-                        <div>
-                            <div class="font-medium">🎯 期末全選擇題題庫</div>
-                            <div class="text-[10px] text-slate-500 font-mono">70 題刷題與全真限時模擬考</div>
-                        </div>
-                        <span class="text-[10px] text-emerald-400 font-mono shrink-0">目前頁面</span>
-                    </a>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="relative group" id="midterm-archive-wrapper">
-                    <button type="button" onclick="toggleMidtermMenu(event)" id="midterm-archive-btn" class="px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
-                        <span>📦 期中考歷史歸檔 (8 大模組)</span>
-                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <!-- Floating Dropdown Drawer -->
-                    <div id="midterm-dropdown-menu" class="hidden group-hover:block absolute right-0 sm:right-auto sm:left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
-                        <div class="px-3 py-1.5 text-[10px] font-mono text-slate-400 bg-slate-950/60 flex items-center justify-between">
-                            <span>期中考精華存檔庫（已結算）</span>
-                            <span class="text-amber-400">Ch. 1-8 完備</span>
-                        </div>
-                        <div class="py-1">
-                            <a href="midterm_index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中互動總覽</div>
-                            <div class="text-[10px] text-slate-500 font-mono">Ch. 1-8 互動實驗室與名詞庫</div>
-                        </div>
-                        
-                    </a>
-<a href="notes.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中講義筆記</div>
-                            <div class="text-[10px] text-slate-500 font-mono">Ch. 1-8 精華閱讀講義</div>
-                        </div>
-                        
-                    </a>
-<a href="exam.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中考點變化題</div>
-                            <div class="text-[10px] text-slate-500 font-mono">10 大考點衍生變化題</div>
-                        </div>
-                        
-                    </a>
-<a href="homework_practice.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">作業練習全解</div>
-                            <div class="text-[10px] text-slate-500 font-mono">作業一與練習一 38 題解析</div>
-                        </div>
-                        
-                    </a>
-<a href="hw1_summary.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">作業一攻略</div>
-                            <div class="text-[10px] text-slate-500 font-mono">作業一 7 大思維與證明藍圖</div>
-                        </div>
-                        
-                    </a>
-<a href="p1_summary.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">練習一攻略</div>
-                            <div class="text-[10px] text-slate-500 font-mono">練習一 6 大考點與 5 大極簡證明</div>
-                        </div>
-                        
-                    </a>
-<a href="mock_exam.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中模擬試卷</div>
-                            <div class="text-[10px] text-slate-500 font-mono">100 分全真模擬試卷與詳解</div>
-                        </div>
-                        
-                    </a>
-<a href="proof_sheet.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中必考證明表</div>
-                            <div class="text-[10px] text-slate-500 font-mono">27 題形式證明直觀速記表</div>
-                        </div>
-                        
-                    </a>
-
-                        </div>
-                    </div>
-                </div>
-                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700/80 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                </a>
+    <!-- 極簡白色頂部導覽列 -->
+    <header id="site-header" class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-neutral-200">
+        <div class="max-w-5xl mx-auto px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-bold text-neutral-900 text-sm sm:text-base tracking-tight hover:text-blue-600 transition">
+                密碼學期末複習
+            </a>
+            <nav id="site-nav" class="flex flex-wrap items-center gap-1 text-xs sm:text-[13px]">
+                <a href="index.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">首頁</a>
+                <a href="final_ch9_cca_ae.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">1.5 CCA 與 AE</a>
+                <a href="final_ch11_dh_hard_problems.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">1.7 DH 與 RSA</a>
+                <a href="final_1_8_ecc_signatures.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">1.8 橢圓曲線與簽章</a>
+                <a href="final_quiz.html" class="px-3.5 py-1.5 rounded-lg bg-neutral-900 text-white font-medium transition ml-1">選擇題練習</a>
+                <a href="midterm_index.html" class="px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 transition ml-1">期中歸檔</a>
             </nav>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <main class="max-w-3xl mx-auto px-5 py-8 space-y-6">
 
-        <!-- Hero Header -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950/70 via-slate-900 to-slate-900 border border-emerald-500/30 p-6 sm:p-10 shadow-2xl">
-            <div class="relative z-10 space-y-4">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    <span>期末考專屬・全真選擇題特訓題庫 (共 70 題)</span>
+        <!-- 標題與進度條 -->
+        <div class="space-y-3 border-b border-neutral-200 pb-5">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-neutral-900 tracking-tight">期末選擇題練習</h1>
+                    <p class="text-xs text-neutral-500 mt-0.5">涵蓋 1.5、1.7 與 1.8，作答後即時顯示白話解析與考場防呆。</p>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                    期末全真選擇題練習與模擬測驗中心
-                </h1>
-                <p class="text-sm sm:text-base text-slate-300 max-w-4xl leading-relaxed">
-                    因應期末考<strong>全選擇題題型</strong>之評量形式，本題庫針對已上傳之<strong>投影片 1.5 Section 2（P.15-85）</strong>與<strong>投影片 1.7（P.1-49）</strong>進行地毯式考點萃取。
-                    提供<strong>即時反饋刷題模式</strong>與<strong>隨機抽題全真模擬考試</strong>，涵蓋公式計算、形式定義、漏洞推導與實務協定全維度。
-                </p>
-
-                <!-- 即時成績與進度卡片 -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
-                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                        <div class="text-[11px] text-slate-400 font-mono">題庫總題數</div>
-                        <div class="text-base font-bold text-white"><span id="stat-total">70</span> 題</div>
-                    </div>
-                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                        <div class="text-[11px] text-slate-400 font-mono">已作答進度</div>
-                        <div class="text-base font-bold text-emerald-400"><span id="stat-answered">0</span> / 70</div>
-                    </div>
-                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                        <div class="text-[11px] text-slate-400 font-mono">當前答對率</div>
-                        <div class="text-base font-bold text-cyan-300"><span id="stat-accuracy">0</span>%</div>
-                    </div>
-                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                        <div class="text-[11px] text-slate-400 font-mono">累積錯題數</div>
-                        <div class="text-base font-bold text-rose-400"><span id="stat-wrong">0</span> 題</div>
-                    </div>
+                <div class="flex items-center gap-3 text-xs bg-white border border-neutral-200 px-3.5 py-2 rounded-xl">
+                    <span class="text-neutral-500">進度 <strong class="text-neutral-900"><span id="stat-answered">0</span>/<span id="stat-total">105</span></strong></span>
+                    <span class="text-neutral-200">|</span>
+                    <span class="text-neutral-500">答對率 <strong class="text-emerald-700"><span id="stat-accuracy">0</span>%</strong></span>
+                    <span class="text-neutral-200">|</span>
+                    <span class="text-neutral-500">錯題 <strong class="text-rose-600"><span id="stat-wrong">0</span></strong></span>
                 </div>
+            </div>
+            <!-- 細長進度條 -->
+            <div class="w-full h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+                <div id="quiz-progress-fill" class="h-full bg-blue-600 rounded-full transition-all duration-300" style="width: 0%"></div>
             </div>
         </div>
 
-        <!-- 模式切換與操作控制工具列 (Sticky Subnav) -->
-        <div class="sticky-subnav z-30 bg-slate-900/95 backdrop-blur border border-slate-800 rounded-2xl p-3 shadow-xl space-y-3">
+        <!-- 控制面板 -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-neutral-200 space-y-3.5">
+            <!-- 第一排：模式 + 狀態篩選 -->
+            <div class="flex flex-wrap items-center justify-between gap-2.5">
+                <div class="inline-flex p-1 rounded-xl bg-neutral-100 text-xs">
+                    <button type="button" onclick="switchMode('practice')" id="btn-mode-practice" class="px-3.5 py-1.5 rounded-lg font-medium bg-white text-neutral-900 shadow-sm transition">
+                        即時刷題
+                    </button>
+                    <button type="button" onclick="switchMode('exam')" id="btn-mode-exam" class="px-3.5 py-1.5 rounded-lg font-medium text-neutral-600 hover:text-neutral-900 transition">
+                        限時模擬考
+                    </button>
+                </div>
+
+                <div id="practice-actions" class="flex flex-wrap items-center gap-1.5 text-xs">
+                    <button type="button" onclick="setStatusFilter('all')" id="filter-btn-all" class="px-2.5 py-1.5 rounded-lg bg-neutral-900 text-white font-medium transition">全部</button>
+                    <button type="button" onclick="setStatusFilter('unanswered')" id="filter-btn-unanswered" class="px-2.5 py-1.5 rounded-lg bg-neutral-100 text-neutral-600 hover:text-neutral-900 transition">未作答</button>
+                    <button type="button" onclick="setStatusFilter('wrong')" id="filter-btn-wrong" class="px-2.5 py-1.5 rounded-lg bg-neutral-100 text-neutral-600 hover:text-neutral-900 transition">錯題 (<span id="wrong-count-badge">0</span>)</button>
+                    <button type="button" onclick="resetAllAnswers()" class="px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-rose-600 transition ml-1">重設</button>
+                </div>
+            </div>
+
+            <!-- 第二排：章節範圍 -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-3 border-t border-neutral-100 text-xs">
+                <span class="text-neutral-400 mr-1">章節：</span>
+                <button type="button" onclick="filterByScope('ALL')" id="scope-btn-all" class="scope-btn px-3 py-1.5 rounded-lg font-medium bg-blue-600 text-white transition">
+                    全部（105）
+                </button>
+                <button type="button" onclick="filterByScope('1.5')" id="scope-btn-1.5" class="scope-btn px-3 py-1.5 rounded-lg font-medium bg-neutral-100 text-neutral-600 hover:text-neutral-900 transition">
+                    1.5（38）
+                </button>
+                <button type="button" onclick="filterByScope('1.7')" id="scope-btn-1.7" class="scope-btn px-3 py-1.5 rounded-lg font-medium bg-neutral-100 text-neutral-600 hover:text-neutral-900 transition">
+                    1.7（32）
+                </button>
+                <button type="button" onclick="filterByScope('1.8')" id="scope-btn-1.8" class="scope-btn px-3 py-1.5 rounded-lg font-medium bg-neutral-100 text-neutral-600 hover:text-neutral-900 transition">
+                    1.8（35）
+                </button>
+            </div>
+
+            <!-- 細分主題（選定單一章節時才顯示） -->
+            <div id="topic-filters-container" class="hidden flex-wrap items-center gap-1.5 pt-2.5 border-t border-neutral-100 text-[11px]"></div>
+
+            <!-- 可收合題號速查導覽 -->
+            <details class="pt-2.5 border-t border-neutral-100">
+                <summary class="text-xs text-neutral-500 hover:text-neutral-800 cursor-pointer select-none list-none flex items-center justify-between">
+                    <span>題號快速跳轉（點開查看答題狀態）</span>
+                    <span class="text-[11px] text-neutral-400">綠＝對 · 紅＝錯 · 灰＝未答</span>
+                </summary>
+                <div id="question-nav-grid" class="flex flex-wrap gap-1.5 pt-3"></div>
+            </details>
+        </div>
+
+        <!-- 限時模擬考控制列（預設隱藏） -->
+        <div id="exam-mode-panel" class="hidden p-4 sm:p-5 rounded-2xl bg-amber-50 border border-amber-200 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <!-- 模式切換按鈕群 -->
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="switchMode('practice')" id="btn-mode-practice" class="px-3.5 py-1.5 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm">
-                        <span>📖 即時刷題模式</span>
-                    </button>
-                    <button type="button" onclick="switchMode('exam')" id="btn-mode-exam" class="px-3.5 py-1.5 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 bg-slate-800 text-slate-300 hover:text-white">
-                        <span>⏱️ 全真模擬考模式 (抽題計分)</span>
-                    </button>
+                <div class="text-xs text-amber-900">
+                    <strong>模擬考進行中</strong>（作答時隱藏解析，交卷後統一計分，不影響刷題紀錄）
                 </div>
-
-                <!-- 輔助篩選按鈕 -->
-                <div class="flex items-center gap-2 text-xs font-mono">
-                    <button type="button" onclick="toggleWrongOnly()" id="btn-wrong-only" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
-                        <span>只看錯題 (<span id="wrong-count-badge">0</span>)</span>
-                    </button>
-                    <button type="button" onclick="resetAllAnswers()" class="px-3 py-1.5 rounded-xl border border-rose-500/30 bg-rose-950/20 text-rose-300 hover:bg-rose-900/40 transition">
-                        <span>重設作答</span>
+                <div class="flex items-center gap-2.5">
+                    <span class="font-mono text-sm font-bold text-amber-900 bg-white border border-amber-200 px-3 py-1 rounded-lg">
+                        <span id="exam-timer">37:30</span>
+                    </span>
+                    <button type="button" onclick="submitExam()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition">
+                        交卷計分
                     </button>
                 </div>
             </div>
-
-                        <!-- 單元範圍篩選 (Scope Switcher) -->
-            <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800/80">
-                <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5 shrink-0">
-                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                    <span class="font-bold">單元範圍：</span>
-                </span>
-                <div class="flex flex-wrap items-center gap-1.5 text-xs font-mono">
-                    <button type="button" onclick="filterByScope('ALL')" id="scope-btn-all" class="scope-btn px-3 py-1.5 rounded-xl font-bold text-xs bg-emerald-600 text-white shadow-sm transition">
-                        全部題庫 (70 題)
-                    </button>
-                    <button type="button" onclick="filterByScope('1.5')" id="scope-btn-1.5" class="scope-btn px-3 py-1.5 rounded-xl font-semibold text-xs bg-slate-800 text-slate-300 hover:text-white transition">
-                        投影片 1.5：CCA 與認證加密 AE (38 題)
-                    </button>
-                    <button type="button" onclick="filterByScope('1.7')" id="scope-btn-1.7" class="scope-btn px-3 py-1.5 rounded-xl font-semibold text-xs bg-slate-800 text-slate-300 hover:text-white transition">
-                        投影片 1.7：困難問題與 DH / RSA (32 題)
-                    </button>
-                </div>
-            </div>
-
-            <!-- 主題分類篩選 Pills -->
-            <div class="flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono pb-1 pt-1" id="topic-filters-container">
-                <button onclick="filterByTopic('ALL')" class="topic-btn px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shrink-0 transition" data-topic="ALL">全部 (70)</button>
-                <button onclick="filterByTopic('CCA 安全性與解密預言機')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="CCA 安全性與解密預言機">CCA 預言機</button>
-                <button onclick="filterByTopic('延展性 (Malleability)')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="延展性 (Malleability)">延展性</button>
-                <button onclick="filterByTopic('PKCS#7 Padding Oracle 攻擊')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="PKCS#7 Padding Oracle 攻擊">Padding Oracle</button>
-                <button onclick="filterByTopic('三大組合範式對比')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="三大組合範式對比">MAC 三大組合</button>
-                <button onclick="filterByTopic('AES-GCM 架構組成')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="AES-GCM 架構組成">AEAD & GCM</button>
-                <button onclick="filterByTopic('離散對數問題 (DLP)')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="離散對數問題 (DLP)">群論 & DLP</button>
-                <button onclick="filterByTopic('Diffie-Hellman 協定流程')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="Diffie-Hellman 協定流程">DH 協定手算</button>
-                <button onclick="filterByTopic('難度層級歸約鏈')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="難度層級歸約鏈">DDH ≤ CDH ≤ DLP</button>
-                <button onclick="filterByTopic('未認證 DH 的中間人攻擊 (MITM)')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="未認證 DH 的中間人攻擊 (MITM)">MITM & AKE</button>
-                <button onclick="filterByTopic('RSA 歷史先鋒與退役原因')" class="topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition" data-topic="RSA 歷史先鋒與退役原因">RSA 歷史定位</button>
+            <div class="flex flex-wrap items-center gap-2 text-xs text-amber-800">
+                <span>抽題數：</span>
+                <button type="button" onclick="setExamQuestionCount(25)" class="exam-cnt-btn px-2.5 py-1 rounded-lg bg-amber-600 text-white font-medium" data-count="25">25 題</button>
+                <button type="button" onclick="setExamQuestionCount(50)" class="exam-cnt-btn px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-amber-900 hover:bg-amber-100" data-count="50">50 題</button>
+                <button type="button" onclick="setExamQuestionCount(105)" class="exam-cnt-btn px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-amber-900 hover:bg-amber-100" data-count="105">全部</button>
             </div>
         </div>
 
-        <!-- 全真模擬考模式控制看板 (Exam Mode Dashboard，預設隱藏) -->
-        <div id="exam-mode-panel" class="hidden p-6 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/40 shadow-xl space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <div class="space-y-1">
-                    <h3 class="font-bold text-white text-lg flex items-center gap-2">
-                        <span>⏱️ 全真限時模擬測驗中</span>
-                    </h3>
-                    <p class="text-xs text-slate-400">作答期間解析隱藏，提交後將產出結算總分與錯題分析。</p>
+        <!-- 模擬考成績卡（預設隱藏） -->
+        <div id="exam-result-banner" class="hidden p-6 rounded-2xl bg-white border border-neutral-200 space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-neutral-900 text-base">模擬考成績結算</h2>
+                <button type="button" onclick="document.getElementById('exam-result-banner').classList.add('hidden')" class="text-xs text-neutral-400 hover:text-neutral-800">關閉</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div class="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
+                    <div class="text-[11px] text-neutral-500">總分</div>
+                    <div class="text-xl font-bold text-blue-600" id="res-score">0</div>
                 </div>
-                <!-- 計時器與提交 -->
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 font-mono text-base font-bold text-amber-400 flex items-center gap-1.5">
-                        <span class="text-xs text-slate-400">倒數計時：</span>
-                        <span id="exam-timer">60:00</span>
-                    </div>
-                    <button type="button" onclick="submitExam()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold font-mono shadow-lg transition">
-                        <span>📋 交卷結算成績</span>
-                    </button>
+                <div class="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
+                    <div class="text-[11px] text-neutral-500">答對</div>
+                    <div class="text-xl font-bold text-emerald-700" id="res-correct">0</div>
+                </div>
+                <div class="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
+                    <div class="text-[11px] text-neutral-500">答錯</div>
+                    <div class="text-xl font-bold text-rose-600" id="res-wrong">0</div>
+                </div>
+                <div class="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
+                    <div class="text-[11px] text-neutral-500">評級</div>
+                    <div class="text-xl font-bold text-neutral-900" id="res-grade">S</div>
                 </div>
             </div>
-            <!-- 考卷配置選項 -->
-            <div class="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono text-slate-300 border-t border-slate-800">
-                <span>抽取題數：</span>
-                <button onclick="setExamQuestionCount(25)" class="exam-cnt-btn px-2.5 py-1 rounded bg-amber-600 text-white font-bold" data-count="25">精要 25 題</button>
-                <button onclick="setExamQuestionCount(50)" class="exam-cnt-btn px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:text-white" data-count="50">標準 50 題</button>
-                <button onclick="setExamQuestionCount(70)" class="exam-cnt-btn px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:text-white" data-count="70">完整 70 題</button>
-            </div>
+            <p class="text-xs text-neutral-600" id="res-feedback"></p>
         </div>
 
-        <!-- 考試成果看板 (Exam Result Modal / Banner) -->
-        <div id="exam-result-banner" class="hidden p-6 rounded-3xl bg-slate-900 border border-emerald-500/50 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="font-bold text-white text-lg">🎓 模擬考試成績報告</h3>
-                <button onclick="document.getElementById('exam-result-banner').classList.add('hidden')" class="text-slate-400 hover:text-white text-xs font-mono">✕ 關閉</button>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
-                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                    <div class="text-xs text-slate-400">總得分</div>
-                    <div class="text-2xl font-black text-emerald-400 font-mono" id="res-score">0 / 100</div>
-                </div>
-                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                    <div class="text-xs text-slate-400">答對題數</div>
-                    <div class="text-2xl font-black text-cyan-300 font-mono" id="res-correct">0</div>
-                </div>
-                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                    <div class="text-xs text-slate-400">答錯題數</div>
-                    <div class="text-2xl font-black text-rose-400 font-mono" id="res-wrong">0</div>
-                </div>
-                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                    <div class="text-xs text-slate-400">落點評級</div>
-                    <div class="text-2xl font-black text-amber-300 font-mono" id="res-grade">S</div>
-                </div>
-            </div>
-            <div class="text-xs text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-800" id="res-feedback">
-                <!-- Dynamic feedback -->
-            </div>
-        </div>
-
-        <!-- 題目列表渲染容器 -->
-        <div id="quiz-list-container" class="space-y-6">
-            <!-- Dynamic Questions Rendered by JS -->
-        </div>
+        <!-- 題目列表 -->
+        <div id="quiz-list-container" class="space-y-4"></div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 mt-16 py-8 text-center text-xs text-slate-400 space-y-1">
-        <p>現代與後量子密碼學導論・期末全真選擇題題庫（70 題無死角全覆蓋）</p>
-        <p class="font-mono text-slate-400">嚴格遵循台灣繁體中文排版規範與形式證明標準</p>
-    </footer>
+    <!-- 回頂部按鈕 -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="hidden fixed bottom-6 right-6 px-3.5 py-2 rounded-full bg-white border border-neutral-200 shadow-sm text-xs font-medium text-neutral-600 hover:text-neutral-900 hover:border-neutral-300 transition z-40">
+        ↑ 回頂部
+    </button>
 
-    <!-- Scripts -->
     <script src="js/final_mcq_data.js"></script>
-    <script id="quiz-engine-script">
-                let currentMode = 'practice'; // 'practice' or 'exam'
-        let currentScope = 'ALL';     // 'ALL', '1.5', '1.7'
+    <script>
+        let currentMode = 'practice';     // 'practice' | 'exam'
+        let currentScope = 'ALL';         // 'ALL' | '1.5' | '1.7' | '1.8'
         let currentTopic = 'ALL';
-        let showWrongOnly = false;
-        let userAnswers = {}; // { qId: selectedOptionIndex }
+        let statusFilter = 'all';         // 'all' | 'unanswered' | 'wrong'
+        let practiceAnswers = {};
+        let examAnswers = {};
         let examQuestions = [];
         let examCount = 25;
+        let examSubmitted = false;
         let examTimerInterval = null;
-        let timeRemaining = 3600; // 60 mins
+        let timeRemaining = 2250;
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('back-to-top');
+            if (btn) btn.classList.toggle('hidden', window.scrollY < 400);
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             loadSavedAnswers();
-            // Parse URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const scopeParam = urlParams.get('scope');
-            const topicParam = urlParams.get('topic');
-            if (scopeParam && ['ALL', '1.5', '1.7'].includes(scopeParam)) {
+            const filterParam = urlParams.get('filter');
+            const modeParam = urlParams.get('mode');
+
+            if (scopeParam && ['ALL', '1.5', '1.7', '1.8'].includes(scopeParam)) {
                 filterByScope(scopeParam, false);
             }
-            if (topicParam) {
-                currentTopic = topicParam;
+            if (filterParam && ['all', 'unanswered', 'wrong'].includes(filterParam)) {
+                setStatusFilter(filterParam, false);
             }
+            if (modeParam === 'exam') {
+                switchMode('exam');
+                return;
+            }
+            renderTopicPills();
             renderQuestions();
             updateStats();
         });
 
         function getQuestionScope(q) {
             const num = parseInt(q.id.replace('q', ''), 10);
-            return num <= 38 ? '1.5' : '1.7';
+            if (num <= 38) return '1.5';
+            if (num <= 70) return '1.7';
+            return '1.8';
         }
 
-        function filterByScope(scope, rerender = true) {
-            currentScope = scope;
-            currentTopic = 'ALL'; // reset topic when switching scope
-            document.querySelectorAll('.scope-btn').forEach(btn => {
-                btn.className = "scope-btn px-3 py-1.5 rounded-xl font-semibold text-xs bg-slate-800 text-slate-300 hover:text-white transition";
-            });
-            const activeBtn = document.getElementById(`scope-btn-${scope.toLowerCase()}`);
-            if (activeBtn) {
-                activeBtn.className = "scope-btn px-3 py-1.5 rounded-xl font-bold text-xs bg-emerald-600 text-white shadow-sm transition";
-            }
-            // Update topic buttons active state
-            document.querySelectorAll('.topic-btn').forEach(btn => {
-                if (btn.getAttribute('data-topic') === 'ALL') {
-                    btn.className = "topic-btn px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shrink-0 transition";
-                } else {
-                    btn.className = "topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition";
-                }
-            });
-
-            // Update URL without reload
-            try {
-                const url = new URL(window.location);
-                if (scope === 'ALL') {
-                    url.searchParams.delete('scope');
-                } else {
-                    url.searchParams.set('scope', scope);
-                }
-                url.searchParams.delete('topic');
-                window.history.replaceState({}, '', url);
-            } catch (e) {}
-
-            if (rerender) {
-                renderQuestions();
-                updateStats();
-            }
+        function getActiveAnswers() {
+            return currentMode === 'exam' ? examAnswers : practiceAnswers;
         }
 
         function loadSavedAnswers() {
             try {
                 const saved = localStorage.getItem('final_mcq_answers');
-                if (saved) userAnswers = JSON.parse(saved);
+                if (saved) practiceAnswers = JSON.parse(saved);
             } catch (e) {
-                userAnswers = {};
+                practiceAnswers = {};
             }
         }
 
         function saveAnswers() {
             try {
-                localStorage.setItem('final_mcq_answers', JSON.stringify(userAnswers));
+                localStorage.setItem('final_mcq_answers', JSON.stringify(practiceAnswers));
             } catch (e) {}
         }
 
+        function setStatusFilter(filter, rerender = true) {
+            statusFilter = filter;
+            ['all', 'unanswered', 'wrong'].forEach(f => {
+                const btn = document.getElementById(`filter-btn-${f}`);
+                if (!btn) return;
+                if (f === filter) {
+                    btn.className = f === 'wrong'
+                        ? "px-2.5 py-1.5 rounded-lg bg-rose-600 text-white font-medium transition"
+                        : "px-2.5 py-1.5 rounded-lg bg-neutral-900 text-white font-medium transition";
+                } else {
+                    btn.className = "px-2.5 py-1.5 rounded-lg bg-neutral-100 text-neutral-600 hover:text-neutral-900 transition";
+                }
+            });
+            if (rerender) renderQuestions();
+        }
+
+        function filterByScope(scope, rerender = true) {
+            currentScope = scope;
+            currentTopic = 'ALL';
+            document.querySelectorAll('.scope-btn').forEach(btn => {
+                btn.className = "scope-btn px-3 py-1.5 rounded-lg font-medium bg-neutral-100 text-neutral-600 hover:text-neutral-900 transition";
+            });
+            const activeBtn = document.getElementById(`scope-btn-${scope.toLowerCase()}`);
+            if (activeBtn) {
+                activeBtn.className = "scope-btn px-3 py-1.5 rounded-lg font-medium bg-blue-600 text-white transition";
+            }
+
+            try {
+                const url = new URL(window.location);
+                if (scope === 'ALL') url.searchParams.delete('scope');
+                else url.searchParams.set('scope', scope);
+                window.history.replaceState({}, '', url);
+            } catch (e) {}
+
+            renderTopicPills();
+            if (currentMode === 'exam') {
+                startExam();
+            } else if (rerender) {
+                renderQuestions();
+                updateStats();
+            }
+        }
+
+        function renderTopicPills() {
+            const container = document.getElementById('topic-filters-container');
+            if (currentMode === 'exam' || currentScope === 'ALL') {
+                container.classList.add('hidden');
+                container.classList.remove('flex');
+                return;
+            }
+            const scoped = FINAL_MCQ_DATA.filter(q => getQuestionScope(q) === currentScope);
+            const topics = [...new Set(scoped.map(q => q.topic))];
+            container.classList.remove('hidden');
+            container.classList.add('flex');
+            container.innerHTML = [
+                `<button type="button" onclick="filterByTopic('ALL')" class="px-2.5 py-1 rounded-md transition ${currentTopic === 'ALL' ? 'bg-blue-600 text-white font-medium' : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900'}">全部主題 (${scoped.length})</button>`,
+                ...topics.map(t => {
+                    const cnt = scoped.filter(q => q.topic === t).length;
+                    const active = currentTopic === t;
+                    return `<button type="button" onclick="filterByTopic('${t.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-md transition ${active ? 'bg-blue-600 text-white font-medium' : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900'}">${t} (${cnt})</button>`;
+                })
+            ].join('');
+        }
+
+        function filterByTopic(topic) {
+            currentTopic = topic;
+            renderTopicPills();
+            renderQuestions();
+        }
+
         function getActiveQuestionList() {
-            let list = (currentMode === 'exam') ? examQuestions : FINAL_MCQ_DATA;
-            if (currentMode === 'practice') {
-                if (currentScope !== 'ALL') {
-                    list = list.filter(q => getQuestionScope(q) === currentScope);
-                }
-                if (currentTopic !== 'ALL') {
-                    list = list.filter(q => q.topic.includes(currentTopic) || currentTopic.includes(q.topic));
-                }
-                if (showWrongOnly) {
-                    list = list.filter(q => userAnswers[q.id] !== undefined && userAnswers[q.id] !== q.answer);
-                }
+            if (currentMode === 'exam') return examQuestions;
+            let list = FINAL_MCQ_DATA;
+            if (currentScope !== 'ALL') {
+                list = list.filter(q => getQuestionScope(q) === currentScope);
+            }
+            if (currentTopic !== 'ALL') {
+                list = list.filter(q => q.topic === currentTopic);
+            }
+            if (statusFilter === 'unanswered') {
+                list = list.filter(q => practiceAnswers[q.id] === undefined);
+            } else if (statusFilter === 'wrong') {
+                list = list.filter(q => practiceAnswers[q.id] !== undefined && practiceAnswers[q.id] !== q.answer);
             }
             return list;
+        }
+
+        function renderNavGrid(questions) {
+            const grid = document.getElementById('question-nav-grid');
+            if (!grid) return;
+            const answers = getActiveAnswers();
+            const reveal = (currentMode === 'practice') || examSubmitted;
+
+            grid.innerHTML = questions.map((q, idx) => {
+                const ans = answers[q.id];
+                let cls = "bg-neutral-100 text-neutral-600 hover:bg-neutral-200";
+                if (ans !== undefined) {
+                    if (reveal) {
+                        cls = (ans === q.answer)
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                            : "bg-rose-100 text-rose-800 border border-rose-200";
+                    } else {
+                        cls = "bg-blue-100 text-blue-800 border border-blue-200";
+                    }
+                }
+                return `<a href="#card-${q.id}" class="w-8 h-7 rounded-md text-[11px] font-mono font-medium flex items-center justify-center transition ${cls}">${idx + 1}</a>`;
+            }).join('');
         }
 
         function renderQuestions() {
             const container = document.getElementById('quiz-list-container');
             const questions = getActiveQuestionList();
+            const answers = getActiveAnswers();
+            const revealFeedback = (currentMode === 'practice') || examSubmitted;
+
+            renderNavGrid(questions);
 
             if (questions.length === 0) {
                 container.innerHTML = `
-                    <div class="p-12 text-center text-slate-400 bg-slate-900/50 border border-slate-800 rounded-3xl space-y-2">
-                        <div class="text-2xl font-bold text-slate-300">目前無符合條件之題目</div>
-                        <p class="text-xs">若開啟了「只看錯題」，代表目前尚無答錯題目或已完全答對！</p>
+                    <div class="p-12 text-center text-neutral-500 bg-white border border-neutral-200 rounded-2xl text-sm">
+                        目前沒有符合條件的題目。
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = questions.map((q, index) => {
-                const userChoice = userAnswers[q.id];
+                const userChoice = answers[q.id];
                 const isAnswered = userChoice !== undefined;
                 const isCorrect = isAnswered && userChoice === q.answer;
-                const isPractice = currentMode === 'practice';
                 const scope = getQuestionScope(q);
 
+                const cardBorder = (revealFeedback && isAnswered)
+                    ? (isCorrect ? 'border-emerald-200' : 'border-rose-200')
+                    : 'border-neutral-200';
+
                 return `
-                    <div class="p-6 rounded-2xl bg-slate-900/90 border ${isAnswered ? (isCorrect ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-rose-500/40 bg-rose-950/10') : 'border-slate-800'} shadow-md space-y-4 transition" id="card-${q.id}">
-                        <!-- 題目標頭資訊 -->
-                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div class="p-5 sm:p-6 rounded-2xl bg-white border ${cardBorder} space-y-4 scroll-mt-24" id="card-${q.id}">
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
                             <div class="flex items-center gap-2">
-                                <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">第 ${index + 1} 題 / ${q.id.toUpperCase()}</span>
-                                <span class="px-2 py-0.5 rounded text-[11px] font-mono ${scope === '1.5' ? 'bg-cyan-950 text-cyan-300 border border-cyan-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">投影片 ${scope}</span>
-                                <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">${q.topic}</span>
+                                <span class="font-mono font-semibold text-neutral-400">#${index + 1}</span>
+                                <span class="px-2 py-0.5 rounded-md bg-neutral-100 text-neutral-600 font-medium">投影片 ${scope}</span>
+                                <span class="text-neutral-400">${q.topic}</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-mono ${q.difficulty === '進階' ? 'bg-purple-950 text-purple-300 border border-purple-800' : (q.difficulty === '中等' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-slate-800 text-slate-400')}">${q.difficulty}</span>
-                                ${isPractice && isAnswered ? (isCorrect ? '<span class="text-xs font-bold text-emerald-400 font-mono">✓ 答對</span>' : '<span class="text-xs font-bold text-rose-400 font-mono">✗ 答錯</span>') : ''}
+                            <div>
+                                ${revealFeedback && isAnswered
+                                    ? (isCorrect
+                                        ? '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-semibold">答對</span>'
+                                        : '<span class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 font-semibold">答錯</span>')
+                                    : `<span class="text-neutral-400">${q.difficulty}</span>`}
                             </div>
                         </div>
 
-                        <!-- 題目本體 -->
-                        <div class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        <div class="text-sm sm:text-[15px] font-medium text-neutral-900 leading-relaxed">
                             ${q.question}
                         </div>
 
-                        <!-- 選項列表 -->
-                        <div class="space-y-2 pt-1">
+                        <div class="space-y-2">
                             ${q.options.map((opt, optIdx) => {
-                                let optStyle = "bg-slate-950 border-slate-800 hover:border-slate-700 text-slate-200";
+                                let style = "bg-white border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 text-neutral-700";
+                                let letterStyle = "text-neutral-400";
                                 if (isAnswered) {
-                                    if (isPractice) {
+                                    if (revealFeedback) {
                                         if (optIdx === q.answer) {
-                                            optStyle = "bg-emerald-950/60 border-emerald-500 text-emerald-200 font-bold ring-1 ring-emerald-500/50";
+                                            style = "bg-emerald-50 border-emerald-400 text-emerald-950 font-medium";
+                                            letterStyle = "text-emerald-700";
                                         } else if (optIdx === userChoice) {
-                                            optStyle = "bg-rose-950/60 border-rose-500 text-rose-200 font-semibold ring-1 ring-rose-500/50";
+                                            style = "bg-rose-50 border-rose-400 text-rose-950 font-medium";
+                                            letterStyle = "text-rose-700";
                                         } else {
-                                            optStyle = "bg-slate-950/50 border-slate-900 text-slate-500 opacity-60";
+                                            style = "bg-neutral-50/60 border-neutral-100 text-neutral-400";
                                         }
-                                    } else {
-                                        if (optIdx === userChoice) {
-                                            optStyle = "bg-emerald-950/80 border-emerald-500 text-emerald-200 font-bold";
-                                        }
+                                    } else if (optIdx === userChoice) {
+                                        style = "bg-blue-50 border-blue-500 text-blue-950 font-medium";
+                                        letterStyle = "text-blue-700";
                                     }
                                 }
-
                                 return `
-                                    <button type="button" onclick="selectOption('${q.id}', ${optIdx})" class="w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition flex items-start gap-3 ${optStyle}">
-                                        <span class="w-5 h-5 rounded-full border flex items-center justify-center text-xs font-mono shrink-0 mt-0.5 ${userChoice === optIdx ? 'border-emerald-400 bg-emerald-500 text-slate-950 font-bold' : 'border-slate-700 text-slate-400'}">${['A','B','C','D'][optIdx]}</span>
-                                        <div class="leading-relaxed flex-1">${opt.replace(/^[A-D]\.\s*/, '')}</div>
+                                    <button type="button" onclick="selectOption('${q.id}', ${optIdx})" class="w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition flex items-start gap-3 ${style}">
+                                        <span class="font-mono text-xs font-bold shrink-0 mt-0.5 ${letterStyle}">${['A','B','C','D'][optIdx]}.</span>
+                                        <span class="leading-relaxed flex-1">${opt.replace(/^[A-D]\.\s*/, '')}</span>
                                     </button>
                                 `;
                             }).join('')}
                         </div>
 
-                        <!-- 刷題模式專屬：即時解析與易錯陷阱 -->
-                        ${isPractice && isAnswered ? `
-                            <div class="pt-3 border-t border-slate-800/80 space-y-2.5">
-                                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs sm:text-sm">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-bold text-emerald-400 font-mono">官方解析：正確答案為 ${['A','B','C','D'][q.answer]}</span>
-                                        <span class="text-[10px] text-slate-500 font-mono">投影片 ${scope} 核心推導</span>
-                                    </div>
-                                    <p class="text-slate-300 leading-relaxed">${q.explanation}</p>
+                        ${revealFeedback && isAnswered ? `
+                            <div class="pt-3 border-t border-neutral-100 space-y-2.5 text-xs sm:text-sm">
+                                <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-1">
+                                    <div class="font-semibold text-neutral-900">解析（正確答案：${['A','B','C','D'][q.answer]}）</div>
+                                    <p class="text-neutral-700 leading-relaxed">${q.explanation}</p>
                                 </div>
                                 ${q.trap ? `
-                                    <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
-                                        <span class="font-bold text-rose-400 font-mono shrink-0">⚠️ 考場陷阱防呆：</span>
-                                        <span class="leading-relaxed">${q.trap}</span>
+                                    <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs leading-relaxed">
+                                        <strong class="text-amber-800">考場防呆：</strong>${q.trap}
                                     </div>
                                 ` : ''}
                             </div>
@@ -538,7 +436,6 @@
                 `;
             }).join('');
 
-            // KaTeX auto-render
             if (window.renderMathInElement) {
                 renderMathInElement(container, {
                     delimiters: [
@@ -551,64 +448,47 @@
         }
 
         function selectOption(qId, optIdx) {
-            userAnswers[qId] = optIdx;
-            saveAnswers();
+            if (currentMode === 'exam') {
+                if (examSubmitted) return;
+                examAnswers[qId] = optIdx;
+            } else {
+                practiceAnswers[qId] = optIdx;
+                saveAnswers();
+            }
             renderQuestions();
             updateStats();
         }
 
         function updateStats() {
-            let relevant = FINAL_MCQ_DATA;
-            if (currentScope !== 'ALL') {
+            let relevant = currentMode === 'exam' ? examQuestions : FINAL_MCQ_DATA;
+            if (currentMode === 'practice' && currentScope !== 'ALL') {
                 relevant = FINAL_MCQ_DATA.filter(q => getQuestionScope(q) === currentScope);
             }
+            const answers = getActiveAnswers();
             const total = relevant.length;
-            let answeredCount = 0;
-            let correctCount = 0;
-
+            let answered = 0;
+            let correct = 0;
             relevant.forEach(q => {
-                if (userAnswers[q.id] !== undefined) {
-                    answeredCount++;
-                    if (userAnswers[q.id] === q.answer) correctCount++;
+                if (answers[q.id] !== undefined) {
+                    answered++;
+                    if (answers[q.id] === q.answer) correct++;
                 }
             });
-
-            const wrongCount = answeredCount - correctCount;
-            const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+            const wrong = answered - correct;
+            const accuracy = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+            const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
 
             document.getElementById('stat-total').innerText = total;
-            document.getElementById('stat-answered').innerText = answeredCount;
+            document.getElementById('stat-answered').innerText = answered;
             document.getElementById('stat-accuracy').innerText = accuracy;
-            document.getElementById('stat-wrong').innerText = wrongCount;
-            document.getElementById('wrong-count-badge').innerText = wrongCount;
-        }
-
-        function filterByTopic(topic) {
-            currentTopic = topic;
-            document.querySelectorAll('.topic-btn').forEach(btn => {
-                if (btn.getAttribute('data-topic') === topic) {
-                    btn.className = "topic-btn px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shrink-0 transition";
-                } else {
-                    btn.className = "topic-btn px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white shrink-0 transition";
-                }
-            });
-            renderQuestions();
-        }
-
-        function toggleWrongOnly() {
-            showWrongOnly = !showWrongOnly;
-            const btn = document.getElementById('btn-wrong-only');
-            if (showWrongOnly) {
-                btn.className = "px-3 py-1.5 rounded-xl border border-rose-500 bg-rose-950 text-rose-200 font-bold transition";
-            } else {
-                btn.className = "px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 transition";
-            }
-            renderQuestions();
+            document.getElementById('stat-wrong').innerText = wrong;
+            document.getElementById('wrong-count-badge').innerText = wrong;
+            document.getElementById('quiz-progress-fill').style.width = `${pct}%`;
         }
 
         function resetAllAnswers() {
-            if (confirm("確定要重設所有作答紀錄嗎？")) {
-                userAnswers = {};
+            if (confirm("確定要清除目前的刷題作答紀錄嗎？")) {
+                practiceAnswers = {};
                 saveAnswers();
                 renderQuestions();
                 updateStats();
@@ -620,157 +500,104 @@
             const btnPractice = document.getElementById('btn-mode-practice');
             const btnExam = document.getElementById('btn-mode-exam');
             const examPanel = document.getElementById('exam-mode-panel');
-            const filterContainer = document.getElementById('topic-filters-container');
+            const practiceActions = document.getElementById('practice-actions');
+            const resultBanner = document.getElementById('exam-result-banner');
 
             if (mode === 'practice') {
-                btnPractice.className = "px-3.5 py-1.5 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm";
-                btnExam.className = "px-3.5 py-1.5 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 bg-slate-800 text-slate-300 hover:text-white";
+                btnPractice.className = "px-3.5 py-1.5 rounded-lg font-medium bg-white text-neutral-900 shadow-sm transition";
+                btnExam.className = "px-3.5 py-1.5 rounded-lg font-medium text-neutral-600 hover:text-neutral-900 transition";
                 examPanel.classList.add('hidden');
-                filterContainer.classList.remove('hidden');
+                resultBanner.classList.add('hidden');
+                practiceActions.classList.remove('hidden');
                 clearInterval(examTimerInterval);
+                renderTopicPills();
+                renderQuestions();
+                updateStats();
             } else {
-                btnExam.className = "px-3.5 py-1.5 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 bg-amber-600 text-white shadow-sm";
-                btnPractice.className = "px-3.5 py-1.5 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 bg-slate-800 text-slate-300 hover:text-white";
+                btnExam.className = "px-3.5 py-1.5 rounded-lg font-medium bg-white text-neutral-900 shadow-sm transition";
+                btnPractice.className = "px-3.5 py-1.5 rounded-lg font-medium text-neutral-600 hover:text-neutral-900 transition";
                 examPanel.classList.remove('hidden');
-                filterContainer.classList.add('hidden');
+                practiceActions.classList.add('hidden');
+                renderTopicPills();
                 startExam();
             }
-            renderQuestions();
         }
 
         function setExamQuestionCount(cnt) {
             examCount = cnt;
             document.querySelectorAll('.exam-cnt-btn').forEach(btn => {
-                if (parseInt(btn.getAttribute('data-count')) === cnt) {
-                    btn.className = "exam-cnt-btn px-2.5 py-1 rounded bg-amber-600 text-white font-bold";
-                } else {
-                    btn.className = "exam-cnt-btn px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:text-white";
-                }
+                const active = parseInt(btn.getAttribute('data-count'), 10) === cnt;
+                btn.className = active
+                    ? "exam-cnt-btn px-2.5 py-1 rounded-lg bg-amber-600 text-white font-medium"
+                    : "exam-cnt-btn px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-amber-900 hover:bg-amber-100";
             });
             startExam();
         }
 
         function startExam() {
-            // Shuffle and pick examCount
-            const shuffled = [...FINAL_MCQ_DATA].sort(() => 0.5 - Math.random());
-            examQuestions = shuffled.slice(0, examCount);
-            userAnswers = {};
-            timeRemaining = Math.round(examCount * 1.5 * 60); // 1.5 mins per question
+            const pool = currentScope === 'ALL'
+                ? FINAL_MCQ_DATA
+                : FINAL_MCQ_DATA.filter(q => getQuestionScope(q) === currentScope);
+            const shuffled = [...pool].sort(() => 0.5 - Math.random());
+            examQuestions = shuffled.slice(0, Math.min(examCount, shuffled.length));
+            examAnswers = {};
+            examSubmitted = false;
+            document.getElementById('exam-result-banner').classList.add('hidden');
+
+            timeRemaining = Math.round(examQuestions.length * 1.5 * 60);
             clearInterval(examTimerInterval);
+            updateTimerDisplay();
             examTimerInterval = setInterval(() => {
                 timeRemaining--;
-                const m = Math.floor(timeRemaining / 60);
-                const s = timeRemaining % 60;
-                document.getElementById('exam-timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                updateTimerDisplay();
                 if (timeRemaining <= 0) {
                     clearInterval(examTimerInterval);
-                    alert("考試時間到！系統將自動交卷。");
                     submitExam();
                 }
             }, 1000);
             renderQuestions();
+            updateStats();
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(Math.max(0, timeRemaining) / 60);
+            const s = Math.max(0, timeRemaining) % 60;
+            document.getElementById('exam-timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
         function submitExam() {
             clearInterval(examTimerInterval);
+            examSubmitted = true;
             let correct = 0;
             examQuestions.forEach(q => {
-                if (userAnswers[q.id] === q.answer) correct++;
+                if (examAnswers[q.id] === q.answer) correct++;
             });
             const wrong = examQuestions.length - correct;
-            const score = Math.round((correct / examQuestions.length) * 100);
+            const score = examQuestions.length > 0 ? Math.round((correct / examQuestions.length) * 100) : 0;
 
             document.getElementById('res-score').innerText = `${score} 分`;
             document.getElementById('res-correct').innerText = correct;
             document.getElementById('res-wrong').innerText = wrong;
 
             let grade = 'S';
-            let feedback = '極致精通！期末選擇題滿分在握，細節與陷阱洞若觀火。';
+            let feedback = '觀念非常穩固，考點與常見陷阱皆已掌握。';
             if (score < 60) {
                 grade = 'C';
-                feedback = '基礎觀念仍需補強，請切換至「刷題模式」重點複習錯題解析。';
+                feedback = '建議先回重點講義複習核心概念，再檢視下方解析。';
             } else if (score < 80) {
                 grade = 'B';
-                feedback = '掌握大半考點，但對二次剩餘、Padding Oracle 逆推細節易踩陷阱。';
+                feedback = '已掌握多數基礎題，建議重點加強下方的錯題與防呆提醒。';
             } else if (score < 90) {
                 grade = 'A';
-                feedback = '表現優異！建議針對薄弱模組再做一次錯題強化。';
+                feedback = '表現優良，檢視剩餘少數錯題即可穩定拿高分。';
             }
 
             document.getElementById('res-grade').innerText = grade;
             document.getElementById('res-feedback').innerText = feedback;
             document.getElementById('exam-result-banner').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Switch back to review
-            currentMode = 'practice';
             renderQuestions();
         }
-
-        // Nav click
-        function toggleFinalMenu(e) {
-            if (e) e.stopPropagation();
-            const menu = document.getElementById('final-dropdown-menu');
-            if (menu) menu.classList.toggle('hidden');
-        }
-        function toggleMidtermMenu(e) {
-            if (e) e.stopPropagation();
-            const menu = document.getElementById('midterm-dropdown-menu');
-            if (menu) menu.classList.toggle('hidden');
-        }
-        document.addEventListener('click', (e) => {
-            const finalWrapper = document.getElementById('final-zone-wrapper');
-            const finalMenu = document.getElementById('final-dropdown-menu');
-            if (finalMenu && finalWrapper && !finalWrapper.contains(e.target)) {
-                finalMenu.classList.add('hidden');
-            }
-            const midtermWrapper = document.getElementById('midterm-archive-wrapper');
-            const midtermMenu = document.getElementById('midterm-dropdown-menu');
-            if (midtermMenu && midtermWrapper && !midtermWrapper.contains(e.target)) {
-                midtermMenu.classList.add('hidden');
-            }
-        });
     </script>
-    <script id="header-sync-script">
-    function syncHeaderHeight() {
-        const header = document.getElementById('site-header');
-        if (header) {
-            const h = header.offsetHeight;
-            document.documentElement.style.setProperty('--header-height', `${h}px`);
-        }
-    }
-    window.addEventListener('resize', syncHeaderHeight);
-    window.addEventListener('DOMContentLoaded', syncHeaderHeight);
-    </script>
-
-<script id="nav-dropdown-script">
-function toggleFinalMenu(e) {
-    if (e) e.stopPropagation();
-    const menu = document.getElementById('final-dropdown-menu');
-    if (menu) {
-        menu.classList.toggle('hidden');
-    }
-}
-function toggleMidtermMenu(e) {
-    if (e) e.stopPropagation();
-    const menu = document.getElementById('midterm-dropdown-menu');
-    if (menu) {
-        menu.classList.toggle('hidden');
-    }
-}
-document.addEventListener('click', (e) => {
-    const finalWrapper = document.getElementById('final-zone-wrapper');
-    const finalMenu = document.getElementById('final-dropdown-menu');
-    if (finalMenu && finalWrapper && !finalWrapper.contains(e.target)) {
-        finalMenu.classList.add('hidden');
-    }
-    const midtermWrapper = document.getElementById('midterm-archive-wrapper');
-    const midtermMenu = document.getElementById('midterm-dropdown-menu');
-    if (midtermMenu && midtermWrapper && !midtermWrapper.contains(e.target)) {
-        midtermMenu.classList.add('hidden');
-    }
-});
-</script>
-
 </body>
 </html>

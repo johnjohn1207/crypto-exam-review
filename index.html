@@ -1,587 +1,203 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="dark">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>現代與後量子密碼學導論 | 期末考核心專區與期中歷史歸檔</title>
-    <!-- Tailwind CSS -->
+    <title>密碼學期末複習｜上課重點與選擇題練習</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            900: '#312e81',
-                        }
-                    },
-                    fontFamily: {
-                        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
-                        sans: ['"Inter"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Noto Sans TC"', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- KaTeX CSS & JS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-
-    <style>
-        :root { --header-height: 64px; }
-        .katex { font-size: 1.05em; }
-        .katex-display { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-    </style>
+    <link rel="stylesheet" href="css/light_theme.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
+<body class="bg-neutral-50 text-neutral-800 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
 
-    <!-- 全域頂部導覽列 (Dynamic CSS variable: --header-height) -->
-    <header id="site-header" class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 transition-all duration-200">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition group">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-600 to-cyan-600 flex items-center justify-center font-bold text-white shadow-md font-mono text-sm shrink-0">
-                        Ψ
-                    </div>
-                    <div>
-                        <span class="font-bold text-white tracking-wide text-sm sm:text-base">現代與後量子密碼學導論</span>
-                        <div class="text-[10px] text-slate-400 font-mono hidden sm:block">Modern & Post-Quantum Cryptography Portal</div>
-                    </div>
-                </a>
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 shrink-0">
-                    當前階段：期末考專區 (Final Exam)
-                </span>
-            </div>
-            
-            <nav id="site-nav" class="flex items-center gap-2 text-xs py-0.5">
-                <div class="relative group" id="final-zone-wrapper">
-                    <button type="button" onclick="toggleFinalMenu(event)" id="final-zone-btn" class="px-3 py-1.5 rounded-lg border border-emerald-500/80 bg-emerald-950/90 text-emerald-200 font-semibold shadow-sm transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                        <span>⚡ 期末考專區</span>
-                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <!-- Floating Dropdown Drawer -->
-                    <div id="final-dropdown-menu" class="hidden group-hover:block absolute left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
-                        <div class="px-3 py-1.5 text-[10px] font-mono text-emerald-400 bg-slate-950/60 flex items-center justify-between">
-                            <span>期末進行中教材專區</span>
-                            <span class="text-xs">70 題庫已就緒</span>
-                        </div>
-                        <div class="py-1">
-                            <a href="index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 bg-emerald-950/70 text-emerald-200 font-semibold border-l-2 border-emerald-400">
-                        <div>
-                            <div class="font-medium">⚡ 期末總覽主控台</div>
-                            <div class="text-[10px] text-slate-500 font-mono">期末考進度與投影片總導覽</div>
-                        </div>
-                        <span class="text-[10px] text-emerald-400 font-mono shrink-0">目前頁面</span>
-                    </a>
-<a href="final_ch9_cca_ae.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">🛡️ 投影片 1.5（Sec 2-2.2 ｜ P.15-85）</div>
-                            <div class="text-[10px] text-slate-500 font-mono">CCA、Padding Oracle 與認證加密 AE</div>
-                        </div>
-                        
-                    </a>
-<a href="final_ch11_dh_hard_problems.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">🔑 投影片 1.7（Sec 1-3 ｜ P.1-49）</div>
-                            <div class="text-[10px] text-slate-500 font-mono">困難問題、Diffie-Hellman 手算與 RSA</div>
-                        </div>
-                        
-                    </a>
-<a href="final_quiz.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">🎯 期末全選擇題題庫</div>
-                            <div class="text-[10px] text-slate-500 font-mono">70 題刷題與全真限時模擬考</div>
-                        </div>
-                        
-                    </a>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="relative group" id="midterm-archive-wrapper">
-                    <button type="button" onclick="toggleMidtermMenu(event)" id="midterm-archive-btn" class="px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/90 hover:border-slate-600 text-slate-300 hover:text-white transition flex items-center gap-1.5 shrink-0 whitespace-nowrap text-xs">
-                        <span>📦 期中考歷史歸檔 (8 大模組)</span>
-                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <!-- Floating Dropdown Drawer -->
-                    <div id="midterm-dropdown-menu" class="hidden group-hover:block absolute right-0 sm:right-auto sm:left-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-700/90 shadow-2xl py-1.5 z-50 divide-y divide-slate-800/80 backdrop-blur-md">
-                        <div class="px-3 py-1.5 text-[10px] font-mono text-slate-400 bg-slate-950/60 flex items-center justify-between">
-                            <span>期中考精華存檔庫（已結算）</span>
-                            <span class="text-amber-400">Ch. 1-8 完備</span>
-                        </div>
-                        <div class="py-1">
-                            <a href="midterm_index.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中互動總覽</div>
-                            <div class="text-[10px] text-slate-500 font-mono">Ch. 1-8 互動實驗室與名詞庫</div>
-                        </div>
-                        
-                    </a>
-<a href="notes.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中講義筆記</div>
-                            <div class="text-[10px] text-slate-500 font-mono">Ch. 1-8 精華閱讀講義</div>
-                        </div>
-                        
-                    </a>
-<a href="exam.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中考點變化題</div>
-                            <div class="text-[10px] text-slate-500 font-mono">10 大考點衍生變化題</div>
-                        </div>
-                        
-                    </a>
-<a href="homework_practice.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">作業練習全解</div>
-                            <div class="text-[10px] text-slate-500 font-mono">作業一與練習一 38 題解析</div>
-                        </div>
-                        
-                    </a>
-<a href="hw1_summary.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">作業一攻略</div>
-                            <div class="text-[10px] text-slate-500 font-mono">作業一 7 大思維與證明藍圖</div>
-                        </div>
-                        
-                    </a>
-<a href="p1_summary.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">練習一攻略</div>
-                            <div class="text-[10px] text-slate-500 font-mono">練習一 6 大考點與 5 大極簡證明</div>
-                        </div>
-                        
-                    </a>
-<a href="mock_exam.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中模擬試卷</div>
-                            <div class="text-[10px] text-slate-500 font-mono">100 分全真模擬試卷與詳解</div>
-                        </div>
-                        
-                    </a>
-<a href="proof_sheet.html" class="px-3 py-2 text-xs transition flex items-center justify-between gap-3 text-slate-300 hover:bg-slate-800 hover:text-white">
-                        <div>
-                            <div class="font-medium">期中必考證明表</div>
-                            <div class="text-[10px] text-slate-500 font-mono">27 題形式證明直觀速記表</div>
-                        </div>
-                        
-                    </a>
-
-                        </div>
-                    </div>
-                </div>
-                <a href="https://github.com/johnjohn1207/crypto-exam-review" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg border border-slate-700/80 hover:border-slate-500 text-slate-400 hover:text-white transition flex items-center shrink-0 ml-1" title="在 GitHub 查看原始碼">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                </a>
+    <!-- 極簡白色頂部導覽列 -->
+    <header id="site-header" class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-neutral-200">
+        <div class="max-w-5xl mx-auto px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="font-bold text-neutral-900 text-sm sm:text-base tracking-tight hover:text-blue-600 transition">
+                密碼學期末複習
+            </a>
+            <nav id="site-nav" class="flex flex-wrap items-center gap-1 text-xs sm:text-[13px]">
+                <a href="index.html" class="px-3 py-1.5 rounded-lg bg-neutral-900 text-white font-medium transition">首頁</a>
+                <a href="final_ch9_cca_ae.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">1.5 CCA 與 AE</a>
+                <a href="final_ch11_dh_hard_problems.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">1.7 DH 與 RSA</a>
+                <a href="final_1_8_ecc_signatures.html" class="px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition">1.8 橢圓曲線與簽章</a>
+                <a href="final_quiz.html" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition ml-1">選擇題練習</a>
+                <a href="midterm_index.html" class="px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 transition ml-1">期中歸檔</a>
             </nav>
         </div>
     </header>
 
-    <!-- 學期階段雙模切換控制列 (Semester Stage Controller) -->
-    <section class="bg-slate-900/80 border-b border-slate-800 px-4 py-2.5 sticky z-40" style="top: var(--header-height, 64px);">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono">
-                <button onclick="switchSemesterTab('final')" id="tab-btn-final" class="px-3.5 py-1.5 rounded-lg transition font-semibold flex items-center gap-2 bg-emerald-600 text-white shadow-sm">
-                    <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
-                    <span>⚡ 期末考專區（進行中）</span>
-                </button>
-                <button onclick="switchSemesterTab('midterm')" id="tab-btn-midterm" class="px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white flex items-center gap-2">
-                    <span>📦 期中考歷史歸檔（已收合）</span>
-                    <span id="midterm-status-badge" class="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">8 大模組</span>
-                </button>
-            </div>
+    <main class="max-w-5xl mx-auto px-5 py-10 sm:py-12 space-y-12 flex-grow w-full">
 
-            <div class="text-xs text-slate-400 font-mono hidden md:flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span>期中考已結算・期末教材隨時可注入推進</span>
+        <!-- 標題與整體學習進度 -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-neutral-200 pb-6">
+            <div class="space-y-1.5">
+                <h1 class="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight">現代與後量子密碼學・期末複習</h1>
+                <p class="text-sm text-neutral-500">先讀重點整理，再做選擇題驗收。</p>
+            </div>
+            <div id="overall-progress-box" class="flex items-center gap-4 text-xs bg-white border border-neutral-200 rounded-xl px-4 py-2.5 shrink-0">
+                <div>
+                    <div class="text-neutral-400">總刷題進度</div>
+                    <div class="font-semibold text-neutral-900 text-sm"><span id="home-answered">0</span> / 105 題</div>
+                </div>
+                <div class="h-6 w-px bg-neutral-200"></div>
+                <div>
+                    <div class="text-neutral-400">答對率</div>
+                    <div class="font-semibold text-emerald-700 text-sm"><span id="home-accuracy">0</span>%</div>
+                </div>
+                <div class="h-6 w-px bg-neutral-200"></div>
+                <div>
+                    <div class="text-neutral-400">待複習錯題</div>
+                    <div class="font-semibold text-rose-600 text-sm"><span id="home-wrong">0</span> 題</div>
+                </div>
             </div>
         </div>
-    </section>
 
-    <!-- 主展示工作區 -->
-    <main class="max-w-7xl mx-auto px-4 py-8 space-y-10 flex-grow w-full">
-
-        <!-- ================= VIEW 1: 期末考核心工作區 (FINAL EXAM WORKSPACE - 預設顯示) ================= -->
-        <section id="view-final" class="space-y-8">
-            
-            <!-- 期末 Hero 看板 -->
-            <div class="bg-gradient-to-b from-emerald-950/30 via-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
-                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono">
-                    <span>期末考專屬主控台</span>
-                    <span class="text-slate-600">|</span>
-                    <span>範圍：投影片 1-5 Sec 2 之後至期末</span>
-                    <span class="text-slate-600">|</span>
-                    <span class="text-cyan-400 font-bold">教材注入槽位已就緒</span>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                    期末考核心複習與教材工作區
-                </h1>
-                <p class="text-slate-400 text-sm max-w-3xl leading-relaxed">
-                    期中考已經結束，本專區正式接管全站學習視野。考綱進度接續<strong>投影片 1-5 Section 2（Ch. 9 選擇密文攻擊 CCA、Padding Oracle、認證加密 AE）</strong>，並向後延伸至<strong>雜湊與 MAC、數論基礎、公鑰密碼體系、數位簽章與後量子密碼學（PQC）</strong>。只要提供期末投影片、作業或練習題目，系統將立即為您自動生成結構化題解、大腦模型與極簡形式證明！
-                </p>
-
-                <!-- 數據指標列 -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-center font-mono">
-                    <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-2xl shadow-sm">
-                        <div class="text-xs text-slate-400">期末規劃模組</div>
-                        <div class="text-xl font-bold text-emerald-400">6 大主題</div>
-                    </div>
-                    <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-2xl shadow-sm">
-                        <div class="text-xs text-slate-400">首發進度銜接</div>
-                        <div class="text-xl font-bold text-cyan-400">Ch. 9 CCA/AE</div>
-                    </div>
-                    <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-2xl shadow-sm">
-                        <div class="text-xs text-slate-400">教材注入狀態</div>
-                        <div class="text-xl font-bold text-amber-400">隨時待命中</div>
-                    </div>
-                    <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-2xl shadow-sm">
-                        <div class="text-xs text-slate-400">期中歷史狀態</div>
-                        <div class="text-xl font-bold text-slate-400">已完整歸檔</div>
-                    </div>
-                </div>
+        <!-- 區塊一：上課重點講義 -->
+        <section class="space-y-4">
+            <div class="flex items-baseline justify-between">
+                <h2 class="text-base font-bold text-neutral-900">一、上課重點講義</h2>
+                <span class="text-xs text-neutral-400">共 3 份投影片</span>
             </div>
-
-            <!-- 期末材料即時注入導引通知 -->
-            <div class="bg-cyan-950/20 border-l-4 border-cyan-500 rounded-r-2xl p-4 sm:p-5 shadow-sm space-y-2">
-                <div class="flex items-center justify-between">
-                    <span class="font-bold text-cyan-300 font-mono text-sm flex items-center gap-2">
-                        <span>📥 期末教材即時匯入槽位說明</span>
-                    </span>
-                    <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/20 px-2 py-0.5 rounded border border-cyan-500/30">隨時可傳入</span>
-                </div>
-                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                    在後續學習中，請直接將老師釋出的<strong>期末投影片（如 1.5 Sec 2、Public-key 等）、作業題目（作業二）或練習題</strong>發送過來。本平台會自動依循「直觀大腦模型」、「考場一秒速記」與「步驟簡短因果清晰」的原則，自動擴充期末專屬的講義筆記、作業詳解、考點變化題與形式證明一覽表！
-                </p>
+            <div id="final-modules-container" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Rendered from js/final_data.js -->
             </div>
-
-            <!-- 期末全真選擇題題庫練習中心推薦看板 (高光入口) -->
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-900 border-2 border-emerald-500/60 p-6 sm:p-8 shadow-2xl space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                            期末評量對策・全選擇題題庫
-                        </span>
-                        <span class="px-2.5 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">
-                            70 題全覆蓋
-                        </span>
-                    </div>
-                    <span class="text-xs font-mono text-emerald-400">已完全收錄 1.5 Sec 2 與 1.7 全部考點</span>
-                </div>
-
-                <div class="space-y-2">
-                    <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                        <span>🎯 期末全真選擇題測驗中心（刷題 ＆ 限時模擬考）</span>
-                    </h2>
-                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-4xl">
-                        針對期末考<strong>全選擇題評量形式</strong>打造。完整涵蓋 CCA 安全性、Padding Oracle 逆推公式、MAC 三大組合範式、AES-GCM 與重放攻擊，以及 1.7 困難問題、群論、Diffie-Hellman 手算（$p=23, g=5$ 原題）、$\text{DDH} \le \text{CDH} \le \text{DLP}$ 歸約證明、KDF 白化、MITM 中間人攻擊與 RSA 淘汰原理。
-                    </p>
-                </div>
-
-                <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
-                    <div class="flex items-center gap-4 text-xs font-mono text-slate-400">
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>即時對錯反饋</span>
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400"></span>投影片原話深度解析</span>
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-400"></span>考場防呆陷阱提點</span>
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span>限時抽題計分模擬考</span>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-                        <a href="final_quiz.html" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs font-mono shadow-md transition flex items-center gap-1.5">
-                            <span>🎯 全部 70 題全真模考</span>
-                        </a>
-                        <a href="final_quiz.html?scope=1.5" class="px-4 py-2.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/50 text-cyan-200 font-bold text-xs font-mono shadow-md transition flex items-center gap-1.5">
-                            <span>⚡ 1-5 專區 (38 題)</span>
-                        </a>
-                        <a href="final_quiz.html?scope=1.7" class="px-4 py-2.5 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-200 font-bold text-xs font-mono shadow-md transition flex items-center gap-1.5">
-                            <span>🔑 1-7 專區 (32 題)</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 期末考 6 大核心模組藍圖卡片群 -->
-            <div class="space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-                    <div>
-                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                            <span>期末考授課投影片核心講義清單（嚴格依投影片檔案與 Section 組織）</span>
-                        </h2>
-                        <p class="text-xs text-slate-400 font-mono mt-0.5">點擊卡片直接進入對應投影片之逐頁精讀筆記、考點拆解與全真選擇題</p>
-                    </div>
-                    <span class="text-xs text-emerald-400 font-mono">狀態：投影片 1.5 與 1.7 已全面對齊</span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="final-modules-container">
-                    <!-- Dynamic rendering from js/final_data.js -->
-                </div>
-            </div>
-
         </section>
 
-
-        <!-- ================= VIEW 2: 期中考歷史歸檔專區 (MIDTERM ARCHIVE - 預設折疊隱藏) ================= -->
-        <section id="view-midterm" class="hidden space-y-8">
-            
-            <!-- 期中歸檔橫幅 -->
-            <div class="bg-gradient-to-b from-amber-950/25 via-slate-900 to-slate-950 border border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
-                        <span>📦 期中考精華歷史存檔庫</span>
-                        <span class="text-slate-600">|</span>
-                        <span>範圍：Ch. 1-8（至 1-5 Sec 1）</span>
-                        <span class="text-slate-600">|</span>
-                        <span class="text-emerald-400 font-bold">已結算唯讀存檔</span>
-                    </div>
-                    <button onclick="switchSemesterTab('final')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono transition border border-slate-700 flex items-center gap-1.5">
-                        <span>✕ 關閉歸檔・返回期末考專區</span>
-                    </button>
+        <!-- 區塊二：期末選擇題練習 -->
+        <section class="space-y-4">
+            <div class="flex items-baseline justify-between">
+                <h2 class="text-base font-bold text-neutral-900">二、期末選擇題練習</h2>
+                <span class="text-xs text-neutral-400">共 105 題・附解析與考場防呆</span>
+            </div>
+            <div class="p-6 sm:p-7 rounded-2xl bg-white border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div class="space-y-1.5 max-w-xl">
+                    <div class="font-bold text-neutral-900 text-base">即時刷題 ＆ 限時模擬考</div>
+                    <p class="text-sm text-neutral-500 leading-relaxed">
+                        涵蓋 1.5（38 題）、1.7（32 題）與 1.8（35 題）。支援「只看未作答」、「只看錯題」、題號快速跳轉與隨機抽題限時模考。
+                    </p>
                 </div>
-
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                    期中考歷史資料庫（8 大功能模組完備）
-                </h2>
-                <p class="text-slate-400 text-sm max-w-3xl leading-relaxed">
-                    期中考階段所建置之所有教材、題目解析、作業一與練習一全解、考點變化題、27 題形式證明表以及滿分模擬試卷，均已妥善歸檔於此。平時在首頁保持收合隱藏，若日後複習先備知識需要查閱，隨時可在這裡一鍵存取。
-                </p>
+                <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+                    <a href="final_quiz.html" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
+                        開始刷題
+                    </a>
+                    <a href="final_quiz.html?filter=wrong" class="px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-50 border border-neutral-200 text-neutral-700 text-sm font-medium transition">
+                        複習錯題
+                    </a>
+                    <a href="final_quiz.html?mode=exam" class="px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-50 border border-neutral-200 text-neutral-700 text-sm font-medium transition">
+                        限時模擬考
+                    </a>
+                </div>
             </div>
+        </section>
 
-            <!-- 期中 8 大模組快速卡片導覽 -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                <!-- 1. 期中互動總覽 -->
-                <a href="midterm_index.html" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 rounded-2xl p-4.5 transition group space-y-2 shadow-sm hover:shadow-amber-500/10">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">基礎架構</span>
-                        <span class="text-slate-500 text-xs group-hover:text-amber-400 transition">進入 ↗</span>
-                    </div>
-                    <div class="font-bold text-white text-sm group-hover:text-amber-300 transition">期中互動總覽</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">OTP、PRG、DES/AES S-box、Feistel、CTR 等 6 大互動實驗室與名詞庫。</p>
-                </a>
-
-                <!-- 2. 期中講義筆記 -->
-                <a href="notes.html" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 rounded-2xl p-4.5 transition group space-y-2 shadow-sm hover:shadow-amber-500/10">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">講義教材</span>
-                        <span class="text-slate-500 text-xs group-hover:text-amber-400 transition">進入 ↗</span>
-                    </div>
-                    <div class="font-bold text-white text-sm group-hover:text-amber-300 transition">期中講義筆記</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">Ch. 1 至 Ch. 8 精華講義手冊，結構化閱讀與關鍵名詞定義對照。</p>
-                </a>
-
-                <!-- 3. 期中考點變化題 -->
-                <a href="exam.html" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 rounded-2xl p-4.5 transition group space-y-2 shadow-sm hover:shadow-amber-500/10">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">考點衍生</span>
-                        <span class="text-slate-500 text-xs group-hover:text-amber-400 transition">進入 ↗</span>
-                    </div>
-                    <div class="font-bold text-white text-sm group-hover:text-amber-300 transition">期中考點變化題</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">10 大核心考點、20 道考卷常考衍生題與題型變體剖析。</p>
-                </a>
-
-                <!-- 4. 作業與練習全解 -->
-                <a href="homework_practice.html" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 rounded-2xl p-4.5 transition group space-y-2 shadow-sm hover:shadow-amber-500/10">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">課堂作業</span>
-                        <span class="text-slate-500 text-xs group-hover:text-amber-400 transition">進入 ↗</span>
-                    </div>
-                    <div class="font-bold text-white text-sm group-hover:text-amber-300 transition">作業與練習全解</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">作業一（9 題）與練習一（29 題）雙軌直觀思維與嚴謹題解。</p>
-                </a>
-
-                <!-- 5. 作業一攻略 -->
-                <a href="hw1_summary.html" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 rounded-2xl p-4.5 transition group space-y-2 shadow-sm hover:shadow-amber-500/10">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">重點歸納</span>
-                        <span class="text-slate-500 text-xs group-hover:text-amber-400 transition">進入 ↗</span>
-                    </div>
-                    <div class="font-bold text-white text-sm group-hover:text-amber-300 transition">作業一攻略</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">作業一 7 大密碼學核心概念、數學本質與 4 大萬用證明藍圖。</p>
-                </a>
-
-                <!-- 6. 練習一攻略 -->
-                <a href="p1_summary.html" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 rounded-2xl p-4.5 transition group space-y-2 shadow-sm hover:shadow-amber-500/10">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">極簡解題</span>
-                        <span class="text-slate-500 text-xs group-hover:text-amber-400 transition">進入 ↗</span>
-                    </div>
-                    <div class="font-bold text-white text-sm group-hover:text-amber-300 transition">練習一攻略</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">練習一 6 大核心考點精華與 5 大秒殺極簡證明範本。</p>
-                </a>
-
-                <!-- 7. 期中模擬試卷 -->
-                <a href="mock_exam.html" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 rounded-2xl p-4.5 transition group space-y-2 shadow-sm hover:shadow-amber-500/10">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-500/10 text-purple-300 border border-purple-500/30">滿分模擬</span>
-                        <span class="text-slate-500 text-xs group-hover:text-amber-400 transition">進入 ↗</span>
-                    </div>
-                    <div class="font-bold text-white text-sm group-hover:text-amber-300 transition">期中模擬試卷</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">滿分 100 分全真模擬考題，單選、簡答與形式證明完整解析。</p>
-                </a>
-
-                <!-- 8. 期中必考證明表 -->
-                <a href="proof_sheet.html" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 rounded-2xl p-4.5 transition group space-y-2 shadow-sm hover:shadow-amber-500/10">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30">形式證明</span>
-                        <span class="text-slate-500 text-xs group-hover:text-amber-400 transition">進入 ↗</span>
-                    </div>
-                    <div class="font-bold text-white text-sm group-hover:text-amber-300 transition">期中必考證明表</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">27 題形式證明直觀大腦模型、速記公式膠囊與分步推導。</p>
-                </a>
-
-            </div>
+        <!-- 收合式期中歸檔 -->
+        <section class="pt-6 border-t border-neutral-200">
+            <details class="group">
+                <summary class="text-xs text-neutral-400 hover:text-neutral-700 cursor-pointer select-none list-none flex items-center gap-1.5">
+                    <span class="transition-transform group-open:rotate-90">▸</span>
+                    <span>期中考歷史歸檔（Ch. 1 - 8 講義、作業與模擬試卷）</span>
+                </summary>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 text-xs">
+                    <a href="midterm_index.html" class="px-3.5 py-2.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-600 hover:text-neutral-900 transition">期中互動總覽</a>
+                    <a href="notes.html" class="px-3.5 py-2.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-600 hover:text-neutral-900 transition">期中講義筆記</a>
+                    <a href="exam.html" class="px-3.5 py-2.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-600 hover:text-neutral-900 transition">期中考點變化題</a>
+                    <a href="homework_practice.html" class="px-3.5 py-2.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-600 hover:text-neutral-900 transition">作業與練習全解</a>
+                    <a href="hw1_summary.html" class="px-3.5 py-2.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-600 hover:text-neutral-900 transition">作業一攻略</a>
+                    <a href="p1_summary.html" class="px-3.5 py-2.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-600 hover:text-neutral-900 transition">練習一攻略</a>
+                    <a href="mock_exam.html" class="px-3.5 py-2.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-600 hover:text-neutral-900 transition">期中模擬試卷</a>
+                    <a href="proof_sheet.html" class="px-3.5 py-2.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-600 hover:text-neutral-900 transition">期中必考證明表</a>
+                </div>
+            </details>
         </section>
 
     </main>
 
-    <!-- 頁尾 -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500 font-mono">
-        <div class="max-w-7xl mx-auto px-4 space-y-2">
-            <p>現代與後量子密碼學導論・期末考核心專區與期中歷史歸檔庫</p>
-            <p class="text-[11px] text-slate-600">Introduction to Modern Cryptography by Katz & Lindell | The Joy of Cryptography by Mike Rosulek</p>
-        </div>
-    </footer>
-
-    <!-- 資料腳本 -->
     <script src="js/final_data.js"></script>
-
-    <!-- 控制邏輯腳本 -->
+    <script src="js/final_mcq_data.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            renderFinalModules();
-        });
+        function getScope(q) {
+            const num = parseInt(q.id.replace('q', ''), 10);
+            if (num <= 38) return '1.5';
+            if (num <= 70) return '1.7';
+            return '1.8';
+        }
 
-        function renderFinalModules() {
+        document.addEventListener('DOMContentLoaded', () => {
+            let saved = {};
+            try {
+                const raw = localStorage.getItem('final_mcq_answers');
+                if (raw) saved = JSON.parse(raw);
+            } catch (e) {}
+
+            // Compute overall & per-scope stats
+            const stats = {
+                total: 0, answered: 0, correct: 0,
+                byScope: { '1.5': { t: 0, a: 0, c: 0 }, '1.7': { t: 0, a: 0, c: 0 }, '1.8': { t: 0, a: 0, c: 0 } }
+            };
+
+            if (typeof FINAL_MCQ_DATA !== 'undefined') {
+                FINAL_MCQ_DATA.forEach(q => {
+                    const sc = getScope(q);
+                    stats.total++;
+                    stats.byScope[sc].t++;
+                    if (saved[q.id] !== undefined) {
+                        stats.answered++;
+                        stats.byScope[sc].a++;
+                        if (saved[q.id] === q.answer) {
+                            stats.correct++;
+                            stats.byScope[sc].c++;
+                        }
+                    }
+                });
+            }
+
+            const wrong = stats.answered - stats.correct;
+            const acc = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+            document.getElementById('home-answered').innerText = stats.answered;
+            document.getElementById('home-accuracy').innerText = acc;
+            document.getElementById('home-wrong').innerText = wrong;
+
             const container = document.getElementById('final-modules-container');
             if (!container || typeof FINAL_EXAM_MODULES === 'undefined') return;
 
             container.innerHTML = FINAL_EXAM_MODULES.map(mod => {
-                const isCompleted = mod.status === 'completed';
-                const cardBorder = isCompleted 
-                    ? 'border-emerald-500/60 bg-gradient-to-b from-emerald-950/30 to-slate-900 shadow-lg shadow-emerald-950/30 ring-1 ring-emerald-500/40' 
-                    : 'border-slate-800 bg-slate-900/90 hover:border-emerald-500/40';
-                const badgeStyle = isCompleted
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold'
-                    : 'bg-slate-800 text-slate-400 border-slate-700';
-
-                const actionButton = isCompleted && mod.page_url ? `
-                    <a href="${mod.page_url}" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 transition transform hover:-translate-y-0.5">
-                        <span>👉 進入 ${mod.chapter} 完整講義與題解</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
-                ` : '';
-
-                const materialsBox = isCompleted ? `
-                    <div class="p-2.5 rounded-lg bg-emerald-950/50 border border-emerald-500/30 text-[10px] text-emerald-300 font-mono flex items-center justify-between">
-                        <span class="font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>教材狀態：</span>
-                        <span class="text-slate-300">${mod.expected_materials[0]}</span>
-                    </div>
-                ` : `
-                    <div class="p-2 rounded-lg bg-slate-950/70 border border-dashed border-slate-800 text-[10px] text-amber-400/90 font-mono flex items-center justify-between">
-                        <span>待注入教材：</span>
-                        <span class="text-slate-400">${mod.expected_materials.join(', ')}</span>
-                    </div>
-                `;
-
+                const scStat = stats.byScope[mod.quiz_scope] || { t: mod.quiz_count, a: 0, c: 0 };
+                const pct = scStat.t > 0 ? Math.round((scStat.a / scStat.t) * 100) : 0;
                 return `
-                    <div class="border rounded-2xl p-5 shadow-sm space-y-3 flex flex-col justify-between transition ${cardBorder}">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">${mod.chapter}</span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-mono border ${badgeStyle}">${mod.badge}</span>
+                    <div class="p-6 rounded-2xl bg-white border border-neutral-200 hover:border-neutral-300 hover:shadow-sm transition flex flex-col justify-between gap-5">
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-semibold text-blue-600">${mod.chapter}</span>
+                                <span class="text-neutral-400">${mod.pages}</span>
                             </div>
-                            <h3 class="font-bold text-white text-base">${mod.title}</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed">${mod.description}</p>
+                            <h3 class="font-bold text-neutral-900 text-base leading-snug">${mod.title}</h3>
+                            <p class="text-[13px] text-neutral-500 leading-relaxed">${mod.summary}</p>
                         </div>
 
-                        <div class="space-y-2.5 pt-2 border-t border-slate-800/80">
-                            <div class="text-[11px] font-mono text-slate-300 font-semibold">核心考點：</div>
-                            <ul class="text-[11px] text-slate-400 space-y-1 font-sans list-disc pl-4">
-                                ${mod.key_topics.slice(0, 3).map(t => `<li>${t}</li>`).join('')}
-                            </ul>
-                            ${materialsBox}
-                            ${actionButton}
+                        <div class="space-y-3 pt-3 border-t border-neutral-100">
+                            <div class="space-y-1">
+                                <div class="flex items-center justify-between text-[11px] text-neutral-400">
+                                    <span>選擇題進度</span>
+                                    <span>${scStat.a} / ${scStat.t} 題（${pct}%）</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-600 rounded-full transition-all" style="width: ${pct}%"></div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <a href="${mod.page_url}" class="flex-1 py-2 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-medium text-center transition">
+                                    閱讀重點
+                                </a>
+                                <a href="final_quiz.html?scope=${mod.quiz_scope}" class="py-2 px-3.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-medium text-center transition">
+                                    練 ${mod.quiz_count} 題
+                                </a>
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
-        }
-
-        function switchSemesterTab(tab) {
-            const viewFinal = document.getElementById('view-final');
-            const viewMidterm = document.getElementById('view-midterm');
-            const btnFinal = document.getElementById('tab-btn-final');
-            const btnMidterm = document.getElementById('tab-btn-midterm');
-
-            if (tab === 'final') {
-                viewFinal.classList.remove('hidden');
-                viewMidterm.classList.add('hidden');
-
-                btnFinal.className = "px-3.5 py-1.5 rounded-lg transition font-semibold flex items-center gap-2 bg-emerald-600 text-white shadow-sm";
-                btnMidterm.className = "px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white flex items-center gap-2";
-            } else {
-                viewFinal.classList.add('hidden');
-                viewMidterm.classList.remove('hidden');
-
-                btnMidterm.className = "px-3.5 py-1.5 rounded-lg transition font-semibold flex items-center gap-2 bg-amber-600 text-white shadow-sm";
-                btnFinal.className = "px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white flex items-center gap-2";
-            }
-        }
+        });
     </script>
-    <script id="header-sync-script">
-    function syncHeaderHeight() {
-        const header = document.getElementById('site-header') || document.querySelector('header');
-        if (header) {
-            const h = Math.ceil(header.getBoundingClientRect().height);
-            document.documentElement.style.setProperty('--header-height', `${h}px`);
-        }
-    }
-    window.addEventListener('resize', syncHeaderHeight);
-    window.addEventListener('orientationchange', syncHeaderHeight);
-    document.addEventListener('DOMContentLoaded', syncHeaderHeight);
-    setTimeout(syncHeaderHeight, 50);
-    setTimeout(syncHeaderHeight, 200);
-    setTimeout(syncHeaderHeight, 600);
-    </script>
-
-<script id="nav-dropdown-script">
-function toggleFinalMenu(e) {
-    if (e) e.stopPropagation();
-    const menu = document.getElementById('final-dropdown-menu');
-    if (menu) {
-        menu.classList.toggle('hidden');
-    }
-}
-function toggleMidtermMenu(e) {
-    if (e) e.stopPropagation();
-    const menu = document.getElementById('midterm-dropdown-menu');
-    if (menu) {
-        menu.classList.toggle('hidden');
-    }
-}
-document.addEventListener('click', (e) => {
-    const finalWrapper = document.getElementById('final-zone-wrapper');
-    const finalMenu = document.getElementById('final-dropdown-menu');
-    if (finalMenu && finalWrapper && !finalWrapper.contains(e.target)) {
-        finalMenu.classList.add('hidden');
-    }
-    const midtermWrapper = document.getElementById('midterm-archive-wrapper');
-    const midtermMenu = document.getElementById('midterm-dropdown-menu');
-    if (midtermMenu && midtermWrapper && !midtermWrapper.contains(e.target)) {
-        midtermMenu.classList.add('hidden');
-    }
-});
-</script>
-
 </body>
 </html>
